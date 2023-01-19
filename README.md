@@ -7,3 +7,5 @@ Simulator for Hyperledger fabric that is a framework to develop permissioned blo
 
 [3] Perform npm install for downloading dependencies. 
 
+[4] Try entering fele in the terminal. It should list Usage, Options and Commands. 
+
