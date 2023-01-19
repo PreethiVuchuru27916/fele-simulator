@@ -1,0 +1,53 @@
+{	"_id": "state.fele.channel~root",
+	"fmt": "channel",
+	"fmId": "root",
+	"channels": [
+		{	"channelName": "Gateway",
+			"msp": {
+				"organizations": [
+					{	"mspId": "Tietronix",
+						"rootCaWalletId": "Tietronix.rootCA",
+						"tlsWalletId": "Tietronix.tlsCA"
+					},
+					{	"mspId": "UHCL",
+						"rootCaWalletId": "UHCL.rootCA",
+						"tlsWalletId": "UHCL.tlsCA"
+					}	
+				],
+				"policies" : {
+					"Readers": {
+						"Type": "ImplicitMeta",
+						"Rule": "ANY Readers"
+					},
+					"Writers": {
+						"Type": "ImplicitMeta",
+						"Rule": "ANY Writers"
+					},
+					"Admin": {
+						"Type": "ImplicitMeta",
+						"Rule": "ANY Writers"
+					}
+				}
+			},
+			"membership": [
+				{	"mspId": "Tietronix",
+					"fabIdentities": [
+						{
+							"fabId": "admin",
+							"role": "admin",
+							"attributes": {}
+						},
+						{
+							"fabId": "SE1",
+							"role": "client",
+							"attributes": {
+								"ABACRole": "CSE",
+								"ABACGroup": "Administrator"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

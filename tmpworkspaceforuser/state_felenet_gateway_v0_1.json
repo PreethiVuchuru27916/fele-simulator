@@ -1,0 +1,10 @@
+{	
+	"_id": "state.fele.felenet~root",
+	"fmt": "felenet",
+	"fmId": "root",
+	"includeLedger": false,
+	"transactionAware": false,
+	"blockAware": false,
+	"timestamping": false,
+	"walletUnaware": false
+}
