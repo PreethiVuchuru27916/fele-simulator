@@ -1,5 +1,5 @@
 const NodeCouchDb = require('node-couchdb');
-const { couchdb } = require('../../conf/feleConf.json')
+const { couchdb } = require('../../conf/feleConf')
 
 const couch = new NodeCouchDb({
     auth: {
