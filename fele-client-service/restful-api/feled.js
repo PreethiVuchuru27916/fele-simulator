@@ -3,7 +3,7 @@ const { couchdb, server } = require('../../conf/feleConf')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express')
-const {swaggerDocument} = require('../../swagger')
+const {swaggerDocument} = require('./openAPI/swagger')
 
 const app = express()
 
@@ -14,6 +14,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 const PORT = server.port
 
+app.get('/api/', (req, res) => {
+    console.log("Base path called")
+    res.send("Hello bitches!!!!!")
+})
 const feleClientRoutes = require('./routes/fele-client.route')
 const scRoutes = require('./routes/sc.route')
 

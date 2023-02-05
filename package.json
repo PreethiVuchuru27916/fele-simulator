@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "refresh": "rm -rf node_modules && rm -rf package-lock.json && npm install commander && npm i -g",
-    "start": "node ./fele-client-service/restful-api/feled"
+    "start": "node ./fele-client-service/restful-api/feled",
+    "dev": "nodemon ./fele-client-service/restful-api/feled"
   },
   "bin": {
     "fele": "./fele-client-service/cli/fele.js"
