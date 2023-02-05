@@ -19,6 +19,7 @@
     "express": "^4.18.2",
     "fs-extra": "^11.1.0",
     "g": "^2.0.1",
-    "node-couchdb": "^2.0.0"
+    "node-couchdb": "^2.0.0",
+    "winston": "^3.8.2"
   }
 }

@@ -5,6 +5,7 @@ const { createChaincode } = require('./scripts/chaincode');
 const { createChannel } = require('./scripts/channel');
 
 const readline = require('readline');
+const logger = require('../utils/logger');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
@@ -96,6 +97,8 @@ userCommand
     .option('-n, --feleNetwork <feleNetwork>', 'Default feleNetwork name to be passed')
     //Add un, pw and insert to wallet
     .action((options) => {
+        logger.info('Waiting to authenticate user');
+
         //authentication
         let Gateway = {
             "mspId" : [options.mspId],
