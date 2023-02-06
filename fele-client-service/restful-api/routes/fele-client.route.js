@@ -1,13 +1,14 @@
 const express = require('express')
 const router = express.Router()
 
-const {createNetwork, deleteNetwork} = require('../handlers/fele-client.handler')
+const {createNetworkHandler, deleteNetwork} = require('../handlers/fele-client.handler')
 
 router.get('/', async (req, res) => {
     res.send("Im FELE-CLIENT Base path")
 })
 
-router.get('/createNetwork', createNetwork)
+router.post('/createNetwork', createNetworkHandler)
 router.delete('/deleteNetwork', deleteNetwork)
+
 
 module.exports = router

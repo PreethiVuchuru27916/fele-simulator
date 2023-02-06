@@ -1,4 +1,5 @@
-const {createChannelSwagger} = require('./create-channel.swagger')
+const {createNetworkSwagger} = require('./create-network.swagger')
+const { components } = require('./components.swagger')
 
 exports.swaggerDocument = {
     openapi: '3.0.0',
@@ -30,9 +31,12 @@ exports.swaggerDocument = {
     ],
     paths: {
         "/api/fele-client/createChannel" : {
-            "get": {
-                ...createChannelSwagger
+            "post": {
+                ...createNetworkSwagger
            }    
         }
+    },
+    components: {
+        ...components
     }
 }

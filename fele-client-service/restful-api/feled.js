@@ -16,7 +16,7 @@ const PORT = server.port
 
 app.get('/api/', (req, res) => {
     console.log("Base path called")
-    res.send("Hello bitches!!!!!")
+    res.send("Hello, Im base path of api !!!!!")
 })
 const feleClientRoutes = require('./routes/fele-client.route')
 const scRoutes = require('./routes/sc.route')
