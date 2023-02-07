@@ -20,9 +20,10 @@ app.get('/api/', (req, res) => {
 })
 const feleClientRoutes = require('./routes/fele-client.route')
 const scRoutes = require('./routes/sc.route')
-
+const fabricUserRoutes = require('./routes/fabric-user.route')
 app.use('/api/fele-client', feleClientRoutes)
 app.use('/api/sc', scRoutes)
+app.unsubscribe('/api/fabric-user', )
 
 app.listen(PORT, () => {
     console.log(`Server running at: http://localhost:${PORT}/`);
