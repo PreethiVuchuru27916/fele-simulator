@@ -5,7 +5,7 @@ const {createNetworkCLI} = require('../scripts/network')
 const {deleteNetworkCLI} = require('../scripts/network')
 const {createChannel} = require('../scripts/channel')
 const {createChaincode} = require('../scripts/chaincode')
-const {interpreter} = require('../fele')
+const {interpreter} = require('../commands')
 // just a user defined function to help view logs
 const log = (value) => {
   if (DEBUG) {
@@ -26,6 +26,7 @@ describe('user program test cases', () => {
       .action(() => {});
     return program;
   }
+  beforeEach(() => { jest.resetAllMocks(); });
   
   test('COMMANDER CMD TEST for creating a network', async () => {
     //console.log({...network })
@@ -54,7 +55,7 @@ describe('user program test cases', () => {
         
       ]
     interpreter.parse(commandArr, { from : 'user'});
-    expect(createNetworkCLI).toHaveBeenCalledTimes(2)
+    expect(createNetworkCLI).toHaveBeenCalledTimes(1)
 
   })
 
@@ -79,6 +80,21 @@ describe('user program test cases', () => {
         '-nn',
         'artemis',
         '-cn',
+        'nasa'
+      ]
+    interpreter.parse(commandArr, { from : 'user'});
+    expect(createChannel).toHaveBeenCalledTimes(1)
+
+  })
+
+  test('COMMANDER CMD TEST for creating a channel', async () => {
+    //console.log({...network })
+    const commandArr = [
+        'channel',
+        'create',
+        '--networkName',
+        'artemis',
+        '--channelName',
         'nasa'
       ]
     interpreter.parse(commandArr, { from : 'user'});
@@ -120,7 +136,7 @@ describe('user program test cases', () => {
         'assests'
       ]
     interpreter.parse(commandArr, { from : 'user'});
-    expect(createChaincode).toHaveBeenCalledTimes(2)
+    expect(createChaincode).toHaveBeenCalledTimes(1)
 
   })
 
