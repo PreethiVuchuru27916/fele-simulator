@@ -5,7 +5,7 @@ const {createNetworkCLI} = require('../scripts/network')
 const {deleteNetworkCLI} = require('../scripts/network')
 const {createChannel} = require('../scripts/channel')
 const {createChaincode} = require('../scripts/chaincode')
-const {interpreter} = require('../commands')
+const {interpreter} = require('../fele')
 // just a user defined function to help view logs
 const log = (value) => {
   if (DEBUG) {
