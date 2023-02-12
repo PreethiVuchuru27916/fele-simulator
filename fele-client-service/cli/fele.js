@@ -115,9 +115,8 @@ userCommand
     //Add un, pw and insert to wallet
     .action(async(options) => {
         //authentication
-        let isUserAuthenticated = false
         const hashedPassword = sha256(options.password);
-        localOrg = await getDocumentFromDatabase("fele_localorg", "localOg_nasa")
+        localOrg = await getDocumentFromDatabase("fele_localorg", "localOrg_nasa")
         //localOrg gets its value from couchdb or from the default localorg.json file
         localOrg = localOrg || defaultLocalOrg
         
