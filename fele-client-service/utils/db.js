@@ -28,9 +28,9 @@ const deleteDatabase = async(databaseName) => {
 
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
     try{
-        const channelId = await couch.insert(databaseName, documentToBeInserted)
+        const { data } = await couch.insert(databaseName, documentToBeInserted)
         console.info("Channel created successfully!")
-        return channelId
+        return data.id
 
     } catch(error) {
         console.err("Error inserting data: ", error)
