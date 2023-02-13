@@ -27,22 +27,29 @@ const deleteDatabase = async(databaseName) => {
 }
 
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
-    couch.insert(databaseName, documentToBeInserted);
-}
-
-
-const getDocumentFromDatabase = async(databaseName, documentToBeSearched) => {
-    return couch.get(databaseName, documentToBeSearched).then(({data, headers, status}) => {
-        return data
+    return couch.insert(databaseName, documentToBeInserted).then(() => {
+        return true
     }, err => {
-        //console.log(err)
-        return null
+        console.log(err)
+        return false
     });
 }
  
+
+const checkIfNetworkExists = async (databaseName) => {
+    console.info(`checking if ${databaseName} DB exists....`)
+    const dbs = await couch.listDatabases()
+    for(let i =0; i<dbs.length; i++) {
+        if(dbs[i] === databaseName) {
+            return true
+        }
+    }
+    return false
+}
+
 module.exports = {
     createDatabase,
     deleteDatabase,
     insertToDatabase,
-    getDocumentFromDatabase
+    checkIfNetworkExists
 }
