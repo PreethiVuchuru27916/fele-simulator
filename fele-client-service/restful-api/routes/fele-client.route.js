@@ -2,10 +2,9 @@ const express = require('express')
 const router = express.Router()
 
 const { createNetworkHandler,
-    loginUserHandler,
-    createChannelHandler,
     deleteNetworkHandler,
-    deleteOrganiationHandler,
+    removeOrganizationHandler,
+    createChannelHandler,
     addOrganizationHandler,
     chainCodeDeployHandler } = require('../handlers/fele-client.handler')
 
@@ -15,9 +14,9 @@ router.get('/', async (req, res) => {
 
 router.post('/createNetwork', createNetworkHandler)
 router.post('/createChannel', createChannelHandler)
-router.delete('/deleteNetwork', deleteNetworkHandler)
-router.post("/network/addOrg", addOrganizationHandler)
-router.get("/network/deleteOrg/:orgName", deleteOrganiationHandler)
-router.post('/chaincode/deploy', chainCodeDeployHandler)
+router.delete('/deleteNetwork', deleteNetworkHandler) 
+router.put("/network/addOrg", addOrganizationHandler) //TODO
+router.put("/network/remove/:orgName", removeOrganizationHandler) //TODO
+router.post('/chaincode/deploy', chainCodeDeployHandler) //TODO
 
 module.exports = router

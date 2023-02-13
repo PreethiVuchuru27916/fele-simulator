@@ -6,7 +6,6 @@ const {loginFabricUserHandler,
     updateFabricUserHandler,
     deleteFabricUserHandler
 } = require('../handlers/fabric-user.handler')
-
 router.post('/login', loginFabricUserHandler)
 router.post('/register', registerFabricUserHandler)
 router.post('/update', updateFabricUserHandler)

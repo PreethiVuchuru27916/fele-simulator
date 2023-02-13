@@ -1,8 +1,13 @@
 const loginFabricUserHandler = (req, res) => {
-    res.send("Login Response")
+    //TODO
+    res.status(200).send({
+        isAuthenticated: true,
+        token: ""
+    })
 }
 
 const registerFabricUserHandler = (req, res) => {
+    //TODO
     res.send("Register Response")
 }
 

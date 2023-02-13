@@ -27,11 +27,33 @@ const deleteDatabase = async(databaseName) => {
 }
 
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
-    couch.insert(databaseName, documentToBeInserted);
+    console.log("Inserttodatabase called!")
+    try{
+
+        const channelId = await couch.insert(databaseName, documentToBeInserted)
+        console.info("Channel created successfully!")
+        return channelId
+
+    } catch(error) {
+        console.err("Error inserting data: ", error)
+            return false
+    }
 }
- 
+
+const checkIfNetworkExists = async (databaseName) => {
+    console.info(`checking if ${databaseName} DB exists....`)
+    const dbs = await couch.listDatabases()
+    for(let i =0; i<dbs.length; i++) {
+        if(dbs[i] === databaseName) {
+            return true
+        }
+    }
+    return false
+}
+
 module.exports = {
     createDatabase,
     deleteDatabase,
-    insertToDatabase
+    insertToDatabase,
+    checkIfNetworkExists
 }

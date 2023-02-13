@@ -24,7 +24,7 @@ networkCommand
     });
 
 networkCommand
-    .command('remove')
+    .command('delete')
     .action((options) => {
         return deleteNetworkCLI(options.networkName);
     });
