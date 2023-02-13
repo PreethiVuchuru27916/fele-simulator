@@ -29,9 +29,20 @@ const deleteDatabase = async(databaseName) => {
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
     couch.insert(databaseName, documentToBeInserted);
 }
+
+
+const getDocumentFromDatabase = async(databaseName, documentToBeSearched) => {
+    return couch.get(databaseName, documentToBeSearched).then(({data, headers, status}) => {
+        return data
+    }, err => {
+        //console.log(err)
+        return null
+    });
+}
  
 module.exports = {
     createDatabase,
     deleteDatabase,
-    insertToDatabase
+    insertToDatabase,
+    getDocumentFromDatabase
 }
