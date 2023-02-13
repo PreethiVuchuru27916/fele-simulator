@@ -51,9 +51,20 @@ const checkIfNetworkExists = async (databaseName) => {
     return false
 }
 
+
+const getDocumentFromDatabase = async(databaseName, documentToBeSearched) => {
+    return couch.get(databaseName, documentToBeSearched).then(({data, headers, status}) => {
+        return data
+    }, err => {
+        //console.log(err)
+        return null
+    });
+}
+ 
 module.exports = {
     createDatabase,
     deleteDatabase,
     insertToDatabase,
-    checkIfNetworkExists
+    checkIfNetworkExists,
+    getDocumentFromDatabase
 }

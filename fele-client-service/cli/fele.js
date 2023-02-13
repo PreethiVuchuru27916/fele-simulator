@@ -1,10 +1,16 @@
 #! /usr/bin/env node
 const commander = require('commander')
-const { createNetworkCLI, deleteNetworkCLI } = require('./scripts/network')
+const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
 const { createChannel } = require('./scripts/channel');
 
 const readline = require('readline');
+const defaultLocalOrg = require('../../conf/localorg.json');
+
+const { getDocumentFromDatabase } = require('../utils/db');
+const { authenticateUser } = require('../utils/auth');
+const logger = require('../utils/logger');
+const { sha256 } = require('../utils/helpers');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
@@ -14,7 +20,21 @@ const networkCommand = interpreter.command('network');
 const chaincodeCommand = interpreter.command('chaincode');
 const channelCommand = interpreter.command('channel');
 
+let localUser
+let localOrg
+let feleUser = {};
+let network
+
 /************************Network Commands*********************/
+networkCommand
+    .command('use')
+    .description('uses a network that is available')
+    .action(async(options) => {
+        network = "";
+        feleUser = await useNetworkCLI(localUser.username, localOrg, options.networkName);
+        if(feleUser.user) network = options.networkName
+    });
+
 networkCommand
     .command('create')
     .description('Creates a network')
@@ -91,36 +111,46 @@ chaincodeCommand
 /************************User Commands*********************/
 userCommand
     .option('-o, --mspId <mspId>', 'mspId to be passed')
-    .option('-u, --feleUser <feleUser>', 'feleUser to be passed')
+    .option('-u, --username <username>', 'feleUser to be passed')
     .option('-p, --password <password>', 'password to be passed')
-    .option('-n, --feleNetwork <feleNetwork>', 'Default feleNetwork name to be passed')
     //Add un, pw and insert to wallet
-    .action((options) => {
+    .action(async(options) => {
         //authentication
-        let Gateway = {
-            "mspId" : [options.mspId],
-            "feleUser" : [options.feleUser],
-            "feleNetwork" : [options.feleNetwork]
-        }
+        const hashedPassword = sha256(options.password);
+        localOrg = await getDocumentFromDatabase("fele_localorg", "localOrg_nasa")
+        //localOrg gets its value from couchdb or from the default localorg.json file
+        localOrg = localOrg || defaultLocalOrg
         
-        var rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
+        localUser = authenticateUser(options.username, hashedPassword, options.mspId, localOrg)
         
-        let waitForUserInput = () => {
-            rl.question("fele [ "+Gateway.feleNetwork+"."+ Gateway.mspId+"."+Gateway.feleUser+" ] > ",  function(command) {
-            if (command == "quit"){
-                rl.close();
-            } else {
-                console.log("command entered is "+command)
-                var commandArr = command.split(" ");
-                interpreter.parse(commandArr, { from : 'user'});
-                waitForUserInput()
+        if(localUser.authenticated) {
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            })
+            
+            const waitForUserInput = () => {
+                const gateway = {
+                    "feleUser" : feleUser.user,
+                    "feleNetwork": network,
+                    "mspId" : options.mspId
+                }
+                const info = Object.values(gateway).filter(gatewayItems => gatewayItems).join('.');
+                const question = `fele [ ${info} ] > `
+                rl.question(question, async(command) => {
+                    if (command === "quit") {
+                        rl.close();
+                    } else {
+                        const commandArr = command.split(" ");
+                        await interpreter.parse(commandArr, { from : 'user'});
+                        waitForUserInput();
+                    }
+                });
             }
-            });
+            waitForUserInput()
+        }else{
+            console.log(" Authentication Failed. Try again ")
         }
-        waitForUserInput()
     })
 
 program.parse(process.argv);
