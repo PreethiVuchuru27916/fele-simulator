@@ -10,7 +10,6 @@ const authenticateUser = (username, password, organizationName, localOrg) => {
     //Found LocalUser
     if (localUserIndex != -1) {
       localUser.username = username;
-      localUser.password = password;
       localUser.organization = organizationName;
       localUser.authenticated = true;
       return localUser;

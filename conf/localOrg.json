@@ -30,26 +30,6 @@
 					"to": "nasa_artemis.se1"
 				}
 		  ]
-		},
-		{  "felenetId": "artemis",
-		   "feleOrgId": "nasa_artemis",
-		   "feleusers": [
-				{  
-				   "feleuserId": "nasa_artemis.admin1",  
-				   "walletId": "wallet_19230"				
-				},
-				{  "feleuserId": "nasa_artemis.se1",
-				   "walletId": "wallet_194560"
-				}
-		   ],
-		   "mappings" : [
-				{   "from": "preethi",
-					"to": "nasa_artemis.admin1"
-				},
-				{   "from": "sha",
-					"to": "nasa_artemis.se1"
-				}
-		  ]
 		}
     ]
 }

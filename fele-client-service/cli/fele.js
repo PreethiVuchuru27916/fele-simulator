@@ -30,6 +30,7 @@ networkCommand
     .command('use')
     .description('uses a network that is available')
     .action(async(options) => {
+        network = "";
         feleUser = await useNetworkCLI(localUser.username, localOrg, options.networkName);
         if(feleUser.user) network = options.networkName
     });
@@ -134,7 +135,7 @@ userCommand
                     "feleNetwork": network,
                     "mspId" : options.mspId
                 }
-                const info = Object.values(gateway).filter(gatewayItems => gatewayItems !== undefined).join('.');
+                const info = Object.values(gateway).filter(gatewayItems => gatewayItems).join('.');
                 const question = `fele [ ${info} ] > `
                 rl.question(question, async(command) => {
                     if (command === "quit") {
