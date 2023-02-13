@@ -1,0 +1,60 @@
+{
+    "_id": "channel~9cba7ee4-147c-4108-a85d-cc4de2f7eee0",
+    "fmt": "channel",
+    "fmId": "9cba7ee4-147c-4108-a85d-cc4de2f7eee0",
+    "created_at": "2023-01-01T17:10:47Z",
+    "updated_at": "2023-01-05T17:10:47Z",
+    "channels": [
+      { 
+        "network_name": "artemis",
+        "channel_name": "myChannel",
+        "created_at": "2023-01-01T17:10:47Z",
+        "updated_at": "2023-01-06T17:10:47Z",
+        "organizations": [
+          {
+            "mspid": "uhclMSP",
+            "rootcertwallet_id": "walletID234"
+          },
+          {
+            "mspid": "utdMSP",
+            "rootcertwallet_id": "walletID567"
+          }
+        ],
+        "policies": [
+          {
+            "name": "Readers",
+            "type": "ImplicitMeta",
+            "rule": "ANY Readers"
+          },
+          {
+            "name": "Writers",
+            "type": "ImplicitMeta",
+            "rule": "ANY Writers"
+          },
+          {
+            "name": "Admins",
+            "type": "ImplicitMeta",
+            "rule": "MAJORITY Admins"
+          }
+        ]
+      }
+    ],
+    "mod_policy": "Admins",
+    "policies": [
+      {
+        "name": "Readers",
+        "type": "ImplicitMeta",
+        "rule": "ANY Readers"
+      },
+      {
+        "name": "Writers",
+        "type": "ImplicitMeta",
+        "rule": "ANY Writers"
+      },
+      {
+        "name": "Admins",
+        "type": "ImplicitMeta",
+        "rule": "MAJORITY Admins"
+      }
+    ]
+  }
