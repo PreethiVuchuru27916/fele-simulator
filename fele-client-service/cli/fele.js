@@ -127,7 +127,8 @@ userCommand
             const rl = readline.createInterface({
                 input: process.stdin,
                 output: process.stdout
-            })
+            });
+            logger.info("User authenticated successfully!");
             
             const waitForUserInput = () => {
                 const gateway = {
@@ -148,8 +149,9 @@ userCommand
                 });
             }
             waitForUserInput()
-        }else{
-            console.log(" Authentication Failed. Try again ")
+        } else {
+            console.log("Authentication Failed. Try again");
+            logger.error(`Failed to authenticate username ${options.username}`);
         }
     })
 
