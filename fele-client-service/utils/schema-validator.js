@@ -1,5 +1,3 @@
-// const jsonSchema = require("../../tmpworkspaceforuser/test-data/testSchema.json");
-// const jsonData = require("../../tmpworkspaceforuser/test-data/testSchemaData.json");
 const Ajv = require("ajv");
 const ajv = new Ajv({ strict: false, allErrors: true });
 
@@ -24,8 +22,6 @@ const validateJSON = (jsonSchema = {}, jsonData = {}) => {
   }
   return { valid: isValid, errors: null };
 }
-
-// console.log(validateJSON(jsonSchema, jsonData));
 
 module.exports = {
   validateJSON
