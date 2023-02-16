@@ -1,19 +1,28 @@
-const ZSchema = require("z-schema");
-const validator = new ZSchema();
+const Ajv = require("ajv");
+const ajv = new Ajv({ strict: false, allErrors: true });
 
-// simple javascript function that returns a object based on validation of json schema
-const validateSchema = async (jsonSchema = {}, jsonData = {}) => {
-  try {
-    const jsonIsValid = validator.validate(jsonData, jsonSchema); // This is used to validate the schema. Returns err object or valid object
-    const errors = validator.getLastErrors();
+const parseValidationErrors = (validationErrors = [])=> {
+  let errors = [];
+  validationErrors.forEach(error => {
+    errors.push({
+      param: JSON.stringify(error.params),
+      key: error.keyword,
+      message: error.message,
+    });
+  });
+  return errors;
+}
 
-    if (jsonIsValid) return { errors: false }; // return object that JSON data is valid
-    if (errors && errors.length) return { errors: true, message: JSON.stringify(errors.map((error) => { return { "message": error.message }})) };  // return the object of errors
-  } catch (error) {
-    return { errors: true, message: error }
+const validateJSON = (jsonSchema = {}, jsonData = {}) => {
+  const validator = ajv.compile(jsonSchema);
+  const isValid = validator(jsonData);
+  if (!isValid) {
+      const errors = parseValidationErrors(validator.errors);
+      return { valid: isValid, errors };
   }
+  return { valid: isValid, errors: null };
 }
 
 module.exports = {
-  validateSchema
+  validateJSON
 }
