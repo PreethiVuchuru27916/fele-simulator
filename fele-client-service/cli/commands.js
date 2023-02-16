@@ -2,7 +2,7 @@
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
-const { createChannel } = require('./scripts/channel');
+const { createChannelCLI } = require('./scripts/channel');
 
 const readline = require('readline');
 
@@ -51,7 +51,7 @@ channelCommand
 .command('create')
 .option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
 .action((options) => {
-	return createChannel(options.networkName, options.channelName, options.channelConfig);
+	return createChannelCLI(options.networkName, options.channelName, options.channelConfig);
 })
 
 channelCommand.commands.forEach((cmd) => {
