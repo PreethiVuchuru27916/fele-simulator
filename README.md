@@ -9,3 +9,5 @@ Simulator for Hyperledger fabric that is a framework to develop permissioned blo
 
 [4] Try entering fele in the terminal. It should list Usage, Options and Commands. 
 
+[5] Run `npm run dev` for starting the server
+

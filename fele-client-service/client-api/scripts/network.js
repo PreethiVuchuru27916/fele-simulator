@@ -8,6 +8,7 @@ var chaincodeDirectory = "../../../chaincode/"
 const createNetwork = async(networkConfigJSON, networkName) => {
     const database = dbPrefix+networkName
     const databaseCreated = await createDatabase(database)
+    
     if(databaseCreated) insertToDatabase(database, JSON.parse(networkConfigJSON));
     //To create network folder under chaincode
     var dir = chaincodeDirectory+networkName
