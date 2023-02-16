@@ -1,5 +1,6 @@
 const NodeCouchDb = require('node-couchdb');
 const { couchdb } = require('../../conf/feleConf')
+const logger = require('./logger')
 
 const couch = new NodeCouchDb({
     auth: {
@@ -29,17 +30,16 @@ const deleteDatabase = async(databaseName) => {
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
     try{
         const { data } = await couch.insert(databaseName, documentToBeInserted)
-        console.info("Channel created successfully!")
         return data.id
 
     } catch(error) {
-        console.err("Error inserting data: ", error)
-            return false
+        logger.error("Error inserting data: ", error)
+        return false
     }
 }
 
 const checkIfNetworkExists = async (databaseName) => {
-    console.info(`checking if ${databaseName} DB exists....`)
+    logger.info(`checking if ${databaseName} DB exists....`)
     const dbs = await couch.listDatabases()
     for(let i =0; i<dbs.length; i++) {
         if(dbs[i] === databaseName) {
@@ -54,7 +54,7 @@ const getDocumentFromDatabase = async(databaseName, documentToBeSearched) => {
     return couch.get(databaseName, documentToBeSearched).then(({data, headers, status}) => {
         return data
     }, err => {
-        //console.log(err)
+        logger.error("Error retrieving document from database: ", err)
         return null
     });
 }
