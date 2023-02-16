@@ -4,13 +4,13 @@ const fs = require('fs');
 const constants = require('../../utils/constants')
 const logger = require('../../utils/logger')
 
-const createChannel = async (networkName, channelName, channelConfigJSON) => {
+const createChannel = async (networkName, channelName, channelConfig) => {
     const database = constants.DB_PREFIX+networkName;
     try{
         const dbStatus = await checkIfNetworkExists(database)
         if(dbStatus) {
             logger.info(`${database} Network found...`)
-            const channelId = await insertToDatabase(database, channelConfigJSON);
+            const channelId = await insertToDatabase(database, channelConfig);
             if(channelId) {
                 logger.info(`channel with _id: ${channelId} created successfully in ${database} Network`)
                 var dir = "../../../chaincode/"+networkName+"/"+ channelName
