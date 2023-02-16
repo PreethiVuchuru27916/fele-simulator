@@ -22,7 +22,7 @@ const validateJSON = (jsonSchema = {}, jsonData = {}) => {
       const errors = parseValidationErrors(validator.errors);
       return { valid: isValid, errors };
   }
-  return { valid: isValid };
+  return { valid: isValid, errors: null };
 }
 
 // console.log(validateJSON(jsonSchema, jsonData));
