@@ -11,3 +11,17 @@ Simulator for Hyperledger fabric that is a framework to develop permissioned blo
 
 [5] Run `npm run dev` for starting the server
 
+# To use json schema validator
+```javascript
+    const { valid, errors } = validateJSON(jsonSchema, jsonData);
+    // valid => true / false
+    // errors => object with all errors
+```
+
+# To use logger
+```javascript
+    logger.info("message"); // => logs info to command line
+    logger.warn("warning"); // => logs warning message to command line
+    logger.error("Error message"); // => logs error message to command line and logs.log file
+```
+
