@@ -39,24 +39,50 @@ const insertToDatabase = async(databaseName, documentToBeInserted) => {
 }
 
 const checkIfNetworkExists = async (databaseName) => {
-    logger.info(`checking if ${databaseName} DB exists....`)
+    logger.info(`checking if ${databaseName} Network exists....`)
     const dbs = await couch.listDatabases()
     for(let i =0; i<dbs.length; i++) {
         if(dbs[i] === databaseName) {
+            logger.info(`${databaseName} newtwork found in DB.`)
             return true
         }
     }
+    logger.info(`${databaseName} newtwork not found in DB.`)
     return false
 }
 
+/**
+ * @param {String} databaseName 
+ * @param {Object} updatedDocument Should contain both "_id" and "_rev" fields
+ * @retrun {Object} 
+ */
+const updateDocument = async (databaseName, updatedDocument) => {
+    try{
+        const update = await couch.update(databaseName, updatedDocument)
+        return {
+            error: false,
+            update
+        }
+    } catch(err) {
+        logger.error("Update failed: ", err)
+        return {
+            error: true,
+            shortMessage: "Update failed",
+            errorMessage: err
+        }
+    }
+}
 
-const getDocumentFromDatabase = async(databaseName, documentToBeSearched) => {
-    return couch.get(databaseName, documentToBeSearched).then(({data, headers, status}) => {
+const getDocumentFromDatabase = async(databaseName, selector) => {
+    try{
+        const data = await couch.mango(databaseName, selector)
+        console.log("data: ", data)
         return data
-    }, err => {
-        logger.error("Error retrieving document from database: ", err)
-        return null
-    });
+    }
+    catch(err) {
+        logger.error(err)
+        return false
+    }
 }
  
 module.exports = {

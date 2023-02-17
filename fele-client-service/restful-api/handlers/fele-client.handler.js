@@ -12,18 +12,17 @@ const createNetworkHandler = async(req, res) => {
  
 
 const createChannelHandler = async (req, res) => {
-    const {networkName, channelName, channelConfig} = req.body
+    const {networkName, channelConfig} = req.body
 
-    const channelId = await createChannel(networkName, channelName, channelConfig)
-    if(channelId) {
+    const info = await createChannel(networkName, channelConfig)
+    if(info.success) {
         res.status(201).send({
-            message: "Channel created successfully",
-            channelId
+            ...info
 
         })
     } else {
         res.status(500).send({
-            message: "Error creating channel"
+            ...info
         })
     }
 }
