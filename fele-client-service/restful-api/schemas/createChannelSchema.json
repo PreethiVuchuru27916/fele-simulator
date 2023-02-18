@@ -32,13 +32,13 @@
               "type": "object",
               "required": [
                 "mspid",
-                "rootcertwallet_id"
+                "root_ca"
               ],
               "properties": {
                 "mspid": {
                   "type": "string"
                 },
-                "rootcertwallet_id": {
+                "root_ca": {
                   "type": "string"
                 }
               }  
