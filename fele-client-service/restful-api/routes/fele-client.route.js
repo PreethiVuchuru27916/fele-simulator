@@ -7,13 +7,14 @@ const { createNetworkHandler,
     createChannelHandler,
     addOrganizationHandler,
     chainCodeDeployHandler } = require('../handlers/fele-client.handler')
+const {validateCreateChannelPayload} = require('../validators/channelValidator')
 
 router.get('/', async (req, res) => {
     res.send("Im FELE-CLIENT Base path")
 })
 
 router.post('/createNetwork', createNetworkHandler)
-router.post('/createChannel', createChannelHandler)
+router.post('/createChannel', validateCreateChannelPayload, createChannelHandler)
 router.delete('/deleteNetwork', deleteNetworkHandler) 
 router.put("/network/addOrg", addOrganizationHandler) //TODO
 router.put("/network/remove/:orgName", removeOrganizationHandler) //TODO
