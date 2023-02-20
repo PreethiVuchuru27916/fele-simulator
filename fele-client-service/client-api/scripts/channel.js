@@ -16,7 +16,6 @@ const createChannel = async (networkName,  channelConfig) => {
         updated_at: timestamp,
         ...channelConfig
     }
-
     try{
         //Checking if Network exists
         const dbStatus = await checkIfNetworkExists(database)
@@ -29,7 +28,6 @@ const createChannel = async (networkName,  channelConfig) => {
                     }
                 }
             })
-            console.log("DOC: ", data)
             if(data.docs.length > 0) {
                 return {
                     error: true,

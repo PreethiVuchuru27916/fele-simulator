@@ -76,7 +76,7 @@ const updateDocument = async (databaseName, updatedDocument) => {
 const getDocumentFromDatabase = async(databaseName, selector) => {
     try{
         const data = await couch.mango(databaseName, selector)
-        console.log("data: ", data)
+       // console.log("data: ", data)
         return data
     }
     catch(err) {

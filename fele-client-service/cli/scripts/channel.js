@@ -1,22 +1,18 @@
-const fs = require('fs');
-const path = require("path");
+const { createChannel } = require('../../client-api/scripts/channel')
+const USER_WORKSPACE = "../../../tmpworkspaceforuser/"
 
-function createChannel(networkName, channelName) {
-  var dir = "../../../chaincode/"+networkName+"/"+channelName
-  dir = path.join(__dirname, dir);
-  try {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir)
-        console.log('Directory created.')
-      } else {
-        console.log('Directory already exists.')
-      }
-  } catch (err) {
-    console.log(err)
+const createChannelfromCLI = async (networkName, channelConfig) => {
+  if(channelConfig.includes(".json")) {
+    const fileName = USER_WORKSPACE+channelConfig;
+    console.log(fileName)
+    channelConfig = require(fileName)
+  } else {
+    channelConfig = JSON.parse(channelConfig) 
   }
+  await createChannel(networkName, channelConfig)
+ 
 }
 
 module.exports = {
-    createChannel
+    createChannelfromCLI
 }
- 
