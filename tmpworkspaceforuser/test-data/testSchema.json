@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "required": ["_id", "fmt", "fmId", "channels", "policies", "mod_policy"],
+  "$defs": {
+    "UUId": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}$",
+      "minLength": 32,
+      "maxLength": 36,
+      "$comment": "UUID for the unique identification"
+    },
+    "timestamp": {
+      "type" : "string",
+      "pattern" : "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])[T](2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9][Z]",
+      "$comment": "Timestamp format to be used globally"
+    },
+    "policy_type": {
+      "type": "string",
+      "enum": [ "ImplicitMeta", "Signature" ],
+      "$comment": "Possible values for Policy type"
+    },
+    "policy_name": {
+      "type": "string",
+      "enum": ["Readers", "Writers", "Admins"],
+      "$comment": "Possible values for Policy name"
+    }
+  },
+  "properties": {
+    "_id": {
+      "type": "string",
+      "allOf": [
+        { 
+          "type": "string",
+          "pattern": "^channel[~]",
+          "$comment": "Regular expression to ensure _id starts with channel~"
+        },
+        {
+          "type": "string",
+          "pattern": "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}$",
+          "$comment": "Regular expression to ensure _id ends with uuid"
+        }
+       ],
+      "minLength": 40,
+      "maxLength": 44
+    },
+    "fmId": {
+      "type": "string",
+      "$ref": "#/$defs/UUId"
+    },
+    "fmt": {
+      "type": "string",
+      "pattern": "^channel$",
+      "$comment": "Regular expression that matches exact word `channel`"
+    },
+    "created_at": {
+      "type": "string",
+      "$ref": "#/$defs/timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "$ref": "#/$defs/timestamp"
+    },
+    "channels": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "required": [ "network_name", "channel_name", "organizations" ],
+          "properties": {
+              "channel_name": {
+                 "type": "string"
+              },
+          "organizations": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "required": [ "mspid", "rootcertwallet_id" ],
+                  "properties": {
+                    "mspid": {
+                      "type": "string"
+                    },
+                    "rootcertwallet_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "mod_policy": {
+      "type": "string"
+    },
+    "policies": {
+      "type": "array",
+      "items": [{
+          "type": "object",
+          "required": ["name", "type", "rule"],
+          "properties": { 
+              "name": { "type": "string", "$ref": "#/$defs/policy_name" },
+              "Type": { "type": "string", "$ref": "#/$defs/policy_type" },
+              "rule": { "type": "string", "pattern": "[A-Za-z]*" }
+          }
+      }]
+    }
+  }
+}

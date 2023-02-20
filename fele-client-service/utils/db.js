@@ -1,5 +1,6 @@
 const NodeCouchDb = require('node-couchdb');
-const { couchdb } = require('../../conf/feleConf.json')
+const { couchdb } = require('../../conf/feleConf')
+const logger = require('./logger')
 
 const couch = new NodeCouchDb({
     auth: {
@@ -27,11 +28,67 @@ const deleteDatabase = async(databaseName) => {
 }
 
 const insertToDatabase = async(databaseName, documentToBeInserted) => {
-    couch.insert(databaseName, documentToBeInserted);
+    try{
+        const { data } = await couch.insert(databaseName, documentToBeInserted)
+        return data.id
+
+    } catch(error) {
+        logger.error("Error inserting data: ", error)
+        return false
+    }
+}
+
+const checkIfNetworkExists = async (databaseName) => {
+    logger.info(`checking if ${databaseName} Network exists....`)
+    const dbs = await couch.listDatabases()
+    for(let i =0; i<dbs.length; i++) {
+        if(dbs[i] === databaseName) {
+            logger.info(`${databaseName} newtwork found in DB.`)
+            return true
+        }
+    }
+    logger.info(`${databaseName} newtwork not found in DB.`)
+    return false
+}
+
+/**
+ * @param {String} databaseName 
+ * @param {Object} updatedDocument Should contain both "_id" and "_rev" fields
+ * @retrun {Object} 
+ */
+const updateDocument = async (databaseName, updatedDocument) => {
+    try{
+        const update = await couch.update(databaseName, updatedDocument)
+        return {
+            error: false,
+            update
+        }
+    } catch(err) {
+        logger.error("Update failed: ", err)
+        return {
+            error: true,
+            shortMessage: "Update failed",
+            errorMessage: err
+        }
+    }
+}
+
+const getDocumentFromDatabase = async(databaseName, selector) => {
+    try{
+        const data = await couch.mango(databaseName, selector)
+        console.log("data: ", data)
+        return data
+    }
+    catch(err) {
+        logger.error(err)
+        return false
+    }
 }
  
 module.exports = {
     createDatabase,
     deleteDatabase,
-    insertToDatabase
+    insertToDatabase,
+    checkIfNetworkExists,
+    getDocumentFromDatabase
 }
