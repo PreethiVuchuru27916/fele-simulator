@@ -36,10 +36,12 @@
               ],
               "properties": {
                 "mspid": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
                 },
                 "root_ca": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
                 }
               }  
             }
