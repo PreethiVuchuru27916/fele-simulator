@@ -27,6 +27,10 @@ const createChannelHandler = async (req, res) => {
     }
 }
 
+const deleteChannelHandler = (req, res) => {
+    res.send({msg: "Channel deletion functionality Not Yet Added"})
+}
+
 const deleteNetworkHandler = async (req, res) => {
     let deleted = await deleteNetwork(req.query.networkName)
     if(deleted) res.send({"status": "Newtwork Deleted Successfully!"})
@@ -52,6 +56,7 @@ const chainCodeDeployHandler = (req, res) => {
 module.exports = {
     createNetworkHandler,
     createChannelHandler,
+    deleteChannelHandler,
     deleteNetworkHandler,
     addOrganizationHandler,
     removeOrganizationHandler,
