@@ -32,7 +32,7 @@ const createNetworkSwagger = {
                         example: {
                             "status": "200 OK",
                             "nCreated": false,
-                            "message": "Network Create Syccesfully",
+                            "message": "Network Create Succesfully",
                             "networkConfig": {
                                 "_id": "state.fele.felenet~root",
                                 "fmt": "felenet",

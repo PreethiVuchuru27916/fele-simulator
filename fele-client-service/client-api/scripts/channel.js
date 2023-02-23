@@ -2,15 +2,16 @@ const { checkIfNetworkExists, insertToDatabase, getDocumentFromDatabase } = requ
 const path = require("path");
 const fs = require('fs');
 const { v4 : uuidv4 } = require('uuid')
-const constants = require('../../utils/constants')
 const logger = require('../../utils/logger');
+const {CHANNEL_ID_PREFIX, DB_PREFIX} = require('../../utils/constants')
+const {NETWORK_BASEPATH} = require('../../../globals')
 
 const createChannel = async (networkName,  channelConfig) => {
     const channelName = channelConfig.channelName
-    const database = constants.DB_PREFIX+networkName;
+    const database = DB_PREFIX+networkName;
     const timestamp = new Date().toISOString()
     channelConfig = {
-        _id: constants.CHANNEL_ID_PREFIX+uuidv4(),
+        _id: CHANNEL_ID_PREFIX+uuidv4(),
         fmt: "Channel",
         created_at: timestamp,
         updated_at: timestamp,
@@ -41,8 +42,7 @@ const createChannel = async (networkName,  channelConfig) => {
 
             if(channelId) {
                 logger.info(`channel with _id: ${channelId} created successfully in ${database} Network`)
-                var dir = "../../../chaincode/"+networkName+"/"+ channelName
-                dir = path.join(__dirname, dir)
+                dir = path.join(NETWORK_BASEPATH, networkName, channelName)
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir)
                 }

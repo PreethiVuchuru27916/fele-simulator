@@ -37,6 +37,65 @@ const components = {
                 }
             }
         },
+        createChannelRequest: {
+            type: "object",
+            properties: {
+                "networkName": {
+                  type: "string",
+                  example: "artemis"
+                },
+                "channelConfig": {
+                    type: "object",
+                    properties:{
+                        "channelName":{
+                            type:"string",
+                            example: "uhcl-international"
+                        },
+                        "organizations":{
+                            type:"array",
+                            items: {
+                                type: "object",
+                                properties:{
+                                    "mspid":{
+                                        type:"string",
+                                        example: "uhclMSP"
+                                    },
+                                    "root_ca":{
+                                        type: "string",
+                                        example: "walletID234"
+                                    }
+                                }
+                            }
+                        },
+                        "mod_policy":{
+                            type: "string",
+                            example: "Admins"
+                        },
+                        "policies":{
+                            type: "array",
+                            items:{
+                                type: "object",
+                                properties: {
+                                    "name":{
+                                        type: "string",
+                                        example: "Readers"
+                                    },
+                                    "type":{
+                                        type: "string",
+                                        example: "ImplicitMeta"
+                                    },
+                                    "rule":{
+                                        type: "string",
+                                        example: "ANY Readers"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }
 

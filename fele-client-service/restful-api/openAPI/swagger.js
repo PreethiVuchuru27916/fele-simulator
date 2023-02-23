@@ -1,4 +1,5 @@
 const {createNetworkSwagger} = require('./create-network.swagger')
+const {createChannelSwagger} = require('./create-channel.swagger')
 const { components } = require('./components.swagger')
 
 exports.swaggerDocument = {
@@ -30,9 +31,14 @@ exports.swaggerDocument = {
         }
     ],
     paths: {
-        "/api/fele-client/createChannel" : {
+        "/api/fele-client/createNetwork" : {
             "post": {
                 ...createNetworkSwagger
+           }    
+        },
+        "/api/fele-client/createChannel" : {
+            "post": {
+                ...createChannelSwagger
            }    
         }
     },
