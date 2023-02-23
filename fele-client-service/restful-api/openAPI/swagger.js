@@ -23,20 +23,20 @@ exports.swaggerDocument = {
     tags: [
         {
             name: 'Fele Client',
-            description: 'Client API - Interface to connect users to the blockchain network'
+            description: 'Client API - API to connect users to the fele network'
         },
-        {
-            name: 'Smart Contract',
-            description: 'Smart contract routes API to execute contracts and transactions'
-        }
+        // {
+        //     name: 'Smart Contract',
+        //     description: 'Smart contract routes API to execute contracts and transactions'
+        // }
     ],
     paths: {
-        "/api/fele-client/createNetwork" : {
+        "/network/create" : {
             "post": {
                 ...createNetworkSwagger
            }    
         },
-        "/api/fele-client/createChannel" : {
+        "/channel/create" : {
             "post": {
                 ...createChannelSwagger
            }    
