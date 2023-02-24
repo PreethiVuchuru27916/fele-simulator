@@ -20,14 +20,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base-path}}/api/fele-client/createNetwork?networkName=artemis",
+					"raw": "{{base-path}}/network/create?networkName=artemis",
 					"host": [
 						"{{base-path}}"
 					],
 					"path": [
-						"api",
-						"fele-client",
-						"createNetwork"
+						"network",
+						"create"
 					],
 					"query": [
 						{
@@ -80,12 +79,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8005/channel/create",
-							"protocol": "http",
+							"raw": "{{base-path}}/channel/create",
 							"host": [
-								"localhost"
+								"{{base-path}}"
 							],
-							"port": "8005",
 							"path": [
 								"channel",
 								"create"
@@ -147,16 +144,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8005/api/fele-client/createChannel",
-							"protocol": "http",
+							"raw": "{{base-path}}/channel/create",
 							"host": [
-								"localhost"
+								"{{base-path}}"
 							],
-							"port": "8005",
 							"path": [
-								"api",
-								"fele-client",
-								"createChannel"
+								"channel",
+								"create"
 							]
 						}
 					},
@@ -201,6 +195,33 @@
 					"body": "{\n    \"error\": true,\n    \"errorMessage\": \"Document insert conflict: Channel with name ram-channel already exists\"\n}"
 				}
 			]
+		},
+		{
+			"name": "Delete Channel",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"networkName\": \"artemis\",\n    \"channelName\": \"uhcl_isd_p\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/channel/delete",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"channel",
+						"delete"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
