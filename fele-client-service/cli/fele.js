@@ -2,7 +2,7 @@
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
-const { createChannel } = require('./scripts/channel');
+const { createChannelfromCLI } = require('./scripts/channel');
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -68,12 +68,15 @@ networkCommand.commands.forEach((cmd) => {
 
 /************************Channel Commands*********************/
 channelCommand
-    .command('create')
-    .option('-nn, --networkName <networkName>', 'Name of the network')
-    .option('-cn, --channelName <channelName>', 'Name of the channel')
-    .action((options) => {
-        return createChannel(options.networkName, options.channelName)
-    })
+.command('create')
+.option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
+.action((options) => {
+	return createChannelfromCLI(options.networkName, options.channelConfig);
+})
+
+channelCommand.commands.forEach((cmd) => {
+	cmd.option('-nn, --networkName <networkName>', 'Name of the network')
+});
 //************************Chaincode Commands******************** */
 const registerCommand = chaincodeCommand.command('register')
 
