@@ -76,7 +76,6 @@ const updateDocument = async (databaseName, updatedDocument) => {
 const getDocumentFromDatabase = async(databaseName, selector) => {
     try{
         const data = await couch.mango(databaseName, selector)
-       // console.log("data: ", data)
         return data
     }
     catch(err) {
@@ -85,10 +84,25 @@ const getDocumentFromDatabase = async(databaseName, selector) => {
     }
 }
  
+const deleteDocument = async (databaseName, _id, _rev) =>{
+    try{
+        await couch.del(databaseName, _id, _rev)
+        return true
+    }
+    catch(err) {
+        logger.error(err)
+        return {
+            error: true,
+            message: `Error deleting the document: ${err}`
+        }
+    }
+}
+
 module.exports = {
     createDatabase,
     deleteDatabase,
     insertToDatabase,
     checkIfNetworkExists,
-    getDocumentFromDatabase
+    getDocumentFromDatabase,
+    deleteDocument
 }

@@ -1,5 +1,5 @@
 const { createNetwork, deleteNetwork } = require('../../client-api/scripts/network')
-const { createChannel } = require('../../client-api/scripts/channel')
+const { createChannel, deleteChannel } = require('../../client-api/scripts/channel')
 
 const createNetworkHandler = async(req, res) => {
     const networkName = req.query.networkName
@@ -27,8 +27,17 @@ const createChannelHandler = async (req, res) => {
     }
 }
 
-const deleteChannelHandler = (req, res) => {
-    res.send({msg: "Channel deletion functionality Not Yet Added"})
+const deleteChannelHandler = async (req, res) => {
+    const response = await deleteChannel(req.body.networkName, req.body.channelName)
+    if(response.success) {
+        res.status(200).send({
+            ...response
+        })
+    } else {
+        res.status(500).send({
+            ...response
+        })
+    }
 }
 
 const deleteNetworkHandler = async (req, res) => {

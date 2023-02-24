@@ -1,11 +1,12 @@
 const { createChannel } = require('../../client-api/scripts/channel')
-const USER_WORKSPACE = "../../../tmpworkspaceforuser/"
+const {USER_WORKSPACE} = require('../../../globals')
+const path = require('path')
+
 
 const createChannelfromCLI = async (networkName, channelConfig) => {
   if(channelConfig.includes(".json")) {
-    const fileName = USER_WORKSPACE+channelConfig;
-    console.log(fileName)
-    channelConfig = require(fileName)
+    const filePath = path.join(USER_WORKSPACE, channelConfig)
+    channelConfig = require(filePath)
   } else {
     channelConfig = JSON.parse(channelConfig) 
   }

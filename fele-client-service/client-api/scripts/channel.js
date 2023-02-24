@@ -1,4 +1,4 @@
-const { checkIfNetworkExists, insertToDatabase, getDocumentFromDatabase } = require('../../utils/db')
+const { checkIfNetworkExists, insertToDatabase, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
 const { v4 : uuidv4 } = require('uuid')
@@ -65,6 +65,42 @@ const createChannel = async (networkName,  channelConfig) => {
     }
 }
 
+
+const deleteChannel = async (networkName, channelName) => {
+    networkName = DB_PREFIX+networkName
+    const dbStatus = await checkIfNetworkExists(networkName)
+    if(dbStatus) {
+        const {data} = await getDocumentFromDatabase(networkName, {
+            selector: {
+                channelName: {
+                    $eq: channelName
+                }
+            }
+        })
+
+        if(data.docs.length > 0) {
+            const {_id, _rev} = data.docs[0]
+            const status = await deleteDocument(networkName, _id, _rev)
+            if(status) {
+                return {
+                    success: true,
+                    message: "Channel deleted successfully"
+                }
+            }
+        }
+        return {
+            error: true,
+            errorMessage: `Error deleting the channel`
+        }
+
+    }
+    return {
+        error: true,
+        errorMessage: `Network not found`
+    }
+}
+
 module.exports = {
-    createChannel
+    createChannel,
+    deleteChannel
 }
