@@ -3,6 +3,7 @@ const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
 const { createChannelfromCLI } = require('./scripts/channel');
+const { deleteChannelfromCLI } = require('./scripts/channel');
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -73,7 +74,12 @@ channelCommand
 .action((options) => {
 	return createChannelfromCLI(options.networkName, options.channelConfig);
 })
-
+channelCommand
+.command('delete')
+.option('-cn, --channelName <channelName>', 'Channel name to be passed')
+.action((options) => {
+    return deleteChannelfromCLI(options.networkName, options.channelName);
+});
 channelCommand.commands.forEach((cmd) => {
 	cmd.option('-nn, --networkName <networkName>', 'Name of the network')
 });

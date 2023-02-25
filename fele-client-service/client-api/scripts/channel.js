@@ -32,7 +32,7 @@ const createChannel = async (networkName,  channelConfig) => {
             if(data.docs.length > 0) {
                 return {
                     error: true,
-                    errorMessage: `Document insert conflict: Channel with name ${channelName} already exists`,
+                    message: `Document insert conflict: Channel with name ${channelName} already exists`,
                 }
             }
             // Creating the new channel
@@ -56,12 +56,12 @@ const createChannel = async (networkName,  channelConfig) => {
         logger.error(err)
         return {
             error: true,
-            errorMessage: `Error creating channel`
+            message: `Error creating channel`
         }
     }
     return {
         error: true,
-        shortMessage: `Error creating channel`,
+        message: `Error creating channel`,
     }
 }
 
@@ -90,13 +90,13 @@ const deleteChannel = async (networkName, channelName) => {
         }
         return {
             error: true,
-            errorMessage: `Error deleting the channel`
+            message: `Error deleting the channel`
         }
 
     }
     return {
         error: true,
-        errorMessage: `Network not found`
+        message: `Network not found`
     }
 }
 
