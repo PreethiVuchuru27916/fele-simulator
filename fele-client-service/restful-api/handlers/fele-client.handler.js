@@ -42,7 +42,7 @@ const deleteChannelHandler = async (req, res) => {
 
 const deleteNetworkHandler = async (req, res) => {
     let deleted = await deleteNetwork(req.query.networkName)
-    if(deleted) res.send({"status": "Newtwork Deleted Successfully!"})
+    if(deleted) res.send({"status": "Network Deleted Successfully!"})
     else res.send({"status": "Error deleting network"})
 }
 

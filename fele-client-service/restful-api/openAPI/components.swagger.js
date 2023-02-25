@@ -95,7 +95,21 @@ const components = {
                 }
             }
 
+        },
+        deleteChannelRequest: {
+            type: "object",
+            properties: {
+                "networkName": {
+                    type: "string",
+                    example: "artemis"
+                  },
+                  "channelName": {
+                    type: "string",
+                    example: "uhcl"
+                  }
+            }
         }
+
     }
 }
 

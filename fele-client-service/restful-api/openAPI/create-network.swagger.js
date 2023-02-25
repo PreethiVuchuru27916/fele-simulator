@@ -1,5 +1,5 @@
 const createNetworkSwagger = {
-    tags: ['Fele Client'],
+    tags: ['Network'],
     description: "Creates a network",
     operationId: 'createNetwork',
     parameters: [

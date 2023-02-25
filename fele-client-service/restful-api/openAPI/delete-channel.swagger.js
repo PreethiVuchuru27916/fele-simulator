@@ -1,13 +1,13 @@
-const createChannelSwagger = {
+const deleteChannelSwagger = {
     tags: ['Channel'],
-    description: "Creates a Channel",
-    operationId: 'createChannel',
+    description: "Deletes a Channel",
+    operationId: 'deleteChannel',
     parameters: [],
     requestBody: {
         content: {
             "application/json" : {
                 schema: {
-                    "$ref": "#/components/schemas/createChannelRequest"
+                    "$ref": "#/components/schemas/deleteChannelRequest"
                 }
             }
         }
@@ -20,11 +20,8 @@ const createChannelSwagger = {
                     schema: {
                         type: "string",
                         example: {
-                            "status": "201 OK",
                             "success": true,
-                            "channelId": "channel-b940f537-40a3-4204-947d-c1ee09430ca5",
-                            "channelName": "uhcl-international",
-                            "message": "Channel created successfully"
+                            "message": "Channel deleted successfully"
                         }
                 }
 
@@ -35,5 +32,5 @@ const createChannelSwagger = {
 }
 
 module.exports = {
-    createChannelSwagger
+    deleteChannelSwagger
 }

@@ -49,7 +49,7 @@ const useNetwork = (username, localOrg, networkName) => {
 
 const deleteNetwork = async(networkName) => {
     const databaseName = "fele__"+networkName
-    await deleteDatabase(databaseName)
+    return await deleteDatabase(databaseName)   
 }
 
 module.exports = {
