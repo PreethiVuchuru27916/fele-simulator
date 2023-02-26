@@ -14,12 +14,12 @@ const createChannelfromCLI = async (networkName, channelConfig) => {
     channelConfig = JSON.parse(channelConfig) 
   }
   const {message} = await createChannel(networkName, channelConfig)
-  logger.error(message)
+  logger.info(message)
  
 }
 const deleteChannelfromCLI = async (networkName, channelName) => {
   const {message} = await deleteChannel(networkName, channelName)
-  logger.error(message)
+  logger.info(message)
   }
   
 module.exports = {
