@@ -19,7 +19,7 @@ const createChannel = async (networkName,  channelConfig) => {
     }
     try{
         //Checking if Network exists
-        const dbStatus = await checkIfNetworkExists(database)
+        const dbStatus = await checkIfDatabaseExists(database)
         if(dbStatus) {
             //Checking if there is an existing channel with the specified name
             const {data} = await getDocumentFromDatabase(database, {
@@ -68,7 +68,7 @@ const createChannel = async (networkName,  channelConfig) => {
 
 const deleteChannel = async (networkName, channelName) => {
     networkName = DB_PREFIX+networkName
-    const dbStatus = await checkIfNetworkExists(networkName)
+    const dbStatus = await checkIfDatabaseExists(networkName)
     if(dbStatus) {
         const {data} = await getDocumentFromDatabase(networkName, {
             selector: {

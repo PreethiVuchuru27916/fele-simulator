@@ -38,7 +38,7 @@ const insertToDatabase = async(databaseName, documentToBeInserted) => {
     }
 }
 
-const checkIfNetworkExists = async (databaseName) => {
+const checkIfDatabaseExists = async (databaseName) => {
     logger.info(`checking if ${databaseName} Network exists....`)
     const dbs = await couch.listDatabases()
     for(let i =0; i<dbs.length; i++) {
