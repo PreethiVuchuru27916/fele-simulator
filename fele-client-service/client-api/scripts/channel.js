@@ -1,4 +1,4 @@
-const { checkIfNetworkExists, insertToDatabase, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
+const { checkIfDatabaseExists, insertToDatabase, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
 const { v4 : uuidv4 } = require('uuid')

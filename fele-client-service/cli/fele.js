@@ -2,8 +2,7 @@
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
-const { createChannelCLI } = require('./scripts/channel');
-const { deleteChannelCLI } = require('./scripts/channel');
+const { createChannelCLI, deleteChannelCLI  } = require('./scripts/channel');
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');

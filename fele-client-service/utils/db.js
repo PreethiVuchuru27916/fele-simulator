@@ -102,7 +102,7 @@ module.exports = {
     createDatabase,
     deleteDatabase,
     insertToDatabase,
-    checkIfNetworkExists,
+    checkIfDatabaseExists,
     getDocumentFromDatabase,
     deleteDocument
 }
