@@ -1,17 +1,10 @@
 const {
-  createDatabase,
-  deleteDatabase,
-  insertToDatabase,
-} = require("../../utils/db");
-const path = require("path");
-const fs = require("fs");
-const {
   createNetwork,
   deleteNetwork,
   useNetwork
 } = require("../../client-api/scripts/network");
 
-const USER_WORKSPACE = "../../../tmpworkspaceforuser/";
+const {USER_WORKSPACE} = require('../../../globals');
 
 async function useNetworkCLI(username, localOrg, networkName) {
   return useNetwork(username, localOrg, networkName)

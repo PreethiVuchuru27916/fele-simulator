@@ -1,12 +1,12 @@
 const { createDatabase, deleteDatabase, insertToDatabase } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
-
+const {NETWORK_PREFIX} = require('../../utils/constants')
 var dbPrefix = "fele__"
 var chaincodeDirectory = "../../../chaincode/"
 
 const createNetwork = async(networkConfigJSON, networkName) => {
-    const database = dbPrefix+networkName
+    const database = NETWORK_PREFIX+networkName
     const databaseCreated = await createDatabase(database)
     
     if(databaseCreated) insertToDatabase(database, JSON.parse(networkConfigJSON));

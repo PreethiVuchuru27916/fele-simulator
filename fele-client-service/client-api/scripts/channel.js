@@ -3,13 +3,13 @@ const path = require("path");
 const fs = require('fs');
 const { v4 : uuidv4 } = require('uuid')
 const logger = require('../../utils/logger');
-const {CHANNEL_ID_PREFIX, DB_PREFIX} = require('../../utils/constants')
+const {CHANNEL_ID_PREFIX, NETWORK_PREFIX} = require('../../utils/constants')
 const {NETWORK_BASEPATH} = require('../../../globals')
 const {getChannelSelector} = require('../../utils/helpers')
 
 const createChannel = async (networkName,  channelConfig) => {
     const channelName = channelConfig.channelName
-    const database = DB_PREFIX+networkName;
+    const database = NETWORK_PREFIX+networkName;
     const timestamp = new Date().toISOString()
     channelConfig = {
         _id: CHANNEL_ID_PREFIX+uuidv4(),
@@ -62,7 +62,7 @@ const createChannel = async (networkName,  channelConfig) => {
 
 
 const deleteChannel = async (networkName, channelName) => {
-    networkName = DB_PREFIX+networkName
+    networkName = NETWORK_PREFIX+networkName
     const dbStatus = await checkIfDatabaseExists(networkName)
     if(dbStatus) {
         const {data} = await getDocumentFromDatabase(networkName, getChannelSelector(channelName))
