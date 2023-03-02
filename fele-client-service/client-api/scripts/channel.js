@@ -5,6 +5,7 @@ const { v4 : uuidv4 } = require('uuid')
 const logger = require('../../utils/logger');
 const {CHANNEL_ID_PREFIX, DB_PREFIX} = require('../../utils/constants')
 const {NETWORK_BASEPATH} = require('../../../globals')
+const {getChannelSelector} = require('../../utils/helpers')
 
 const createChannel = async (networkName,  channelConfig) => {
     const channelName = channelConfig.channelName
@@ -22,13 +23,7 @@ const createChannel = async (networkName,  channelConfig) => {
         const dbStatus = await checkIfDatabaseExists(database)
         if(dbStatus) {
             //Checking if there is an existing channel with the specified name
-            const {data} = await getDocumentFromDatabase(database, {
-                selector: {
-                    channelName: {
-                        $eq: channelName
-                    }
-                }
-            })
+            const {data} = await getDocumentFromDatabase(database, getChannelSelector(channelName))
             if(data.docs.length > 0) {
                 return {
                     error: true,
@@ -70,13 +65,7 @@ const deleteChannel = async (networkName, channelName) => {
     networkName = DB_PREFIX+networkName
     const dbStatus = await checkIfDatabaseExists(networkName)
     if(dbStatus) {
-        const {data} = await getDocumentFromDatabase(networkName, {
-            selector: {
-                channelName: {
-                    $eq: channelName
-                }
-            }
-        })
+        const {data} = await getDocumentFromDatabase(networkName, getChannelSelector(channelName))
 
         if(data.docs.length > 0) {
             const {_id, _rev} = data.docs[0]
