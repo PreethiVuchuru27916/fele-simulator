@@ -1,92 +1,69 @@
 const { checkIfDatabaseExists, insertToDatabase, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
-const { v4 : uuidv4 } = require('uuid')
+const { v4: uuidv4 } = require('uuid')
 const logger = require('../../utils/logger');
-const {CHANNEL_ID_PREFIX, NETWORK_PREFIX} = require('../../utils/constants')
-const {NETWORK_BASEPATH} = require('../../../globals')
-const {getChannelSelector} = require('../../utils/helpers')
+const { CHANNEL_ID_PREFIX, NETWORK_PREFIX } = require('../../utils/constants')
+const { NETWORK_BASEPATH } = require('../../../globals')
+const { getChannelSelector } = require('../../utils/helpers')
 
-const createChannel = async (networkName,  channelConfig) => {
+const createChannel = async (networkName, channelConfig) => {
     const channelName = channelConfig.channelName
-    const database = NETWORK_PREFIX+networkName;
+    const database = NETWORK_PREFIX + networkName;
     const timestamp = new Date().toISOString()
     channelConfig = {
-        _id: CHANNEL_ID_PREFIX+uuidv4(),
+        _id: CHANNEL_ID_PREFIX + uuidv4(),
         fmt: "Channel",
         created_at: timestamp,
         updated_at: timestamp,
         ...channelConfig
     }
-    try{
-        //Checking if Network exists
-        const dbStatus = await checkIfDatabaseExists(database)
-        if(dbStatus) {
-            //Checking if there is an existing channel with the specified name
-            const {data} = await getDocumentFromDatabase(database, getChannelSelector(channelName))
-            if(data.docs.length > 0) {
-                return {
-                    error: true,
-                    message: `Document insert conflict: Channel with name ${channelName} already exists`,
-                }
-            }
-            // Creating the new channel
-            const channelId = await insertToDatabase(database, channelConfig);
 
-            if(channelId) {
-                logger.info(`channel with _id: ${channelId} created successfully in ${database} Network`)
-                dir = path.join(NETWORK_BASEPATH, networkName, channelName)
-                if (!fs.existsSync(dir)) {
-                    fs.mkdirSync(dir)
-                }
-                return {
-                    success: true,
-                    channelId,
-                    channelName,
-                    message: "Channel created successfully"
-                }
-            }
+    const dbStatus = await checkIfDatabaseExists(database)
+    if (dbStatus) {
+        const { docs } = await getDocumentFromDatabase(database, getChannelSelector(channelName))
+        if (docs.length > 0) {
+            const errorMsg = `Document insert conflict: Channel with name ${channelName} already exists`
+            logger.error(errorMsg)
+            throw new Error(errorMsg)
         }
-    } catch(err) {
-        logger.error(err)
+
+        const channelId = await insertToDatabase(database, channelConfig);
+        logger.info(`channel with _id: ${channelId} created successfully in ${database} Network`)
+
+        dir = path.join(NETWORK_BASEPATH, networkName, channelName)
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir)
+        }
         return {
-            error: true,
-            message: `Error creating channel`
+            channelId,
+            channelName,
+            message: "Channel created successfully"
         }
-    }
-    return {
-        error: true,
-        message: `Error creating channel`,
+    } else {
+        const errorMsg = `Network ${networkName} not found`
+        logger.error(errorMsg)
+        throw new Error(errorMsg)
     }
 }
 
 
 const deleteChannel = async (networkName, channelName) => {
-    networkName = NETWORK_PREFIX+networkName
+    networkName = NETWORK_PREFIX + networkName
     const dbStatus = await checkIfDatabaseExists(networkName)
-    if(dbStatus) {
-        const {data} = await getDocumentFromDatabase(networkName, getChannelSelector(channelName))
+    if (dbStatus) {
+        const { docs } = await getDocumentFromDatabase(networkName, getChannelSelector(channelName))
 
-        if(data.docs.length > 0) {
-            const {_id, _rev} = data.docs[0]
-            const status = await deleteDocument(networkName, _id, _rev)
-            if(status) {
-                return {
-                    success: true,
-                    message: "Channel deleted successfully"
-                }
+        if (docs.length > 0) {
+            const { _id, _rev } = docs[0]
+            await deleteDocument(networkName, _id, _rev)
+            return {
+                message: "Channel deleted successfully"
             }
         }
-        return {
-            error: true,
-            message: `Error deleting the channel`
-        }
-
+        throw new Error(`Channel with name ${channelName} not found`)
     }
-    return {
-        error: true,
-        message: `Network not found`
-    }
+    throw new Error(`Network ${networkName} not found`)
 }
 
 module.exports = {

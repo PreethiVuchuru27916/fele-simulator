@@ -1,49 +1,67 @@
 const { createNetwork, deleteNetwork } = require('../../client-api/scripts/network')
 const { createChannel, deleteChannel } = require('../../client-api/scripts/channel')
 
-const createNetworkHandler = async(req, res) => {
-    const networkName = req.query.networkName
-    await createNetwork(JSON.stringify(req.body), networkName)
-    res.status(201).send({
-        message: "Network Created Successfully", 
-        networkConfig: {...req.body}
-    })
+const createNetworkHandler = async (req, res) => {
+    try {
+        var networkName = req.query.networkName
+        networkName = networkName.toLowerCase()
+        await createNetwork(JSON.stringify(req.body), networkName)
+        res.status(201).send({
+            message: "Network Created Successfully",
+            data: { 
+                networkName,
+                ...req.body 
+            }
+        })
+    } catch (e) {
+        res.status(500).send({
+            error: e.message
+        })
+    }
 }
- 
+
 
 const createChannelHandler = async (req, res) => {
-    const {networkName, channelConfig} = req.body
-
-    const info = await createChannel(networkName, channelConfig)
-    if(info.success) {
+    const { networkName, channelConfig } = req.body
+    try {
+        const response = await createChannel(networkName, channelConfig)
         res.status(201).send({
-            ...info
-
+            ...response
         })
-    } else {
+    } catch (e) {
         res.status(500).send({
-            ...info
+            error: e.message
         })
     }
 }
 
 const deleteChannelHandler = async (req, res) => {
-    const response = await deleteChannel(req.body.networkName, req.body.channelName)
-    if(response.success) {
+    const { networkName, channelName } = req.body
+    try {
+        const response = await deleteChannel(networkName, channelName)
         res.status(200).send({
             ...response
         })
-    } else {
+    } catch (e) {
         res.status(500).send({
-            ...response
+            error: e.message
         })
     }
 }
 
 const deleteNetworkHandler = async (req, res) => {
-    let deleted = await deleteNetwork(req.query.networkName)
-    if(deleted) res.send({"status": "Network Deleted Successfully!"})
-    else res.send({"status": "Error deleting network"})
+    const { networkName } = req.query
+    try {
+        await deleteNetwork(networkName)
+        res.status(204).send({
+            message: `Network ${networkName} Deleted Successfully!`
+        })
+
+    } catch (e) {
+        res.status(500).send({
+            error: e.message
+        })
+    }
 }
 
 const addOrganizationHandler = (req, res) => {

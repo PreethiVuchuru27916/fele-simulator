@@ -9,46 +9,51 @@ const couch = new NodeCouchDb({
     }
 });
 
-const createDatabase = async(databaseName) => {
-    console.log(databaseName)
-    return couch.createDatabase(databaseName).then(() => {
-        return true
-    }, err => {
-        console.log(err)
-        return false
-    });
-}
-
-const deleteDatabase = async(databaseName) => {
-    return couch.dropDatabase(databaseName).then(() => {
-        return true
-    }, err => {
-        return false
-    });
-}
-
-const insertToDatabase = async(databaseName, documentToBeInserted) => {
+const createDatabase = async (databaseName) => {
     try{
+        await couch.createDatabase(databaseName)
+    } catch(e) {
+        logger.error(e)
+        throw new Error(`Error creating database ${databaseName}`)
+    }
+}
+
+const deleteDatabase = async (databaseName) => {
+    try {
+        await couch.dropDatabase(databaseName)
+        logger.info(`${databaseName} deleted successfully`)
+    } catch (e) {
+        logger.error(e)
+        throw new Error(`Error deleting database ${databaseName}`)
+    }
+}
+
+const insertToDatabase = async (databaseName, documentToBeInserted) => {
+    try {
         const { data } = await couch.insert(databaseName, documentToBeInserted)
         return data.id
 
-    } catch(error) {
-        logger.error("Error inserting data: ", error)
-        return false
+    } catch (e) {
+        logger.error(e)
+        throw new Error(`Error inserting document to ${databaseName}`)
     }
 }
 
 const checkIfDatabaseExists = async (databaseName) => {
-    logger.info(`checking if ${databaseName} Network exists....`)
-    const dbs = await couch.listDatabases()
-    for(let i =0; i<dbs.length; i++) {
-        if(dbs[i] === databaseName) {
-            logger.info(`${databaseName} newtwork found in DB.`)
-            return true
+    try {
+        const dbs = await couch.listDatabases()
+        for (let i = 0; i < dbs.length; i++) {
+            if (dbs[i] === databaseName) {
+                logger.info(`${databaseName} database found.`)
+                return true
+            }
         }
+        logger.info(`${databaseName} database not found`)
+        return false
+    } catch (e) {
+        logger.error(e)
+        throw new Error(`Error listing databases`)
     }
-    logger.info(`${databaseName} newtwork not found in DB.`)
-    return false
 }
 
 /**
@@ -57,44 +62,34 @@ const checkIfDatabaseExists = async (databaseName) => {
  * @retrun {Object} 
  */
 const updateDocument = async (databaseName, updatedDocument) => {
-    try{
+    try {
         const update = await couch.update(databaseName, updatedDocument)
-        return {
-            error: false,
-            update
-        }
-    } catch(err) {
-        logger.error("Update failed: ", err)
-        return {
-            error: true,
-            shortMessage: "Update failed",
-            errorMessage: err
-        }
+        return update
+    } catch (e) {
+        logger.error(e)
+        throw new Error(`Error updating the document`)
     }
 }
 
-const getDocumentFromDatabase = async(databaseName, selector) => {
-    try{
-        const data = await couch.mango(databaseName, selector)
+const getDocumentFromDatabase = async (databaseName, selector) => {
+    try {
+        const { data } = await couch.mango(databaseName, selector)
         return data
     }
-    catch(err) {
-        logger.error(err)
-        return false
+    catch (e) {
+        logger.error(e)
+        throw new Error(`Error retrieving data from ${databaseName}`)
     }
 }
- 
-const deleteDocument = async (databaseName, _id, _rev) =>{
-    try{
+
+const deleteDocument = async (databaseName, _id, _rev) => {
+    try {
         await couch.del(databaseName, _id, _rev)
         return true
     }
-    catch(err) {
-        logger.error(err)
-        return {
-            error: true,
-            message: `Error deleting the document: ${err}`
-        }
+    catch (err) {
+        logger.error(e)
+        throw new Error(`Error deleting the document with id ${_id}`)
     }
 }
 
