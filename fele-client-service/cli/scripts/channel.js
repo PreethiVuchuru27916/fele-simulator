@@ -1,22 +1,34 @@
-const fs = require('fs');
-const path = require("path");
+const { createChannel, deleteChannel } = require('../../client-api/scripts/channel')
+const { USER_WORKSPACE } = require('../../../globals')
+const path = require('path')
+const logger = require('../../utils/logger')
 
-function createChannel(networkName, channelName) {
-  var dir = "../../../chaincode/"+networkName+"/"+channelName
-  dir = path.join(__dirname, dir);
+
+const createChannelCLI = async (networkName, channelConfig) => {
+  if (channelConfig.includes(".json")) {
+    const filePath = path.join(USER_WORKSPACE, channelConfig)
+    channelConfig = require(filePath)
+  } else {
+    channelConfig = JSON.parse(channelConfig)
+  }
   try {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir)
-        console.log('Directory created.')
-      } else {
-        console.log('Directory already exists.')
-      }
-  } catch (err) {
-    console.log(err)
+    const { message } = await createChannel(networkName, channelConfig)
+    logger.info(message)
+  } catch (e) {
+    logger.error(e.message)
+  }
+
+}
+const deleteChannelCLI = async (networkName, channelName) => {
+  try {
+    const { message } = await deleteChannel(networkName, channelName)
+    logger.info(message)
+  } catch (e) {
+    logger.error(e.message)
   }
 }
 
 module.exports = {
-    createChannel
+  createChannelCLI,
+  deleteChannelCLI
 }
- 

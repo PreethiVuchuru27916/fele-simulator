@@ -2,7 +2,7 @@
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincode } = require('./scripts/chaincode');
-const { createChannel } = require('./scripts/channel');
+const { createChannelCLI, deleteChannelCLI  } = require('./scripts/channel');
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -68,12 +68,20 @@ networkCommand.commands.forEach((cmd) => {
 
 /************************Channel Commands*********************/
 channelCommand
-    .command('create')
-    .option('-nn, --networkName <networkName>', 'Name of the network')
-    .option('-cn, --channelName <channelName>', 'Name of the channel')
-    .action((options) => {
-        return createChannel(options.networkName, options.channelName)
-    })
+.command('create')
+.option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
+.action((options) => {
+	return createChannelCLI(options.networkName, options.channelConfig);
+})
+channelCommand
+.command('delete')
+.option('-cn, --channelName <channelName>', 'Channel name to be passed')
+.action((options) => {
+    return deleteChannelCLI(options.networkName, options.channelName);
+});
+channelCommand.commands.forEach((cmd) => {
+	cmd.option('-nn, --networkName <networkName>', 'Name of the network')
+});
 //************************Chaincode Commands******************** */
 const registerCommand = chaincodeCommand.command('register')
 
@@ -117,7 +125,7 @@ userCommand
     .action(async(options) => {
         //authentication
         const hashedPassword = sha256(options.password);
-        localOrg = await getDocumentFromDatabase("fele_localorg", "localOrg_nasa")
+        //localOrg = await getDocumentFromDatabase("fele_localorg", "localOrg_nasa")
         //localOrg gets its value from couchdb or from the default localorg.json file
         localOrg = localOrg || defaultLocalOrg
         

@@ -1,0 +1,36 @@
+error: Label: Feb-24-2023 17:45:21: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:47:19: Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:50:18: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:51:08: Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:52:05: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:52:18: Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:53:23: Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:53:37: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:53:42: e1 Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:54:44: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:54:46: e1 Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:55:33: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:55:34: e1 Cannot read properties of undefined (reading 'length')
+error: Label: Feb-24-2023 17:57:26: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 17:59:43: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:00:58: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:02:23: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:04:52: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:05:14: [object Object]
+error: Label: Feb-24-2023 18:05:52: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:05:55: undefined
+error: Label: Feb-24-2023 18:06:49: The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:07:04: Document insert conflict: Channel with name uhcl-international1 already exists
+error: Label: Feb-24-2023 18:08:54: Document insert conflict: Channel with name uhcl-international1 already exists
+error: Label: Feb-24-2023 18:09:01: getDoc:db The Mango query parameter is not parsable.
+error: Label: Feb-24-2023 18:09:03: Document insert conflict: Channel with name uhcl-international1 already exists
+error: Label: Feb-24-2023 18:15:02: Channel deleted successfully
+error: Label: Feb-24-2023 18:20:57: Channel deleted successfully
+error: Label: Feb-24-2023 18:24:57: Channel created successfully
+error: Label: Feb-24-2023 18:25:20: Channel created successfully
+error: Label: Feb-24-2023 18:26:53: Document insert conflict: Channel with name uhcl-international1 already exists
+error: Label: Feb-24-2023 18:27:06: Channel created successfully
+error: Label: Feb-24-2023 18:28:36: Channel deleted successfully
+error: Label: Feb-24-2023 18:29:17: Error deleting the channel
+error: Label: Feb-24-2023 18:29:33: Network not found
+error: Label: Feb-24-2023 18:30:05: Error creating channel

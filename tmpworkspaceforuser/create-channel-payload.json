@@ -1,0 +1,31 @@
+{ 
+    "channelName": "uhcl-international1",
+    "organizations": [
+        {
+        "mspid": "uhclMSP",
+        "root_ca": "walletID234"
+        },
+        {
+        "mspid": "utdMSP",
+        "root_ca": "walletID567"
+        }
+    ],
+    "mod_policy": "Admins",
+    "policies": [
+        {
+        "name": "Readers",
+        "type": "ImplicitMeta",
+        "rule": "ANY Readers"
+        },
+        {
+        "name": "Writers",
+        "type": "ImplicitMeta",
+        "rule": "ANY Writers"
+        },
+        {
+        "name": "Admins",
+        "type": "ImplicitMeta",
+        "rule": "MAJORITY Admins"
+        }
+    ]
+}

@@ -2,7 +2,8 @@
 	"fmt": "channel",
 	"fmId": "root",
 	"channels": [
-		{	"channelName": "Gateway",
+		{	
+			"channelName": "Gateway",
 			"msp": {
 				"organizations": [
 					{	"mspId": "Tietronix",

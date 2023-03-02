@@ -1,4 +1,7 @@
 const {createNetworkSwagger} = require('./create-network.swagger')
+const {createChannelSwagger} = require('./create-channel.swagger')
+const {deleteChannelSwagger} = require('./delete-channel.swagger')
+const {deleteNetworkSwagger} = require('./delete-network.swagger')
 const { components } = require('./components.swagger')
 
 exports.swaggerDocument = {
@@ -21,18 +24,33 @@ exports.swaggerDocument = {
     ],
     tags: [
         {
-            name: 'Fele Client',
-            description: 'Client API - Interface to connect users to the blockchain network'
+            name: 'Network',
+            description: 'Network Endpoints'
         },
         {
-            name: 'Smart Contract',
-            description: 'Smart contract routes API to execute contracts and transactions'
+            name: 'Channel',
+            description: 'Channel Endpoints'
         }
     ],
     paths: {
-        "/api/fele-client/createChannel" : {
+        "/network/create" : {
             "post": {
                 ...createNetworkSwagger
+           }    
+        },
+        "/channel/create" : {
+            "post": {
+                ...createChannelSwagger
+           }    
+        },
+        "/channel/delete" : {
+            "delete": {
+                ...deleteChannelSwagger
+           }    
+        },
+        "/network/delete" : {
+            "delete": {
+                ...deleteNetworkSwagger
            }    
         }
     },

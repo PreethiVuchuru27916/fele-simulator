@@ -1,0 +1,96 @@
+{
+  
+  "type": "object",
+  "$defs": {
+    "policy_type": {
+      "type": "string",
+      "enum": [ "ImplicitMeta", "Signature" ],
+      "$comment": "Possible values for Policy type"
+    },
+    "policy_name": {
+      "type": "string",
+      "enum": ["Readers", "Writers", "Admins"],
+      "$comment": "Possible values for Policy name"
+    }
+  },
+  "properties": {
+    "networkName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "channelConfig": {
+      "type": "object",
+      "properties": {
+        "channelName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "organizations": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "required": [
+                "mspid",
+                "root_ca"
+              ],
+              "properties": {
+                "mspid": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "root_ca": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }  
+            }
+          ],
+          "minItems": 1
+
+        },
+        "mod_policy": {
+          "type": "string"
+        },
+        "policies": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "$ref": "#/$defs/policy_name"
+                },
+                "type": {
+                  "type": "string",
+                  "$ref": "#/$defs/policy_type"
+                },
+                "rule": {
+                  "type": "string",
+                  "pattern": "[A-Za-z]*"
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "rule"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "channelName",
+        "organizations",
+        "mod_policy",
+        "policies"
+      ]
+    }
+  },
+  "required": [
+    "networkName",
+    "channelConfig"
+  ]
+}
+    

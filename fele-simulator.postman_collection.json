@@ -1,0 +1,254 @@
+{
+	"info": {
+		"_postman_id": "cef80b6d-a580-4f64-8572-cd8f557f89e9",
+		"name": "fele-simulator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "createNetwork",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\t\n\t\"_id\": \"state.fele.felenet~root\",\n\t\"fmt\": \"felenet\",\n\t\"fmId\": \"root\",\n\t\"includeLedger\": false,\n\t\"transactionAware\": false,\n\t\"blockAware\": false,\n\t\"timestamping\": false,\n\t\"walletUnaware\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/network/create?networkName=artemis",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"network",
+						"create"
+					],
+					"query": [
+						{
+							"key": "networkName",
+							"value": "artemis"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createChannel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n    \"networkName\" : \"artemis\",\n    \"channelConfig\": \n    { \n        \"channelName\": \"uhcl_isd_p\",\n        \"organizations\": [\n            {\n            \"mspid\": \"uhclMSP\",\n            \"root_ca\": \"walletID234\"\n            },\n            {\n            \"mspid\": \"utdMSP\",\n            \"root_ca\": \"walletID567\"\n            }\n        ],\n        \"mod_policy\": \"Admins\",\n        \"policies\": [\n            {\n            \"name\": \"Readers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Readers\"\n            },\n            {\n            \"name\": \"Writers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Writers\"\n            },\n            {\n            \"name\": \"Admins\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"MAJORITY Admins\"\n            }\n        ]\n    }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/channel/create",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"channel",
+						"create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "createChannel-success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"networkName\" : \"artemis\",\n    \"channelConfig\": \n    { \n        \"channelName\": \"uhcl-international\",\n        \"organizations\": [\n            {\n            \"mspid\": \"uhclMSP\",\n            \"rootcertwallet_id\": \"walletID234\"\n            },\n            {\n            \"mspid\": \"utdMSP\",\n            \"rootcertwallet_id\": \"walletID567\"\n            }\n        ],\n        \"mod_policy\": \"Admins\",\n        \"policies\": [\n            {\n            \"name\": \"Readers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Readers\"\n            },\n            {\n            \"name\": \"Writers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Writers\"\n            },\n            {\n            \"name\": \"Admins\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"MAJORITY Admins\"\n            }\n        ]\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-path}}/channel/create",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"channel",
+								"create"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "151"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"97-jLkrqxmTXzfrMbL4vnurWHuUdoo\""
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 17 Feb 2023 12:19:16 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"channelId\": \"channel-c9d2af2a-8547-4cac-a81c-4bb68d3f9874\",\n    \"channelName\": \"uhcl-international\",\n    \"message\": \"Channel created successfully\"\n}"
+				},
+				{
+					"name": "createChannel-error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"networkName\" : \"artemis\",\n    \"channelConfig\": \n    { \n        \"channelName\": \"ram-channel\",\n        \"organizations\": [\n            {\n            \"mspid\": \"uhclMSP\",\n            \"rootcertwallet_id\": \"walletID234\"\n            },\n            {\n            \"mspid\": \"utdMSP\",\n            \"rootcertwallet_id\": \"walletID567\"\n            }\n        ],\n        \"mod_policy\": \"Admins\",\n        \"policies\": [\n            {\n            \"name\": \"Readers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Readers\"\n            },\n            {\n            \"name\": \"Writers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Writers\"\n            },\n            {\n            \"name\": \"Admins\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"MAJORITY Admins\"\n            }\n        ]\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-path}}/channel/create",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"channel",
+								"create"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "102"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"66-hU3hBi9aJO5WQWr/clDEEHX8d0I\""
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 17 Feb 2023 12:18:21 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": true,\n    \"errorMessage\": \"Document insert conflict: Channel with name ram-channel already exists\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete Channel",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"networkName\": \"artemis\",\n    \"channelName\": \"uhcl_isd_p\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/channel/delete",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"channel",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base-path",
+			"value": "http://localhost:8005",
+			"type": "default"
+		}
+	]
+}
