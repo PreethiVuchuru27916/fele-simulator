@@ -3,7 +3,7 @@ const { createChannel, deleteChannel } = require('../../client-api/scripts/chann
 
 const createNetworkHandler = async (req, res) => {
     try {
-        var networkName = req.query.networkName
+        let {networkName} = req.query
         networkName = networkName.toLowerCase()
         await createNetwork(JSON.stringify(req.body), networkName)
         res.status(201).send({

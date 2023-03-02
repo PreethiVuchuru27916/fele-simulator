@@ -4,7 +4,7 @@ const {
   useNetwork
 } = require("../../client-api/scripts/network");
 
-const {USER_WORKSPACE} = require('../../../globals');
+const { USER_WORKSPACE } = require('../../../globals');
 
 async function useNetworkCLI(username, localOrg, networkName) {
   return useNetwork(username, localOrg, networkName)
@@ -19,12 +19,21 @@ async function createNetworkCLI(networkConfig, networkName) {
   } else {
     networkConfig = networkConfig.replace(/\\/g, "");
   }
-  console.log("after removing chars" + networkConfig);
-  createNetwork(networkConfig, networkName);
+  logger.info("after removing chars" + networkConfig);
+
+  try {
+    createNetwork(networkConfig, networkName);
+  } catch (e) {
+    logger.error(e.message)
+  }
 }
 
 async function deleteNetworkCLI(networkName) {
-  deleteNetwork(networkName);
+  try {
+    deleteNetwork(networkName);
+  } catch (e) {
+    logger.error(e.message)
+  }
 }
 
 module.exports = {
