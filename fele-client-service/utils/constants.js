@@ -8,7 +8,6 @@ const GLOBAL_STATE = {
 };
 
 module.exports = {
-    DB_PREFIX,
     GLOBAL_STATE,
     NETWORK_PREFIX,
     CHANNEL_ID_PREFIX,
