@@ -1,12 +1,8 @@
 const { createDatabase, deleteDatabase, insertToDatabase } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
-<<<<<<< HEAD
-const { GLOBAL_STATE } = require('../../utils/constants');
-=======
-const { NETWORK_PREFIX } = require('../../utils/constants')
+const { NETWORK_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
 const { NETWORK_BASEPATH } = require('../../../globals')
->>>>>>> d8b6eb3e00ff31e35efc726b80482b2c16244014
 
 const createNetwork = async (networkConfigJSON, networkName) => {
     const database = NETWORK_PREFIX + networkName
@@ -21,7 +17,6 @@ const createNetwork = async (networkConfigJSON, networkName) => {
 }
 
 const useNetwork = (username, localOrg, networkName) => {
-<<<<<<< HEAD
   console.log(GLOBAL_STATE);
   const { localUsers, felenetworks } = GLOBAL_STATE.localOrg
   const feleUser = {}
@@ -30,14 +25,6 @@ const useNetwork = (username, localOrg, networkName) => {
         const felenetworkIndex = felenetworks.findIndex((felenetwork) => felenetwork.felenetId === networkName);
         if(felenetworkIndex != -1) {
             feleUser.network = felenetworks[felenetworkIndex];
-=======
-    const { localUsers, felenetworks } = localOrg
-    const feleUser = {}
-    const localUserIndex = localUsers.findIndex((localUser) => (localUser.username === username));
-    if (localUserIndex != -1) {
-        const felenetworkIndex = felenetworks.findIndex((felenetwork) => felenetwork.felenetId === networkName);
-        if (felenetworkIndex != -1) {
->>>>>>> d8b6eb3e00ff31e35efc726b80482b2c16244014
             const isMappingPresentForUser = felenetworks[felenetworkIndex].mappings.findIndex((mapping) => mapping.from === username);
             if (isMappingPresentForUser != -1) {
                 feleUser.user = felenetworks[felenetworkIndex].mappings[isMappingPresentForUser].to
