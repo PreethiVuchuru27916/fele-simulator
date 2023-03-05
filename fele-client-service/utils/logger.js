@@ -1,4 +1,5 @@
 const winston = require('winston');
+const path = require('path');
 
 const logger = winston.createLogger({
     transports: [
@@ -7,7 +8,7 @@ const logger = winston.createLogger({
         }),
         new winston.transports.File({
             level: 'error',
-            filename: 'logs/logs.log'
+            filename: path.join(__dirname, '../..', '/logs/logs.log')
         })
     ],
     format: winston.format.combine(

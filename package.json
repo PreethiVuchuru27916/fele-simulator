@@ -7,7 +7,8 @@
     "test": "jest",
     "refresh": "rm -rf node_modules && rm -rf package-lock.json && npm install commander && npm i -g",
     "start": "node ./fele-client-service/restful-api/feled",
-    "dev": "nodemon ./fele-client-service/restful-api/feled"
+    "dev": "nodemon ./fele-client-service/restful-api/feled",
+    "asset": "node ./chaincode/artemis/uhcl-international1/MyAsset.js"
   },
   "bin": {
     "fele": "fele-client-service/cli/fele.js"

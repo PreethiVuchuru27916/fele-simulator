@@ -13,6 +13,7 @@ const getChannelSelector = (channelName) => {
         }     
     }
 }
+
 module.exports = {
     sha256,
     getChannelSelector
