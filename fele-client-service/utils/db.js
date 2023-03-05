@@ -29,9 +29,6 @@ const deleteDatabase = async (databaseName) => {
 }
 
 const insertToDatabase = async (databaseName, documentToBeInserted) => {
-    console.log(databaseName)
-    console.log(documentToBeInserted)
-    console.log(couchdb.username,couchdb.username)
     try {
         const { data } = await couch.insert(databaseName, documentToBeInserted)
         return data.id
