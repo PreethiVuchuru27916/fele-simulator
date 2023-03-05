@@ -4,6 +4,7 @@ class SmartContract extends Context {
   ctx = null;
 
   constructor() {
+    super()
     this.ctx = new Context();
   }
 

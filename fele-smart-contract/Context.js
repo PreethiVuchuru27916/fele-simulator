@@ -13,7 +13,6 @@ class Context {
       const result = await getDocumentFromDatabase(databaseName, key);
       return result;
     } catch(error) {
-      logger.error(error);
       throw new Error(error);
     }
   }
@@ -24,7 +23,6 @@ class Context {
       const result = await insertToDatabase(databaseName, document);
       return result;
     } catch(error) {
-      logger.error(error);
       throw new Error(error);
     }
   }
