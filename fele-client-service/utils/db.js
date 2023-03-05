@@ -29,10 +29,12 @@ const deleteDatabase = async (databaseName) => {
 }
 
 const insertToDatabase = async (databaseName, documentToBeInserted) => {
+    console.log(databaseName)
+    console.log(documentToBeInserted)
+    console.log(couchdb.username,couchdb.username)
     try {
         const { data } = await couch.insert(databaseName, documentToBeInserted)
         return data.id
-
     } catch (e) {
         logger.error(e)
         throw new Error(`Error inserting document to ${databaseName}`)
@@ -53,6 +55,16 @@ const checkIfDatabaseExists = async (databaseName) => {
     } catch (e) {
         logger.error(e)
         throw new Error(`Error listing databases`)
+    }
+}
+
+const getDocumentByID = async (databaseName, documentId) => {
+    try {
+        const { data } = await couch.get(databaseName, documentId)
+        return data
+    }
+    catch (e) {
+        logger.error(e)
     }
 }
 
@@ -99,5 +111,6 @@ module.exports = {
     insertToDatabase,
     checkIfDatabaseExists,
     getDocumentFromDatabase,
-    deleteDocument
+    deleteDocument,
+    getDocumentByID
 }

@@ -1,5 +1,4 @@
 const { getDocumentFromDatabase, insertToDatabase } = require("../fele-client-service/utils/db");
-const logger = require("../fele-client-service/utils/logger");
 
 class Context {
   #databaseName = 'fele__artemis';
