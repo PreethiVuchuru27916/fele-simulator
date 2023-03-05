@@ -1,13 +1,21 @@
+const { NETWORK_PREFIX } = require("../fele-client-service/utils/constants");
 const { getDocumentByID, insertToDatabase } = require("../fele-client-service/utils/db");
 
 class Context {
-  #databaseName = 'fele__artemis';
+  #globalState = {
+    networkName: '',
+    channelName: ''
+  };
 
   constructor() {
-    // TODO
+    this.#globalState = {
+      networkName: 'artemis',
+      channelName: ''
+    };
   }
+  
   async getState(key) {
-    const databaseName = this.#databaseName;
+    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
       return result;
@@ -15,8 +23,9 @@ class Context {
       throw new Error(error);
     }
   }
+
   async putState(key, value) {
-    const databaseName = this.#databaseName;
+    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const document = { ...value, _id: key };
       const result = await insertToDatabase(databaseName, document);
