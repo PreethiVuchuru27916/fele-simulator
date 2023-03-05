@@ -1,13 +1,13 @@
 const { SmartContract } = require("../../../fele-smart-contract/SmartContract");
 
-class MyAsset {
+class MyAsset extends SmartContract {
     async readAsset(key) {
-        const result = await new SmartContract().getState(key);
+        const result = SmartContract.getState(key);
         console.log(result)
         return result;
     } 
     async putAsset(key, value) {
-        const result = await new SmartContract().putState(key, value);
+        const result = SmartContract.putState(key, value);
         console.log(result)
         return result;
     } 
