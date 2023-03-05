@@ -1,7 +1,7 @@
 const { Context } = require("./Context");
 
 class SmartContract extends Context {
-  static ctx = null;
+  ctx = null;
 
   constructor() {
     this.ctx = new Context();
