@@ -7,7 +7,7 @@ const { createChannel } = require('./scripts/channel');
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
 
-const { getDocumentFromDatabase } = require('../utils/db');
+const { getDocumentByID } = require('../utils/db');
 const { authenticateUser } = require('../utils/auth');
 const logger = require('../utils/logger');
 const { sha256 } = require('../utils/helpers');
@@ -117,7 +117,7 @@ userCommand
     .action(async(options) => {
         //authentication
         const hashedPassword = sha256(options.password);
-        GLOBAL_STATE.localOrg = await getDocumentFromDatabase("fele_localorg", "localOrg_nasa")
+        GLOBAL_STATE.localOrg = await getDocumentByID("fele_localorg", "localOrg-nasa")
         //localOrg gets its value from couchdb or from the default localorg.json file
         GLOBAL_STATE.localOrg = GLOBAL_STATE.localOrg || defaultLocalOrg
         
