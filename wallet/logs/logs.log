@@ -1,0 +1,30 @@
+error: Label: Mar-06-2023 07:16:26: Document not found
+error: Label: Mar-06-2023 07:17:03: Document not found
+error: Label: Mar-06-2023 07:17:42: Document not found
+error: Label: Mar-06-2023 07:17:50: Database already exists: wallet
+error: Label: Mar-06-2023 07:18:24: Database already exists: wallet
+error: Label: Mar-06-2023 07:18:57: Database already exists: wallet
+error: Label: Mar-06-2023 07:21:33: Database already exists: wallet
+error: Label: Mar-06-2023 07:24:00: Database already exists: wallet
+error: Label: Mar-06-2023 07:30:21: Database already exists: wallet
+error: Label: Mar-06-2023 07:31:53: Document insert conflict
+error: Label: Mar-06-2023 07:34:21: Document insert conflict
+error: Label: Mar-06-2023 07:34:48: Document insert conflict
+error: Label: Mar-07-2023 02:05:50: Document insert conflict
+error: Label: Mar-07-2023 02:18:10: Document insert conflict
+error: Label: Mar-07-2023 02:18:35: Document insert conflict
+error: Label: Mar-07-2023 02:18:49: Document insert conflict
+error: Label: Mar-07-2023 02:20:24: Document insert conflict
+error: Label: Mar-07-2023 02:52:20: Document is not found
+error: Label: Mar-07-2023 05:00:55: Cannot read properties of undefined (reading 'length')
+error: Label: Mar-07-2023 05:12:25: Database already exists: wallet
+error: Label: Mar-07-2023 05:13:15: Database already exists: wallet
+error: Label: Mar-07-2023 05:13:43: Database already exists: wallet
+error: Label: Mar-07-2023 05:15:17: Database already exists: wallet
+error: Label: Mar-07-2023 05:20:12: Database already exists: wallet
+error: Label: Mar-07-2023 05:21:17: Database already exists: wallet
+error: Label: Mar-07-2023 05:25:01: Document insert conflict
+error: Label: Mar-07-2023 05:26:03: Document insert conflict
+error: Label: Mar-07-2023 06:54:31: This employee with emp_id = emp_14 already has a certificate issued from this organization
+error: Label: Mar-07-2023 06:54:47: The employee with emp_id = emp_14 already has a certificate issued from this organization
+error: Label: Mar-07-2023 07:01:11: The employee with emp_id = emp_14 already has a certificate issued from this organization
