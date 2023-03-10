@@ -17,7 +17,18 @@ function createChaincode(networkName, channelName, chaincodeName) {
   }
 }
 
+async function invokeChaincode(networkName, channelName, chaincodeName, argumentJSON) {
+
+  const chcode = require('../../../chaincode/'+networkName+'/'+channelName+'/'+chaincodeName);
+  const chClass = new chcode[chaincodeName]();
+  const functionToCall = argumentJSON.Args[0];
+  const functionArgs = argumentJSON.Args.slice(1);
+  const result = await chClass[functionToCall](...functionArgs)
+  console.log(result);
+}
+
 module.exports = {
-  createChaincode
+  createChaincode,
+  invokeChaincode
 }
  

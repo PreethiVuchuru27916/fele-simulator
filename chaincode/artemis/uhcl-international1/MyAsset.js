@@ -13,17 +13,6 @@ class MyAsset extends SmartContract {
     } 
 }
 
-const testFunc = async() => {
-    const read = true;
-    const asset = new MyAsset();
-    if (read) {
-        const readData = await asset.readAsset('123');
-        console.log(readData);
-    } else {
-        const addedData = await asset.putAsset('123', { "data": "hello" });
-        console.log(addedData);
-    }
+module.exports={
+    MyAsset
 }
-
-
-testFunc();
