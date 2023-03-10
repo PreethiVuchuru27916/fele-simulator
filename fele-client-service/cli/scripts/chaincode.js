@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require("path");
+const logger = require('../../utils/logger');
 const {NETWORK_BASEPATH} = require('../../../globals')
 
 function createChaincodeCLI(networkName, channelName, chaincodeName) {
@@ -19,12 +20,17 @@ function createChaincodeCLI(networkName, channelName, chaincodeName) {
 
 async function invokeChaincodeCLI(networkName, channelName, chaincodeName, argumentJSON) {
 
-  const chcode = require('../../../chaincode/'+networkName+'/'+channelName+'/'+chaincodeName);
+  const chcode = require(NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName);
   const chClass = new chcode[chaincodeName]();
   const functionToCall = argumentJSON.Args[0];
   const functionArgs = argumentJSON.Args.slice(1);
-  const result = await chClass[functionToCall](...functionArgs)
-  console.log(result);
+  try{
+    const result = await chClass[functionToCall](...functionArgs)
+    console.log(result);
+  }
+  catch(err){
+    logger.error(err);
+  }
 }
 
 module.exports = {
