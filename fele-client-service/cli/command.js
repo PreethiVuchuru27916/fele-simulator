@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
-const { createChaincode, invokeChaincode } = require('./scripts/chaincode');
+const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
 
 const readline = require('readline');
@@ -86,7 +86,7 @@ const registerCommand = chaincodeCommand.command('register')
 registerCommand
     .command('create')
     .action(options => {
-        return createChaincode(options.networkName, options.channelName, options.chaincodeName)
+        return createChaincodeCLI(options.networkName, options.channelName, options.chaincodeName)
     })
 
 registerCommand
@@ -111,7 +111,7 @@ chaincodeCommand
     .action(async(options) => {
         var json = options.chaincodeArgument;
         json = JSON.parse(json);
-        return invokeChaincode(options.networkName, options.channelName, options.chaincodeName, json); 
+        return invokeChaincodeCLI(options.networkName, options.channelName, options.chaincodeName, json); 
     });
     
 

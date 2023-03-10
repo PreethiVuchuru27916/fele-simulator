@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require("path");
 const {NETWORK_BASEPATH} = require('../../../globals')
 
-function createChaincode(networkName, channelName, chaincodeName) {
+function createChaincodeCLI(networkName, channelName, chaincodeName) {
 
   const chaincodePath = path.join(NETWORK_BASEPATH, networkName, channelName, chaincodeName)
   try {
@@ -17,7 +17,7 @@ function createChaincode(networkName, channelName, chaincodeName) {
   }
 }
 
-async function invokeChaincode(networkName, channelName, chaincodeName, argumentJSON) {
+async function invokeChaincodeCLI(networkName, channelName, chaincodeName, argumentJSON) {
 
   const chcode = require('../../../chaincode/'+networkName+'/'+channelName+'/'+chaincodeName);
   const chClass = new chcode[chaincodeName]();
@@ -28,7 +28,7 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
 }
 
 module.exports = {
-  createChaincode,
-  invokeChaincode
+  createChaincodeCLI,
+  invokeChaincodeCLI
 }
  
