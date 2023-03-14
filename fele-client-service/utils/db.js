@@ -109,5 +109,6 @@ module.exports = {
     checkIfDatabaseExists,
     getDocumentFromDatabase,
     deleteDocument,
-    getDocumentByID
+    getDocumentByID,
+    updateDocument
 }
