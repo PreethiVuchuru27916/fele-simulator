@@ -1,4 +1,4 @@
-const { SmartContract } = require("../../../fele-smart-contract/SmartContract");
+const { SmartContract } = require("../../../../fele-smart-contract/SmartContract");
 
 class MyAsset extends SmartContract {
     async readAsset(key) {
