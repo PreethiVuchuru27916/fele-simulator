@@ -3,16 +3,22 @@ const path = require("path");
 const fs = require('fs');
 const { NETWORK_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
 const { NETWORK_BASEPATH } = require('../../../globals')
+const logger = require('../../utils/logger');
 
 const createNetwork = async (networkConfigJSON, networkName) => {
     const database = NETWORK_PREFIX + networkName
-    await createDatabase(database)
-    await insertToDatabase(database, JSON.parse(networkConfigJSON))
-    //To create network folder under chaincode
-    const dir = path.join(NETWORK_BASEPATH, networkName);
+    try{
+        await createDatabase(database)
+        await insertToDatabase(database, JSON.parse(networkConfigJSON))
+        //To create network folder under chaincode
+        const dir = path.join(NETWORK_BASEPATH, networkName);
 
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir)
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir)
+        }
+    }
+    catch(err){
+        logger.error(err);
     }
 }
 

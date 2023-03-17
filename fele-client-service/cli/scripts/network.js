@@ -5,6 +5,7 @@ const {
 } = require("../../client-api/scripts/network");
 
 const { USER_WORKSPACE } = require('../../../globals');
+const logger = require('../../utils/logger');
 
 async function useNetworkCLI(username, localOrg, networkName) {
   return useNetwork(username, localOrg, networkName)
@@ -13,7 +14,7 @@ async function useNetworkCLI(username, localOrg, networkName) {
 async function createNetworkCLI(networkConfig, networkName) {
   if (networkConfig.includes(".json")) {
     //When networkConfig is a file
-    const fileName = USER_WORKSPACE + networkConfig;
+    const fileName = USER_WORKSPACE +'/'+ networkConfig;
     networkConfig = require(fileName); //Get contents of file as object
     networkConfig = JSON.stringify(networkConfig); //Convert object to string
   } else {
