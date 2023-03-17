@@ -101,7 +101,6 @@ registerCommand.commands.forEach((cmd) => {
         cmd.option('-ccn, --chaincodeName <chaincodeName>', 'Name of the chaincode')
     });
 
-/************************Chaincode Commands*********************/
 chaincodeCommand
     .command('invoke')
     .option('-nn, --networkName <networkName>', 'Name of the network')

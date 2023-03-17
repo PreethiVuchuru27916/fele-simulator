@@ -4,8 +4,7 @@ const logger = require('../../utils/logger');
 const {NETWORK_BASEPATH,USER_WORKSPACE} = require('../../../globals')
 const { checkIfDatabaseExists, getDocumentFromDatabase} = require('../../utils/db')
 const { NETWORK_PREFIX } = require('../../utils/constants')
-const { getChannelSelector } = require('../../utils/helpers')
-
+const { getChannelSelector, copyFolderSync } = require('../../utils/helpers')
 
 
 async function createChaincode(networkName, channelName, chaincodeName) {
@@ -18,11 +17,9 @@ async function createChaincode(networkName, channelName, chaincodeName) {
             const chaincodePath = path.join(NETWORK_BASEPATH, networkName, channelName, chaincodeName)
             try {
                 if (!fs.existsSync(chaincodePath)) {
-                    fs.mkdirSync(chaincodePath)
-                    console.log('Directory created.')
-                    fs.copyFileSync(USER_WORKSPACE+'/'+chaincodeName+'.js',NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/'+chaincodeName+'.js')
+                    copyFolderSync(USER_WORKSPACE+'/'+chaincodeName, NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName, {recursive: true})
                 } else {
-                console.log('Directory already exists.')
+                    console.log('Directory already exists.')
                 }
             }
             catch (err) {
@@ -30,7 +27,7 @@ async function createChaincode(networkName, channelName, chaincodeName) {
             }
         }
         else{
-            logger.error("Channel \""+channelName+"\" not found in "+networkName);
+            //logger.error("Channel \""+channelName+"\" not found in "+networkName);
         }
     } 
 }

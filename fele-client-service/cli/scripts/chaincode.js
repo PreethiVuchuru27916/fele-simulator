@@ -2,7 +2,6 @@ const logger = require('../../utils/logger');
 const { createChaincode, invokeChaincode} = require('../../client-api/scripts/chaincode')
 
 async function createChaincodeCLI(networkName, channelName, chaincodeName) {
-
   try {
     await createChaincode(networkName, channelName, chaincodeName);
   } 
@@ -12,7 +11,6 @@ async function createChaincodeCLI(networkName, channelName, chaincodeName) {
 }
 
 async function invokeChaincodeCLI(networkName, channelName, chaincodeName, argumentJSON) {
-
   try{
     await invokeChaincode(networkName, channelName, chaincodeName, argumentJSON);
   }

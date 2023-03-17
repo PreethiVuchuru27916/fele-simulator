@@ -3,7 +3,6 @@ const { USER_WORKSPACE } = require('../../../globals')
 const path = require('path')
 const logger = require('../../utils/logger')
 
-
 const createChannelCLI = async (networkName, channelConfig) => {
   if (channelConfig.includes(".json")) {
     const filePath = path.join(USER_WORKSPACE, channelConfig)
