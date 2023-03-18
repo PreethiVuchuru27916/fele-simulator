@@ -1,13 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-const {loginFabricUserHandler,
-    updateFabricUserHandler,
-    deleteFabricUserHandler
+const {loginUserHandler,
+    updateUserHandler,
+    deleteUserHandler
 } = require('../handlers/fabric-user.handler')
 
-router.post('/login', loginFabricUserHandler)
-router.post('/update', updateFabricUserHandler)
-router.post('/delete', deleteFabricUserHandler)
+router.post('/login', loginUserHandler)
+router.post('/update', updateUserHandler)
+router.post('/delete', deleteUserHandler)
 
 module.exports = router
