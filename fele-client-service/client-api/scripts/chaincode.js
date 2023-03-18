@@ -27,7 +27,7 @@ async function createChaincode(networkName, channelName, chaincodeName) {
             }
         }
         else{
-            //logger.error("Channel \""+channelName+"\" not found in "+networkName);
+            logger.error("Channel \""+channelName+"\" not found in "+networkName);
         }
     } 
 }
@@ -39,7 +39,7 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
         const { docs } = await getDocumentFromDatabase(database, getChannelSelector(channelName))
         if (docs.length > 0) {
             try{
-                const chcode = require(NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/'+chaincodeName);
+                const chcode = require(NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/index');
                 const chClass = new chcode[chaincodeName]();
                 const functionToCall = argumentJSON.Args[0];
                 const functionArgs = argumentJSON.Args.slice(1);
