@@ -14,7 +14,11 @@ const registerUserHandler = (req, res) => {
 }
 
 const updateUserHandler = (req, res) => {
-    res.send("Update fabric user Response")
+    res.status(200).send({
+        username: req.username,
+        userRole: req.userRole,
+        organization: req.organization
+    })
 }
 
 const deleteUserHandler = (req, res) => {

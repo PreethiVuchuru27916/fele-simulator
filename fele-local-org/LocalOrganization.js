@@ -14,24 +14,31 @@ const addLocalUser = async (req, res) => {
     password = sha256(password)
     console.log({username, password})
 
-    let {docs} = await getDocumentFromDatabase("uhcl", {
+    let {docs} = await getDocumentFromDatabase(organization, {
         selector: {
             organization: {
-                $eq: "uhcl"
+                $eq: organization
             }
         }     
     })
 
     let localUsers = docs[0].localUsers || []
-    console.log("from db: ", docs[0].localUsers)
-    console.log("if not in db", localUsers)
+    
+    localUsers.forEach(user => {
+        if(user.username === username) {
+            res.status(500).send({
+                message: `User ${username} already exists.`
+            })
+        }
+    });
+
     localUsers.push({username, password})
     docs[0].localUsers = localUsers
 
     const result = await updateDocument(organization, docs[0])
 
     console.log(result)
-    res.send(localUsers)
+    res.status(200).send(localUsers)
 
 }
 

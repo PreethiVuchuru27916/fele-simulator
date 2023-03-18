@@ -4,10 +4,11 @@ const router = express.Router()
 const {loginUserHandler,
     updateUserHandler,
     deleteUserHandler
-} = require('../handlers/fabric-user.handler')
+} = require('../handlers/user.handler')
+const { authenticateUser, isAuthrorized } = require('../middleware/auth')
 
-router.post('/login', loginUserHandler)
-router.post('/update', updateUserHandler)
+router.post('/login', authenticateUser)
+router.post('/update', isAuthrorized, updateUserHandler)
 router.post('/delete', deleteUserHandler)
 
 module.exports = router
