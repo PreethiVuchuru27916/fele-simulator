@@ -109,6 +109,7 @@ chaincodeCommand
     .option('-ca, --chaincodeArgument <chaincodeArgument>', 'Argument passed to the chaincode')
     .action(async(options) => {
         var json = options.chaincodeArgument;
+        console.log("Chaincode Argument", json);
         json = JSON.parse(json);
         return invokeChaincodeCLI(options.networkName, options.channelName, options.chaincodeName, json); 
     });

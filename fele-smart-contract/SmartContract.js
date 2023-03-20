@@ -8,7 +8,9 @@ class SmartContract extends Context {
   }
 
   static getState(key) {
-    return this.ctx.getState(key);
+    const value = this.ctx.getState(key);
+    if (value) return value
+    return null;
   }
 
   static putState(key, value) {

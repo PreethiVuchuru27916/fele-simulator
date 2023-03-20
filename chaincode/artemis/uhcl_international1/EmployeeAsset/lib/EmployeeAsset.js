@@ -32,9 +32,11 @@ class EmployeeAsset extends SmartContract {
     }
 
     async createAsset(name, designation, salary) {
+        console.log("inside createasset")
         const key = "Asset~" + uuidv4();
         console.log("Create Asset", key)
         const asset = this.AssetExists(key)
+        console.log("aset is"+asset)
         if(!asset) {
             const value = {
                 "name": name,

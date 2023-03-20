@@ -10,7 +10,7 @@ class Context {
   constructor() {
     this.#globalState = {
       networkName: 'artemis',
-      channelName: ''
+      channelName: 'uhcl_international1'
     };
   }
   
@@ -23,7 +23,7 @@ class Context {
       throw new Error(error);
     }
   }
-
+  
   async putState(key, value) {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
