@@ -37,6 +37,7 @@ class EmployeeAsset extends SmartContract {
         console.log("Create Asset", key)
         const asset = this.AssetExists(key)
         console.log("aset is"+JSON.stringify(asset))
+        console.log("not asser"+!asset)
         if(!asset) {
             const value = {
                 "name": name,
