@@ -44,7 +44,6 @@ class EmployeeAsset extends SmartContract {
 
     async readAsset(key) {
         const result = await SmartContract.getState(key);
-        console.log(result)
         return result;
     } 
 
