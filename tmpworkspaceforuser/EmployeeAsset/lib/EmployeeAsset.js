@@ -26,11 +26,20 @@ class EmployeeAsset extends SmartContract {
         
     }
 
-    async createAsset(id, name, age) {
-        
-        const result = await SmartContract.putState(key, value);
-        console.log(result)
-        return result;
+    async createAsset(name, designation, salary) {
+        const key = "Asset~" + uuidv4();
+        const asset = AssetExists(key)
+        if(!asset) {
+            const value = {
+                "name": name,
+                "designation": designation,
+                "salary": salary
+            }
+            const result = await SmartContract.putState(key, value);
+            console.log(result)
+            return result;
+        }
+        else throw new Error("Asset ID Already exists")
     } 
 
     async readAsset(key) {
@@ -40,8 +49,9 @@ class EmployeeAsset extends SmartContract {
     } 
 
     async AssetExists(key) {
-        const assetJSON = await ctx.stub.getState(id);
-        return assetJSON && assetJSON.length > 0;
+        const asset = await SmartContract.getState(key);
+        if(asset) return asset
+        return null
     }
 }
 
