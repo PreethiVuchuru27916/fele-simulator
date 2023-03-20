@@ -32,12 +32,8 @@ class EmployeeAsset extends SmartContract {
     }
 
     async createAsset(name, designation, salary) {
-        console.log("inside createasset")
         const key = "Asset~" + uuidv4();
-        console.log("Create Asset", key)
-        const asset = this.AssetExists(key)
-        console.log("aset is"+JSON.stringify(asset))
-        console.log("not asser"+!asset)
+        const asset = await this.AssetExists(key)
         if(!asset) {
             const value = {
                 "name": name,
@@ -45,7 +41,6 @@ class EmployeeAsset extends SmartContract {
                 "salary": salary
             }
             const result = await SmartContract.putState(key, value);
-            console.log(result)
             return result;
         }
         else throw new Error("Asset ID Already exists")

@@ -18,12 +18,13 @@ class Context {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
-      return result;
+      if (result) return result;
+      return null;
     } catch(error) {
       throw new Error(error);
     }
   }
-  
+
   async putState(key, value) {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
