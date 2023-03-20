@@ -1,4 +1,4 @@
-const { SmartContract } = require('../../../../../fele-smart-contract/SmartContract');
+const { SmartContract } = require('../../../fele-smart-contract/SmartContract');
 const { v4: uuidv4 } = require('uuid');
 
 class EmployeeAsset extends SmartContract {
@@ -49,7 +49,7 @@ class EmployeeAsset extends SmartContract {
     async readAsset(key) {
         const result = await SmartContract.getState(key);
         return result;
-    } 
+    }
     
     async deleteAsset(key) {
         const asset = await this.AssetExists(key)

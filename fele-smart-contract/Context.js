@@ -1,5 +1,5 @@
 const { NETWORK_PREFIX } = require("../fele-client-service/utils/constants");
-const { getDocumentByID, insertToDatabase } = require("../fele-client-service/utils/db");
+const { getDocumentByID, insertToDatabase, deleteDocument } = require("../fele-client-service/utils/db");
 
 class Context {
   #globalState = {
@@ -39,9 +39,7 @@ class Context {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
-      console.log("in here"+result)
-      //deleteDocument(databaseName, key, result)
-      if (result) return result;
+      if (result) deleteDocument(databaseName, key, result._rev)
       return null;
     } catch(error) {
       throw new Error(error);
