@@ -14,6 +14,10 @@ class SmartContract extends Context {
   static putState(key, value) {
     return this.ctx.putState(key, value);
   }
+
+  static deleteState(key, value) {
+    return this.ctx.deleteState(key, value);
+  }
 }
 
 module.exports = {

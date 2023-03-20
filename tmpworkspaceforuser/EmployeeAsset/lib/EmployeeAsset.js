@@ -50,6 +50,14 @@ class EmployeeAsset extends SmartContract {
         const result = await SmartContract.getState(key);
         return result;
     } 
+    
+    async deleteAsset(key) {
+        const asset = await this.AssetExists(key)
+        if(asset) {
+            const response = await SmartContract.deleteState(key);
+        }
+        else throw new Error("Asset ID Does not exists")
+    } 
 }
 
 module.exports={

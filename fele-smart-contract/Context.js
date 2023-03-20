@@ -35,6 +35,18 @@ class Context {
       throw new Error(error);
     }
   }
+  async deleteState(key, value) {
+    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
+    try {
+      const result = await getDocumentByID(databaseName, key);
+      console.log("in here"+result)
+      //deleteDocument(databaseName, key, result)
+      if (result) return result;
+      return null;
+    } catch(error) {
+      throw new Error(error);
+    }
+  }
 }
 
 module.exports = {
