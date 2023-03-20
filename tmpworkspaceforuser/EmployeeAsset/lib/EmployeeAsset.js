@@ -23,7 +23,7 @@ class EmployeeAsset extends SmartContract {
             employeeAsset.fmt = "asset";
             await SmartContract.putState(key, EmployeeAsset)
         })
-
+        
     }
 
     async createAsset(id, name, age) {
