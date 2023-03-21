@@ -33,9 +33,6 @@ async function createChaincode(networkName, channelName, chaincodeName) {
 }
 
 async function invokeChaincode(networkName, channelName, chaincodeName, argumentJSON) {
-
-    // console.log("Argument json", argumentJSON, typeof argumentJSON);
-
     const database = NETWORK_PREFIX + networkName;
     const dbStatus = await checkIfDatabaseExists(database)
     if (dbStatus) {
@@ -46,17 +43,18 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
                 const chClass = new chcode[chaincodeName]();
                 const functionToCall = argumentJSON.Args[0];
                 const functionArgs = argumentJSON.Args.slice(1);
-                console.log("function args"+functionArgs) 
                 try{
                     const txnResult = await chClass[functionToCall](...functionArgs)
                     console.log(txnResult)
                     logger.info("Transaction successful");
                 }
                 catch(err){
+                    console.log(err);
                     logger.error(err);
                 }
             }
             catch(err){
+                console.log(err);
                 logger.error(chaincodeName + " does not exist.");
             }
         }
