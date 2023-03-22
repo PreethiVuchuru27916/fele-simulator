@@ -1,5 +1,5 @@
 const { NETWORK_PREFIX } = require("../fele-client-service/utils/constants");
-const { getDocumentByID, insertToDatabase } = require("../fele-client-service/utils/db");
+const { getDocumentByID, insertToDatabase, deleteDocument, updateDocument } = require("../fele-client-service/utils/db");
 
 class Context {
   #globalState = {
@@ -10,7 +10,7 @@ class Context {
   constructor() {
     this.#globalState = {
       networkName: 'artemis',
-      channelName: ''
+      channelName: 'uhcl_international1'
     };
   }
   
@@ -18,7 +18,8 @@ class Context {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
-      return result;
+      if (result) return result;
+      return null;
     } catch(error) {
       throw new Error(error);
     }
@@ -28,8 +29,23 @@ class Context {
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const document = { ...value, _id: key };
-      const result = await insertToDatabase(databaseName, document);
-      return result;
+      const assetExists = await getDocumentByID(databaseName, key);
+      if (assetExists) {
+        document._rev = assetExists._rev;
+        return await updateDocument(databaseName, document);
+      }
+      return await insertToDatabase(databaseName, document);
+    } catch(error) {
+      throw new Error(error);
+    }
+  }
+
+  async deleteState(key) {
+    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
+    try {
+      const result = await getDocumentByID(databaseName, key);
+      if (result) return deleteDocument(databaseName, key, result._rev)
+      return null;
     } catch(error) {
       throw new Error(error);
     }
