@@ -17,7 +17,7 @@ const authorize = (req, res, next) => {
         req.organization = userData.organization
         next()
     } catch {
-        res.sendStatus(403)
+        res.sendStatus(401)
     }
 }
 
@@ -25,7 +25,7 @@ const authenticateUser = async (req, res, next) => {
     const {organization} = req.params
     const {username, password} = req.body
     try {
-        let {docs} = await getDocumentFromDatabase(organization, {
+        let {docs} = await getDocumentFromDatabase("fele__bid", {
             selector: {
                 organization: {
                     $eq: organization
@@ -33,25 +33,34 @@ const authenticateUser = async (req, res, next) => {
             }     
         })
     
-
+        console.log("docs: ", docs)
         let localUsers = docs[0].localUsers
+
+        let isAuthenticated = false, token = ""
 
         localUsers.forEach(user => {
             if(user.username === username && user.password === sha256(password)) {
-                const token = jwt.sign({
+                token = jwt.sign({
                     username,
                     organization,
                     role: user.role
             
                 }, JWT_SECRET)
             
-                res.cookie("access_token", token, {httpOnly: true}).status(200).send({
-                    message: "Logged in successfully"
-                })
+
+                isAuthenticated = true
             }
         });
-    
-        throw new Error("Credentials not found")
+
+        if(isAuthenticated) {
+
+            
+            res.cookie("access_token", token, {httpOnly: true}).status(200).send({
+                message: `user '${username}' logged in successfully`
+            })
+        } else {
+            throw new Error("Credentials not found")
+        }
     } catch(error) {
         res.status(500).send({
             message: "Unable to Authenticate user: "+error

@@ -21,14 +21,33 @@ const createOrganization = async (req, res) => {
     }
 
     try{
-        await createDatabase(organization)
-        await insertToDatabase(organization, organizationConfig)
+        try{
+            const {docs} = await getDocumentFromDatabase("fele__bid", {
+                selector: {
+                    organization: {
+                        $eq: organization
+                    }
+                }
+            })
+            if(docs.length > 0) {
+                res.status(500).send({
+                    message: `FAILED!! Organization with name: '${organization}' exists.`
+                })
+                return
+            } else {
+                await insertToDatabase("fele__bid", organizationConfig)
+            }
+        } catch {
+            await createDatabase("fele__bid")
+            await insertToDatabase("fele__bid", organizationConfig)
+        }
+
         res.send({
             ...req.body
         })
     } catch(error) {
         res.status(500).send({
-            message: "Internal Error: "+ error
+            message: error
         })
     }
 
@@ -40,7 +59,7 @@ const addLocalUser = async (req, res) => {
 
     try{
 
-        let {docs} = await getDocumentFromDatabase(organization, {
+        let {docs} = await getDocumentFromDatabase("fele__bid", {
             selector: {
                 organization: {
                     $eq: organization
@@ -49,24 +68,28 @@ const addLocalUser = async (req, res) => {
         })
     
         let localUsers = docs[0].localUsers || []
-        
+        let duplicateFound = false
         localUsers.forEach(user => {
             if(user.username === username) {
-                res.status(500).send({
-                    message: `User ${username} already exists.`
-                })
+                duplicateFound = true
             }
         });
     
-        localUsers.push({username, password, role})
-        docs[0].localUsers = localUsers
-    
-        const result = await updateDocument(organization, docs[0])
-    
-        console.log(result)
-        res.status(200).send({
-            message: "local user added successfully"
-        })
+        if(duplicateFound) {
+            res.status(500).send({
+                message: `User ${username} already exists.`
+            })
+        } else {
+            localUsers.push({username, password, role})
+            docs[0].localUsers = localUsers
+        
+            const result = await updateDocument("fele__bid", docs[0])
+        
+            console.log(result)
+            res.status(200).send({
+                message: "local user added successfully"
+            })
+        }
     } catch(error) {
         res.status(500).send({
             message: "Internal error: "+error
@@ -76,7 +99,38 @@ const addLocalUser = async (req, res) => {
 
 }
 
+const deleteLocalUser = async (req, res) => {
+    let {organization, user: {username}} = req.body
+    try{
+
+        let {docs} = await getDocumentFromDatabase("fele__bid", {
+            selector: {
+                organization: {
+                    $eq: organization
+                }
+            }     
+        })
+        let localUsers = docs[0].localUsers || []
+        localUsers = localUsers.filter((user) => {
+            return user.username !== username
+        })
+
+        console.log("local user users:  ", localUsers)
+        docs[0].localUsers = localUsers
+        const result = await updateDocument("fele__bid", docs[0])
+        console.log(result)
+            res.status(200).send({
+                message: "local user deleted successfully"
+            })
+    
+    } catch(error) {
+        res.status(500).send({
+            message: "Internal error: "+error
+        })
+    }
+}
 module.exports = {
     createOrganization,
-    addLocalUser
+    addLocalUser,
+    deleteLocalUser
 }
