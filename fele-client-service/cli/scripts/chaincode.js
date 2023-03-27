@@ -1,23 +1,25 @@
-const fs = require('fs');
-const path = require("path");
-const {NETWORK_BASEPATH} = require('../../../globals')
+const logger = require('../../utils/logger');
+const { createChaincode, invokeChaincode} = require('../../client-api/scripts/chaincode')
 
-function createChaincode(networkName, channelName, chaincodeName) {
-
-  const chaincodePath = path.join(NETWORK_BASEPATH, networkName, channelName, chaincodeName)
+async function createChaincodeCLI(networkName, channelName, chaincodeName) {
   try {
-      if (!fs.existsSync(__dirname, chaincodePath)) {
-        fs.mkdirSync(__dirname, chaincodePath)
-        console.log('Directory created.')
-      } else {
-        console.log('Directory already exists.')
-      }
-  } catch (err) {
-    console.log(err)
+    await createChaincode(networkName, channelName, chaincodeName);
+  } 
+  catch (err) {
+    logger.error(err);
+  }
+}
+
+async function invokeChaincodeCLI(networkName, channelName, chaincodeName, argumentJSON) {
+  try{
+    await invokeChaincode(networkName, channelName, chaincodeName, argumentJSON);
+  }
+  catch(err){
+    logger.error(err);
   }
 }
 
 module.exports = {
-  createChaincode
+  createChaincodeCLI,
+  invokeChaincodeCLI
 }
- 

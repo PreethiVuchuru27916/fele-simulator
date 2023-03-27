@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
-const { createChaincode } = require('./scripts/chaincode');
-const { createChannel } = require('./scripts/channel');
+const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
+const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -12,6 +12,7 @@ const { authenticateUser } = require('../utils/auth');
 const logger = require('../utils/logger');
 const { sha256 } = require('../utils/helpers');
 const { GLOBAL_STATE } = require('../utils/constants');
+const { async } = require('node-couchdb/dist/node-couchdb');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
@@ -20,11 +21,6 @@ const interpreter = new commander.Command();
 const networkCommand = interpreter.command('network');
 const chaincodeCommand = interpreter.command('chaincode');
 const channelCommand = interpreter.command('channel');
-
-// let localUser
-// let localOrg
-// let feleUser = {};
-// let network
 
 /************************Network Commands*********************/
 networkCommand
@@ -68,19 +64,29 @@ networkCommand.commands.forEach((cmd) => {
 
 /************************Channel Commands*********************/
 channelCommand
-    .command('create')
-    .option('-nn, --networkName <networkName>', 'Name of the network')
-    .option('-cn, --channelName <channelName>', 'Name of the channel')
-    .action((options) => {
-        return createChannel(options.networkName, options.channelName)
-    })
+.command('create')
+.option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
+.action(async(options) => {
+	return createChannelCLI(options.networkName, options.channelConfig);
+})
+
+channelCommand
+.command('delete')
+.option('-cn, --channelName <channelName>', 'Channel name to be passed')
+.action(async(options) => {
+    return deleteChannelCLI(options.networkName, options.channelName);
+});
+
+channelCommand.commands.forEach((cmd) => {
+	cmd.option('-nn, --networkName <networkName>', 'Name of the network')
+});
 //************************Chaincode Commands******************** */
 const registerCommand = chaincodeCommand.command('register')
 
 registerCommand
     .command('create')
     .action(options => {
-        return createChaincode(options.networkName, options.channelName, options.chaincodeName)
+        return createChaincodeCLI(options.networkName, options.channelName, options.chaincodeName)
     })
 
 registerCommand
@@ -95,18 +101,19 @@ registerCommand.commands.forEach((cmd) => {
         cmd.option('-ccn, --chaincodeName <chaincodeName>', 'Name of the chaincode')
     });
 
-/************************Chaincode Commands*********************/
 chaincodeCommand
     .command('invoke')
-    // .option('-cn, --channelName <channelName>', 'Name of the channel')
-    // .option('-ccn, --chaincodeName <chaincodeName>', 'Name of the chaincode')
-    .argument('<args...>', 'arguments to the chaincode')
-    .action((args) => {
-        args.forEach((arg) => {
-            console.log(arg);
-            console.log(typeof arg);
-        });
+    .option('-nn, --networkName <networkName>', 'Name of the network')
+    .option('-cn, --channelName <channelName>', 'Name of the channel')
+    .option('-ccn, --chaincodeName <chaincodeName>', 'Name of the chaincode')
+    .option('-ca, --chaincodeArgument <chaincodeArgument>', 'Argument passed to the chaincode')
+    .action(async(options) => {
+        var json = options.chaincodeArgument;
+        console.log("Chaincode Argument", json);
+        json = JSON.parse(json);
+        return invokeChaincodeCLI(options.networkName, options.channelName, options.chaincodeName, json); 
     });
+    
 
 /************************User Commands*********************/
 userCommand

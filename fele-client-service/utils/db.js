@@ -57,8 +57,8 @@ const checkIfDatabaseExists = async (databaseName) => {
 
 const getDocumentByID = async (databaseName, documentId) => {
     try {
-        const { data } = await couch.get(databaseName, documentId)
-        return data
+        const { data } = await couch.get(databaseName, documentId);
+        return data;
     }
     catch (e) {
         logger.error(e)
@@ -72,6 +72,7 @@ const getDocumentByID = async (databaseName, documentId) => {
  */
 const updateDocument = async (databaseName, updatedDocument) => {
     try {
+        console.log(updatedDocument)
         const update = await couch.update(databaseName, updatedDocument)
         return update
     } catch (e) {
