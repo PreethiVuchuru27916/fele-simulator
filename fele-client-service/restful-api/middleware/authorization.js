@@ -5,6 +5,7 @@ const isAdmin = async (req, res, next) => {
 
     if(!token) {
         res.sendStatus(403)
+        return
     }
 
     try{
@@ -29,6 +30,7 @@ const isWriter = async (req, res, next) => {
 
     if(!token) {
         res.sendStatus(403)
+        return
     }
 
     try{
@@ -53,6 +55,7 @@ const isReader = async (req, res, next) => {
 
     if(!token) {
         res.sendStatus(403)
+        return
     }
 
     try{
