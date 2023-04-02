@@ -27,8 +27,11 @@ const caCommand = interpreter.command('ca');
 caCommand
     .command('register') 
     .description('Registers a Fele User')
-    .action(() => {
-        console.log("register user")
+    .option('-id, --id <id>', 'id for the fele user')
+    .option('-s, --secret <secret>', 'secret for the fele user')
+    .action((options) => {
+        console.log("options id"+options.id);
+        console.log("options secret"+options.secret);
     });
 
 caCommand
