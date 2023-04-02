@@ -28,17 +28,21 @@ caCommand
     .command('register') 
     .description('Registers a Fele User')
     .option('-id, --id <id>', 'id for the fele user')
-    .option('-s, --secret <secret>', 'secret for the fele user')
+    .option('-a, --affiliation <affiliation>', 'id for the fele user') //orgName eg: nasa_artemis
     .action((options) => {
+        //Simulate generating enrollment id that is combination of orgname and user to have nasa_artemis.admin1
+        //Simulate generating random password by the ca and giving the enrollment id and password to the user for performing the enroll step
         console.log("options id"+options.id);
-        console.log("options secret"+options.secret);
     });
 
 caCommand
     .command('enroll') 
     .description('Enroll a Fele User')
+    .option('-id --id <enrollmentId>', 'id for the fele user')
+    .option('-s, --secret <enrollmentSecret>', 'secret for the fele user')
     .action(() => {
-        console.log("enroll user")
+        //Prepare a csr to send & generate a certificate for the fele user 
+        //and store in the local org db
     });
 
 /************************Network Commands*********************/
