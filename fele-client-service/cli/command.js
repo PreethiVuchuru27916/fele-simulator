@@ -3,6 +3,7 @@ const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
+const { registerUser, enrollUser } = require('./scripts/ca')
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -30,18 +31,37 @@ caCommand
     .option('-id, --id <id>', 'id for the fele user')
     .option('-a, --affiliation <affiliation>', 'id for the fele user') //orgName eg: nasa_artemis
     .action((options) => {
+        let { enrollmentID, enrollmentSecret } = registerUser(options);
+        
+        interpreter.enrollmentID = enrollmentID;
+        interpreter.enrollmentSecret = enrollmentSecret;
+
+        console.log("enrollmentID : "+enrollmentID);
+        console.log("enrollmentSecret : "+enrollmentSecret);
+        
         //Simulate generating enrollment id that is combination of orgname and user to have nasa_artemis.admin1
         //Simulate generating random password by the ca and giving the enrollment id and password to the user for performing the enroll step
-        console.log("options id"+options.id);
+        //Should we add Fele users to the network database?
+
+        //the enrollmentSecret is stored temporarily after registration and deleted
+        //when the user finishes enrollment. so we can store details in interpreter object.
     });
 
 caCommand
     .command('enroll') 
     .description('Enroll a Fele User')
-    .option('-id --id <enrollmentId>', 'id for the fele user')
-    .option('-s, --secret <enrollmentSecret>', 'secret for the fele user')
-    .action(() => {
+    .option('-id, --enrollmentId <enrollmentId>', 'id for the fele user')
+    .option('-s, --enrollmentSecret <enrollmentSecret>', 'secret for the fele user')
+    .option('-m, --mspId <mspId>', 'secret for the fele user')
+    .action(async(options) => {
         //Prepare a csr to send & generate a certificate for the fele user 
+        if(interpreter.enrollmentID == options.enrollmentId && interpreter.enrollmentSecret == options.enrollmentSecret) {
+            console.log("Credentials valid. Enrolling user ")
+            const wallet_id = await enrollUser(options);
+            console.log(wallet_id)
+        }else{
+            console.log("Credentials Invalid")
+        }
         //and store in the local org db
     });
 
@@ -87,18 +107,18 @@ networkCommand.commands.forEach((cmd) => {
 
 /************************Channel Commands*********************/
 channelCommand
-.command('create')
-.option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
-.action(async(options) => {
-	return createChannelCLI(options.networkName, options.channelConfig);
-})
+    .command('create')
+    .option('-cc, --channelConfig <channelConfig>', 'Channel config json filename to be passed')
+    .action(async(options) => {
+        return createChannelCLI(options.networkName, options.channelConfig);
+    })
 
 channelCommand
-.command('delete')
-.option('-cn, --channelName <channelName>', 'Channel name to be passed')
-.action(async(options) => {
-    return deleteChannelCLI(options.networkName, options.channelName);
-});
+    .command('delete')
+    .option('-cn, --channelName <channelName>', 'Channel name to be passed')
+    .action(async(options) => {
+        return deleteChannelCLI(options.networkName, options.channelName);
+    });
 
 channelCommand.commands.forEach((cmd) => {
 	cmd.option('-nn, --networkName <networkName>', 'Name of the network')

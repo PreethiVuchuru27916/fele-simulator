@@ -17,8 +17,8 @@ const createChannelCLI = async (networkName, channelConfig) => {
   } catch (e) {
     logger.error(e.message)
   }
-
 }
+
 const deleteChannelCLI = async (networkName, channelName) => {
   try {
     const { message } = await deleteChannel(networkName, channelName)
