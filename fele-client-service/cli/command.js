@@ -21,6 +21,22 @@ const interpreter = new commander.Command();
 const networkCommand = interpreter.command('network');
 const chaincodeCommand = interpreter.command('chaincode');
 const channelCommand = interpreter.command('channel');
+const caCommand = interpreter.command('ca');
+
+/************************CA Register and enroll Commands*********************/
+caCommand
+    .command('register') 
+    .description('Registers a Fele User')
+    .action(() => {
+        console.log("register user")
+    });
+
+caCommand
+    .command('enroll') 
+    .description('Enroll a Fele User')
+    .action(() => {
+        console.log("enroll user")
+    });
 
 /************************Network Commands*********************/
 networkCommand
@@ -161,7 +177,6 @@ userCommand
             logger.error(`Failed to authenticate username ${options.username}`);
         }
     })
-
 module.exports = {
   program,
   interpreter
