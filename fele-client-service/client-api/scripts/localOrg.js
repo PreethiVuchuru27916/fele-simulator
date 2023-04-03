@@ -113,6 +113,26 @@ const deleteLocalUser = async (json) => {
         if (docs[0].localUsers.length != localUsers.length){
             docs[0].localUsers = localUsers
             await updateDocument("fele__bid", docs[0])
+            let fele_localorg = await getDocumentFromDatabase("fele__localorg", {
+                selector: {
+                    organization: {
+                        $eq: organization
+                    }
+                }     
+            })
+            let local = fele_localorg.docs[0].localUsers
+            local = local.filter((user) => {
+                return user.username !== username
+            })
+            fele_localorg.docs[0].localUsers = local
+            for(let i=0;i<fele_localorg.docs[0].felenetworks.length;i++){
+                let mappings = fele_localorg.docs[0].felenetworks[i].mappings
+                mappings = mappings.filter((user) => {
+                    return user.from !== username
+                })
+                fele_localorg.docs[0].felenetworks[i].mappings = mappings
+            }
+            await updateDocument("fele__localorg", fele_localorg.docs[0])
             return{
                 message: "local user deleted successfully"
             }
