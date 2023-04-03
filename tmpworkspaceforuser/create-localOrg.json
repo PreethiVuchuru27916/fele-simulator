@@ -1,0 +1,10 @@
+{
+    "organization": "nasa",
+    "localUsers": [
+        {
+            "username": "admin",
+            "password": "adminpw",
+            "role": "Admin"
+        }
+    ]
+}

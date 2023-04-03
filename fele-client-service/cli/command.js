@@ -3,19 +3,20 @@ const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
+const { createOrganizationCLI, addLocalUserCLI, deleteLocalUserCLI, mapLocalUserCLI } = require('./scripts/localOrg')
 
 const readline = require('readline');
-const defaultLocalOrg = require('../../conf/localorg.json');
+const defaultLocalOrg = require('../../conf/localOrg.json');
 
-const { getDocumentByID } = require('../utils/db');
+const { getDocumentByID, getDocumentFromDatabase } = require('../utils/db');
 const { authenticateUser } = require('../utils/auth');
 const logger = require('../utils/logger');
 const { sha256 } = require('../utils/helpers');
 const { GLOBAL_STATE } = require('../utils/constants');
-const { async } = require('node-couchdb/dist/node-couchdb');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
+const localOrgsCommand = program.command('localOrgs');
 
 const interpreter = new commander.Command();
 const networkCommand = interpreter.command('network');
@@ -124,9 +125,15 @@ userCommand
     .action(async(options) => {
         //authentication
         const hashedPassword = sha256(options.password);
-        GLOBAL_STATE.localOrg = await getDocumentByID("fele_localorg", "localOrg-nasa")
+        GLOBAL_STATE.localOrg = await getDocumentFromDatabase("fele__localorg", {
+            selector: {
+                organization: {
+                    $eq: options.mspId
+                }
+            }     
+        })
         //localOrg gets its value from couchdb or from the default localorg.json file
-        GLOBAL_STATE.localOrg = GLOBAL_STATE.localOrg || defaultLocalOrg
+        GLOBAL_STATE.localOrg = GLOBAL_STATE.localOrg.docs[0] || defaultLocalOrg
         
         GLOBAL_STATE.localUser = authenticateUser(options.username, hashedPassword, options.mspId, GLOBAL_STATE.localOrg)
         
@@ -161,6 +168,51 @@ userCommand
             logger.error(`Failed to authenticate username ${options.username}`);
         }
     })
+
+/************************LocalOrg Commands*********************/
+localOrgsCommand
+    .command('createLocalOrg')
+    .option('-oc, --orgConfig <orgConfig>', 'JSON configuration of the local organization')
+    .action(async(options) => {
+        return await createOrganizationCLI(options.orgConfig);
+    })
+
+localOrgsCommand
+    .command('addUser')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'new user details in JSON format')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addLocalUserCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('deleteUser')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'user details to be deleted in JSON format')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await deleteLocalUserCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('mapUser')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'user details to be mapped in JSON format')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await mapLocalUserCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+
 
 module.exports = {
   program,

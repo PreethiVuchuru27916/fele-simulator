@@ -1,0 +1,8 @@
+fele localOrgs addUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"Shiva\",\"password\":\"shivapw\",\"role\":\"Writer\"}}"
+
+fele localOrgs deleteUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"thomas12\"}}"
+
+fele localOrgs createLocalOrg -oc create-localOrg.json
+
+fele localOrgs mapUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"fele_network\":\"artemis\",\"fele_user\":\"nasa_artemis.se1\",\"user\":{\"username\":\"Shiva\"}}"
+
