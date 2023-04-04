@@ -55,11 +55,10 @@ const createOrganization = async (organizationConfig) => {
 }
 
 const addLocalUser = async (json) => {
+
     let {organization, user: {username, password, role}} = json
     password = sha256(password)
-
     try{
-
         let {docs} = await getDocumentFromDatabase("fele__bid", {
             selector: {
                 organization: {
@@ -91,8 +90,6 @@ const addLocalUser = async (json) => {
     } catch(error) {
         logger.error("Internal error: "+error)
     }
-    
-
 }
 
 const deleteLocalUser = async (json) => {
@@ -112,27 +109,14 @@ const deleteLocalUser = async (json) => {
         })
         if (docs[0].localUsers.length != localUsers.length){
             docs[0].localUsers = localUsers
-            await updateDocument("fele__bid", docs[0])
-            let fele_localorg = await getDocumentFromDatabase("fele__localorg", {
-                selector: {
-                    organization: {
-                        $eq: organization
-                    }
-                }     
-            })
-            let local = fele_localorg.docs[0].localUsers
-            local = local.filter((user) => {
-                return user.username !== username
-            })
-            fele_localorg.docs[0].localUsers = local
-            for(let i=0;i<fele_localorg.docs[0].felenetworks.length;i++){
-                let mappings = fele_localorg.docs[0].felenetworks[i].mappings
+            for(let i=0;i<docs[0].felenetworks.length;i++){
+                let mappings = docs[0].felenetworks[i].mappings
                 mappings = mappings.filter((user) => {
                     return user.from !== username
                 })
-                fele_localorg.docs[0].felenetworks[i].mappings = mappings
+                docs[0].felenetworks[i].mappings = mappings
             }
-            await updateDocument("fele__localorg", fele_localorg.docs[0])
+            await updateDocument("fele__bid", docs[0])
             return{
                 message: "local user deleted successfully"
             }
@@ -151,29 +135,21 @@ const deleteLocalUser = async (json) => {
 const mapLocalUser = async(json) => {
     let {organization, fele_network, fele_user, user: {username}} = json
     try{
-        let bid = await getDocumentFromDatabase("fele__bid", {
+        let {docs} = await getDocumentFromDatabase("fele__bid", {
             selector: {
                 organization: {
                     $eq: organization
                 }
             }     
         })
-        let localUsers = bid.docs[0].localUsers
+        let localUsers = docs[0].localUsers
         localUsers = localUsers.filter((user) => {
             return user.username == username
         })
         if (localUsers.length > 0){
-            let {docs} = await getDocumentFromDatabase("fele__localorg", {
-                selector: {
-                    organization: {
-                        $eq: organization
-                    }
-                }     
-            })
             let index = -1
             for(let i=0;i<docs[0].felenetworks.length;i++){
-                if (docs[0].felenetworks[i].felenetId == fele_network)
-                {
+                if (docs[0].felenetworks[i].felenetId == fele_network){
                     index=i;
                     break;
                 }
@@ -198,28 +174,12 @@ const mapLocalUser = async(json) => {
                         }
                     }
                     if (m_index == -1){
-                        let local = docs[0].localUsers
-                        let duplicateFound = false
-                        local.forEach(user => {
-                            if(user.username === username) {
-                                duplicateFound = true
-                            }
-                        });
                         mappings.push({"from":username,"to":fele_user})
                         f_network.mappings = mappings
                         docs[0].felenetworks[index] = f_network
-                        if(duplicateFound) {
-                            await updateDocument("fele__localorg", docs[0])
-                            return{
-                                message: `User ${username} mapped to Fele User successfully.`
-                            }
-                        } else {
-                            local.push({"username":localUsers[0].username,"password":localUsers[0].password})
-                            docs[0].localUsers = local
-                            await updateDocument("fele__localorg", docs[0])
-                            return{
-                                message: `User ${username} mapped to Fele User successfully.`
-                            }
+                        await updateDocument("fele__bid", docs[0])
+                        return{
+                            message: `User ${username} mapped to Fele User ${fele_user} successfully.`
                         }
                     }
                     else{

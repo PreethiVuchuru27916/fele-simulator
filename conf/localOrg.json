@@ -1,16 +1,40 @@
 {
-	"_id": "b806e024-9e63-11ed-a8fc-0242ac120002_nasa",
-	"_rev": "2-8ea4c76458f4b86b6b5d65946b7cf555",
-	"organization_id": "b806e024-9e63-11ed-a8fc-0242ac120002",
+	"_id": "organization~05aa7e22-5c13-4410-a892-2a5b6c50b437",
+	"_rev": "24-a326178ddbac7e96d228276774beeead",
+	"fmt": "Organization",
+	"created_at": "2023-04-03T09:37:45.787Z",
+	"updated_at": "2023-04-03T09:37:45.787Z",
 	"organization": "nasa",
 	"localUsers": [
 	  {
 		"username": "preethi",
-		"password": "8a4faf06aa44973bf837fa68f1155e2096660d0f97b2c699840f56b38bf3b244"
+		"password": "8a4faf06aa44973bf837fa68f1155e2096660d0f97b2c699840f56b38bf3b244",
+		"role": "Admin"
 	  },
 	  {
 		"username": "sha",
-		"password": "d600474b1b8e50d3633c91c0cf1efc454b79c9624a43fd7de441ee71745726ab"
+		"password": "d600474b1b8e50d3633c91c0cf1efc454b79c9624a43fd7de441ee71745726ab",
+		"role": "Reader"
+	  },
+	  {
+		"username": "Thomas",
+		"password": "f33f9649d13837982e4a0745d196bd0c2d466cfc77c5ea1738b7af83249d284d",
+		"role": "Writer"
+	  },
+	  {
+		"username": "admin",
+		"password": "5fcf82bc15aef42cd3ec93e6d4b51c04df110cf77ee715f62f3f172ff8ed9de9",
+		"role": "Admin"
+	  },
+	  {
+		"username": "Shiva",
+		"password": "8119e42babe36d3ef23d3211d404239c9416e8eb30cf21fd74c74ae6729dfae4",
+		"role": "Writer"
+	  },
+	  {
+		"username": "Sooraj",
+		"password": "3e6f943979f2bf1bca7d593d7f3cd5941d3fd4735f59902c37945a859b2cba62",
+		"role": "Writer"
 	  }
 	],
 	"felenetworks": [
@@ -35,8 +59,28 @@
 		  {
 			"from": "sha",
 			"to": "nasa_artemis.se1"
+		  },
+		  {
+			"from": "Thomas",
+			"to": "nasa_artemis.se1"
+		  },
+		  {
+			"from": "admin",
+			"to": "nasa_artemis.admin1"
+		  },
+		  {
+			"from": "Shiva",
+			"to": "nasa_artemis.se1"
+		  },
+		  {
+			"from": "Shiva",
+			"to": "nasa_artemis.admin1"
+		  },
+		  {
+			"from": "Sooraj",
+			"to": "nasa_artemis.se1"
 		  }
 		]
 	  }
 	]
-  }
+}

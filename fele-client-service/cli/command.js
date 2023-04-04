@@ -125,7 +125,7 @@ userCommand
     .action(async(options) => {
         //authentication
         const hashedPassword = sha256(options.password);
-        GLOBAL_STATE.localOrg = await getDocumentFromDatabase("fele__localorg", {
+        GLOBAL_STATE.localOrg = await getDocumentFromDatabase("fele__bid", {
             selector: {
                 organization: {
                     $eq: options.mspId

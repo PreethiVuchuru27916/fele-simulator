@@ -1,6 +1,6 @@
 fele localOrgs addUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"Shiva\",\"password\":\"shivapw\",\"role\":\"Writer\"}}"
 
-fele localOrgs deleteUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"thomas12\"}}"
+fele localOrgs deleteUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"Shiva\"}}"
 
 fele localOrgs createLocalOrg -oc create-localOrg.json
 
