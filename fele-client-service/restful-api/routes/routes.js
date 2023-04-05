@@ -12,8 +12,8 @@ module.exports = (app) => {
     app.use(cookieParser())
     app.use(bodyParser.json())
     
-    app.use('/channel', channelRoutes)
-    app.use('/network', networkRoutes)
-    app.use('/user', userRoutes)
-    app.use('/localorganization', localOrgRoutes)
+    app.use('/api/channel', channelRoutes)
+    app.use('/api/network', networkRoutes)
+    app.use('/api/user', userRoutes)
+    app.use('/api/localorganization', localOrgRoutes)
 }
