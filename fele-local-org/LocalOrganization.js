@@ -1,5 +1,4 @@
 const {createDatabase, insertToDatabase, getDocumentFromDatabase, updateDocument} = require('../fele-client-service/utils/db')
-const { sha256 } = require('../fele-client-service/utils/helpers')
 const { v4: uuidv4 } = require('uuid')
 const {LORG_ID_PREFIX, LORG_FMT, BID} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
@@ -17,45 +16,31 @@ const createOrganization = async (organization, localUsers) => {
         localUsers
     }
 
+    let docs
     try{
-        let docs
-        try{
-             ({docs} = await getDocumentFromDatabase(BID, {
-                selector: {
-                    organization: {
-                        $eq: organization
-                    }
+        ({docs} = await getDocumentFromDatabase(BID, {
+            selector: {
+                organization: {
+                    $eq: organization
                 }
-            }))
-        } catch {
-            await createDatabase(BID)
-            await insertToDatabase(BID, organizationConfig)
-            return;
-        }
-    
-        if(docs.length > 0) {
-            throw new Error(`FAILED!! Organization with name: '${organization}' exists.`)
-        } else {
-            await insertToDatabase(BID, organizationConfig)
-        }
-    } catch(error) {
-        logger.error(error)
-        throw new Error("[Unable to create organization] ", error)
+            }
+        }))
+    } catch {
+        await createDatabase(BID)
+        await insertToDatabase(BID, organizationConfig)
+        return;
+    }
+
+    if(docs.length > 0) {
+        throw new Error(`FAILED!! Organization with name: '${organization}' exists.`)
+    } else {
+        await insertToDatabase(BID, organizationConfig)
     }
 
 }
 
 const addLocalUser = async (organization, username, password, role) => {
-
-    let {docs} = await getDocumentFromDatabase(BID, {
-        selector: {
-            organization: {
-                $eq: organization
-            }
-        }     
-    })
-
-    let localUsers = docs[0].localUsers || []
+    let localUsers = await getAllLocalUsers()
     let duplicateFound = false
     localUsers.forEach(user => {
         if(user.username === username) {
@@ -74,20 +59,26 @@ const addLocalUser = async (organization, username, password, role) => {
 }
 
 const deleteLocalUser = async (organization, username) => {
-    let {docs} = await getDocumentFromDatabase(BID, {
-        selector: {
-            organization: {
-                $eq: organization
-            }
-        }     
-    })
-    let localUsers = docs[0].localUsers || []
+    
+    let localUsers = await getAllLocalUsers(organization)
+
     localUsers = localUsers.filter((user) => {
         return user.username !== username
     })
 
     docs[0].localUsers = localUsers
     await updateDocument(BID, docs[0])
+}
+
+const getAllLocalUsers = async (organization) => {
+    const {docs} = await getDocumentFromDatabase(BID, {
+        selector: {
+            organization: {
+                $eq: organization
+            }
+        }     
+    })
+    return docs[0].localUsers || []
 }
 module.exports = {
     createOrganization,

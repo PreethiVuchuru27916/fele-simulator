@@ -1,4 +1,5 @@
 const localOrg = require('../LocalOrganization')
+const logger = require('../../fele-client-service/utils/logger')
 
 const loginLocalUser = (req, res) => {
 
@@ -16,8 +17,9 @@ const createOrganization = async (req, res) => {
             message: "Local organization created successfully"
         })
     } catch(error) {
+        logger.error(error)
         res.status(500).send({
-            message: error
+            message: error.message
         })
     }
     
@@ -58,6 +60,7 @@ const deleteLocalUser = async (req, res) => {
             try{
                 await localOrg.deleteLocalUser(organization, username)
             } catch(error) {
+                logger.error(error)
                 res.status(500).send({
                     message: error
                 })
@@ -70,8 +73,19 @@ const deleteLocalUser = async (req, res) => {
     }
 }
 
-const getAllLocalUsers = (req, res) => {
+const getAllLocalUsers = async (req, res) => {
 
+    try {
+        const organization = req.organization
+        //const organization = req.headers.organization
+        const localUsers = await localOrg.getAllLocalUsers(organization)
+        res.status(200).send(localUsers)
+    } catch(error) {
+        logger.error(error)
+        res.status(500).send({
+            message: error
+        })
+    }
 }
 
 const getAllUserMappings = (req, res) => {
@@ -88,4 +102,18 @@ const deleteMappping = (req, res) => {
 
 const getCurrentUserMapping = (req, res) => {
 
+}
+
+module.exports = {
+    loginLocalUser,
+    registerLocalUser,
+    createOrganization,
+    addLocalUser,
+    updateLocalUser,
+    deleteLocalUser,
+    getAllLocalUsers,
+    getAllUserMappings,
+    addNewMapping,
+    deleteMappping,
+    getCurrentUserMapping
 }
