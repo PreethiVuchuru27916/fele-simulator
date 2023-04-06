@@ -147,7 +147,6 @@ registerCommand.commands.forEach((cmd) => {
         cmd.option('-ccn, --chaincodeName <chaincodeName>', 'Name of the chaincode')
     });
 
-/************************Chaincode Commands*********************/
 chaincodeCommand
     .command('invoke')
     .option('-nn, --networkName <networkName>', 'Name of the network')
@@ -156,6 +155,7 @@ chaincodeCommand
     .option('-ca, --chaincodeArgument <chaincodeArgument>', 'Argument passed to the chaincode')
     .action(async(options) => {
         var json = options.chaincodeArgument;
+        console.log("Chaincode Argument", json);
         json = JSON.parse(json);
         return invokeChaincodeCLI(options.networkName, options.channelName, options.chaincodeName, json); 
     });

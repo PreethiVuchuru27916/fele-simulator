@@ -4,8 +4,7 @@ const logger = require('../../utils/logger');
 const {NETWORK_BASEPATH,USER_WORKSPACE} = require('../../../globals')
 const { checkIfDatabaseExists, getDocumentFromDatabase} = require('../../utils/db')
 const { NETWORK_PREFIX } = require('../../utils/constants')
-const { getChannelSelector } = require('../../utils/helpers')
-
+const { getChannelSelector, copyFolderSync } = require('../../utils/helpers')
 
 
 async function createChaincode(networkName, channelName, chaincodeName) {
@@ -18,11 +17,9 @@ async function createChaincode(networkName, channelName, chaincodeName) {
             const chaincodePath = path.join(NETWORK_BASEPATH, networkName, channelName, chaincodeName)
             try {
                 if (!fs.existsSync(chaincodePath)) {
-                    fs.mkdirSync(chaincodePath)
-                    console.log('Directory created.')
-                    fs.copyFileSync(USER_WORKSPACE+'/'+chaincodeName+'.js',NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/'+chaincodeName+'.js')
+                    copyFolderSync(USER_WORKSPACE+'/'+chaincodeName, NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName, {recursive: true})
                 } else {
-                console.log('Directory already exists.')
+                    console.log('Directory already exists.')
                 }
             }
             catch (err) {
@@ -42,19 +39,22 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
         const { docs } = await getDocumentFromDatabase(database, getChannelSelector(channelName))
         if (docs.length > 0) {
             try{
-                const chcode = require(NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/'+chaincodeName);
+                const chcode = require(NETWORK_BASEPATH+'/'+networkName+'/'+channelName+'/'+chaincodeName+'/index');
                 const chClass = new chcode[chaincodeName]();
                 const functionToCall = argumentJSON.Args[0];
                 const functionArgs = argumentJSON.Args.slice(1);
                 try{
-                await chClass[functionToCall](...functionArgs)
-                logger.info("Transaction successful");
+                    const txnResult = await chClass[functionToCall](...functionArgs)
+                    console.log(txnResult)
+                    logger.info("Transaction successful");
                 }
                 catch(err){
-                logger.error(err);
+                    console.log(err);
+                    logger.error(err);
                 }
             }
             catch(err){
+                console.log(err);
                 logger.error(chaincodeName + " does not exist.");
             }
         }

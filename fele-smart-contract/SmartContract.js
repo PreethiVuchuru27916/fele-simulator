@@ -14,6 +14,10 @@ class SmartContract {
   static putState(key, value) {
     return this.ctx.putState(key, value);
   }
+
+  static deleteState(key) {
+    return this.ctx.deleteState(key);
+  }
 }
 
 module.exports = {

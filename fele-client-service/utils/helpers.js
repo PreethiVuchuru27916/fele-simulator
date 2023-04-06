@@ -1,6 +1,8 @@
 const { createHash, generateKeyPairSync } = require('crypto')
 const forge = require("node-forge");
 const pki = forge.pki;
+const fs = require('fs');
+const path = require("path");
 
 const sha256 = (content) => {  
     return createHash('sha256').update(content).digest('hex')
@@ -65,11 +67,23 @@ const generateCertificate = (user,attrs) => {
       publicKey: publicKey,
       privateKey: privateKey
     }
-  };
+};
+
+function copyFolderSync(from, to) {
+    fs.mkdirSync(to);
+    fs.readdirSync(from).forEach(element => {
+        if (fs.lstatSync(path.join(from, element)).isFile()) {
+            fs.copyFileSync(path.join(from, element), path.join(to, element));
+        } else {
+            copyFolderSync(path.join(from, element), path.join(to, element));
+        }
+    });
+}
 
 module.exports = {
     sha256,
     getChannelSelector,
     getCredentialSelector,
-    generateCertificate
+    generateCertificate,
+    copyFolderSync
 }
