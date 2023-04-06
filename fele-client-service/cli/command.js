@@ -3,7 +3,7 @@ const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
-const { registerUser, enrollUser } = require('./scripts/ca')
+const { registerUserCLI, enrollUserCLI } = require('./scripts/ca')
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localorg.json');
@@ -31,14 +31,17 @@ caCommand
     .option('-id, --id <id>', 'id for the fele user')
     .option('-a, --affiliation <affiliation>', 'id for the fele user') //orgName eg: nasa_artemis
     .action((options) => {
-        let { enrollmentID, enrollmentSecret } = registerUser(options);
+        let { enrollmentID, enrollmentSecret } = registerUserCLI(options);
         
         interpreter.enrollmentID = enrollmentID;
         interpreter.enrollmentSecret = enrollmentSecret;
 
         console.log("enrollmentID : "+enrollmentID);
         console.log("enrollmentSecret : "+enrollmentSecret);
-        
+        //fele user -u preethi -p preethi -o nasa
+        //ca register -id admin -a nasa_artemis
+        //ca enroll -id nasa.admin -s 3bUR9gy9slAgH0 -m nasa
+
         //Simulate generating enrollment id that is combination of orgname and user to have nasa_artemis.admin1
         //Simulate generating random password by the ca and giving the enrollment id and password to the user for performing the enroll step
         //Should we add Fele users to the network database?
@@ -56,13 +59,13 @@ caCommand
     .action(async(options) => {
         //Prepare a csr to send & generate a certificate for the fele user 
         if(interpreter.enrollmentID == options.enrollmentId && interpreter.enrollmentSecret == options.enrollmentSecret) {
-            console.log("Credentials valid. Enrolling user ")
-            const wallet_id = await enrollUser(options);
-            console.log(wallet_id)
+            const wallet_id = await enrollUserCLI(options);
+            console.log("CREDENTIAL ID: ", wallet_id);
+            if (wallet_id) console.log(wallet_id)
+            else console.log("User cannot be enrolled")
         }else{
             console.log("Credentials Invalid")
         }
-        //and store in the local org db
     });
 
 /************************Network Commands*********************/
