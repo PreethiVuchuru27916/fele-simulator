@@ -1,4 +1,5 @@
 const NETWORK_PREFIX = "fele__"
+const NETWORK_ID_PREFIX = "network~"
 const CHANNEL_ID_PREFIX = "channel~"
 const ORG_ID_PREFIX = "org~"
 const LORG_ID_PREFIX = "localorg~"
@@ -15,6 +16,7 @@ const GLOBAL_STATE = {
 module.exports = {
     GLOBAL_STATE,
     NETWORK_PREFIX,
+    NETWORK_ID_PREFIX,
     CHANNEL_ID_PREFIX,
     ORG_ID_PREFIX,
     LORG_ID_PREFIX,

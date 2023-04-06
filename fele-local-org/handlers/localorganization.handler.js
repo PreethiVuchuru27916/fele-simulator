@@ -41,15 +41,16 @@ const addLocalUser = async (req, res) => {
 }
 
 const updatePassword = async (req, res) => {
-    const {username, oldPassword, newPassword} = req.body
+    const {oldPassword, newPassword} = req.body
+    const {organization, username} = req
     try {
-        await localOrg.updatePassword(username, oldPassword, newPassword)
+        await localOrg.updatePassword(organization, username, oldPassword, newPassword)
         res.status(200).send({
             message: "Password updated successfully!"
         })
     } catch (error) {
         res.status(500).send({
-            message: "Unable to update password"
+            message: error
         })
     }
 }

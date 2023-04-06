@@ -1,15 +1,24 @@
 const { createDatabase, deleteDatabase, insertToDatabase } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
-const { NETWORK_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
+const { NETWORK_PREFIX, NETWORK_ID_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
 const { NETWORK_BASEPATH } = require('../../../globals')
+const { v4: uuidv4 } = require('uuid')
 const logger = require('../../utils/logger');
 
-const createNetwork = async (networkConfigJSON, networkName) => {
+const createNetwork = async (networkConfig, networkName) => {
     const database = NETWORK_PREFIX + networkName
+    const timestamp = new Date().toISOString()
+    networkConfig = {
+        _id: NETWORK_ID_PREFIX + uuidv4(),
+        fmt: "Network",
+        created_at: timestamp,
+        updated_at: timestamp,
+        ...networkConfig
+    }
     try{
         await createDatabase(database)
-        await insertToDatabase(database, JSON.parse(networkConfigJSON))
+        await insertToDatabase(database, networkConfig)
         //To create network folder under chaincode
         const dir = path.join(NETWORK_BASEPATH, networkName);
 

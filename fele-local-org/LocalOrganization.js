@@ -40,11 +40,14 @@ const createOrganization = async (organization, localUsers) => {
 }
 
 const addLocalUser = async (organization, username, password, role) => {
-    let localUsers = await getAllLocalUsers()
+    let docs = await getDocs(organization)
+    let localUsers = docs[0].localUsers || []
+    
     let duplicateFound = false
     localUsers.forEach(user => {
         if(user.username === username) {
             duplicateFound = true
+            return
         }
     });
 
@@ -59,18 +62,27 @@ const addLocalUser = async (organization, username, password, role) => {
 }
 
 const deleteLocalUser = async (organization, username) => {
+    const docs = await getDocs(organization)
+    let localUsers = docs[0].localUsers || []
+    let userObj = localUsers.findIndex((user => user.username == username))
+    if(userObj) {
+        localUsers = localUsers.filter((user) => {
+            return user.username !== username
+        })
     
-    let localUsers = await getAllLocalUsers(organization)
-
-    localUsers = localUsers.filter((user) => {
-        return user.username !== username
-    })
-
-    docs[0].localUsers = localUsers
-    await updateDocument(BID, docs[0])
+        docs[0].localUsers = localUsers
+        await updateDocument(BID, docs[0])
+    } else {
+        throw new Error("Local user not found")
+    }
 }
 
 const getAllLocalUsers = async (organization) => {
+    const docs = await getDocs(organization)
+    return docs[0].localUsers || []
+}
+
+const getDocs = async (organization) => {
     const {docs} = await getDocumentFromDatabase(BID, {
         selector: {
             organization: {
@@ -78,10 +90,26 @@ const getAllLocalUsers = async (organization) => {
             }
         }     
     })
-    return docs[0].localUsers || []
+    return docs
 }
+
+const updatePassword = async (organization, username, oldPassword, newPassword) => {
+    let docs = await getDocs(organization)
+    let localUsers = docs[0].localUsers || []
+    let userObj = localUsers.findIndex((user => user.username == username))
+    if(localUsers[userObj].password == oldPassword){
+        localUsers[userObj].password = newPassword
+        docs[0].localUsers = localUsers
+        await updateDocument(BID, docs[0])
+    } else {
+        throw new Error("Password doesnt match with the record")
+    }
+}
+
 module.exports = {
     createOrganization,
     addLocalUser,
-    deleteLocalUser
+    deleteLocalUser,
+    getAllLocalUsers,
+    updatePassword
 }

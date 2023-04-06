@@ -1,13 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-const {loginUserHandler,
+const {
     updateUserHandler,
     deleteUserHandler
 } = require('../handlers/user.handler')
-const { authenticateUser } = require('../middleware/auth')
+const Auth = require('../middleware/LocalOrgAuthentication')
 
-router.post('/:organization/login', authenticateUser)
+router.post('/:organization/login', Auth.Authenticate)
 router.post('/update', updateUserHandler)
 router.post('/delete', deleteUserHandler)
 
