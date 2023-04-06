@@ -10,7 +10,8 @@ class Context {
   constructor() {
     this.#globalState = {
       networkName: 'artemis',
-      channelName: 'uhcl_international1'
+      channelName: '',
+      invokerName: ''
     };
   }
   
