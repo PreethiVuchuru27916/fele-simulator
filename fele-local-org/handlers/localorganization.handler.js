@@ -23,18 +23,16 @@ const createOrganization = async (req, res) => {
 
 const addLocalUser = async (req, res) => {
     const {username, password, role} = req.body
-    const organization = req.header.organization
-    if(organization) {
-        try{
-            await localOrg.addLocalUser(organization, username, password, role)
-        } catch(error) {
-            res.status(500).send({
-                message: error
-            })
-        }
-    } else {
-        res.status(400).send({
-            message: "Mandatory header 'organization'is missing in the request"
+    const {organization} = req
+    console.log(username, password, role, organization)
+    try{
+        await localOrg.addLocalUser(organization, username, password, role)
+        res.status(500).send({
+            message: `user ${username} added successfully`
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
         })
     }
 
@@ -56,34 +54,31 @@ const updatePassword = async (req, res) => {
 }
 
 const deleteLocalUser = async (req, res) => {
-    const {username} = req.body
+    const {username} = req.params
+    const organization = req.organization
     if(username == req.username) {
         res.status(500).send({
             message: "User(Admin) cannot delete himself"
         })
     } else{
-        const organization = req.header.organization
-        if(organization) {
-            try{
-                await localOrg.deleteLocalUser(organization, username)
-            } catch(error) {
-                logger.error(error)
-                res.status(500).send({
-                    message: error
-                })
-            }
-        } else {
-            res.status(400).send({
-                message: "Mandatory header 'organization'is missing in the request"
+        try{
+            await localOrg.deleteLocalUser(organization, username)
+            res.status(200).send({
+                message: "user deleted successfully"
             })
-        }
+        } catch(error) {
+            logger.error(error)
+            res.status(500).send({
+                message: error.message
+            })
+        }   
     }
 }
 
 const getAllLocalUsers = async (req, res) => {
-
     try {
         const organization = req.headers.organization
+        console.log("org: ", organization)
         const localUsers = await localOrg.getAllLocalUsers(organization)
         res.status(200).send(localUsers)
     } catch(error) {

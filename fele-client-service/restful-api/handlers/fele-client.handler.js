@@ -54,7 +54,7 @@ const deleteNetworkHandler = async (req, res) => {
     const { networkName } = req.query
     try {
         await deleteNetwork(networkName)
-        res.status(204).send({
+        res.status(200).send({
             message: `Network ${networkName} Deleted Successfully!`
         })
 
