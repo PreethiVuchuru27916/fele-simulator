@@ -1,10 +1,6 @@
 const localOrg = require('../LocalOrganization')
 const logger = require('../../fele-client-service/utils/logger')
 
-const loginLocalUser = (req, res) => {
-
-}
-
 const registerLocalUser = (req, res) => {
 
 }
@@ -44,8 +40,18 @@ const addLocalUser = async (req, res) => {
 
 }
 
-const updateLocalUser = (req, res) => {
-
+const updatePassword = async (req, res) => {
+    const {username, oldPassword, newPassword} = req.body
+    try {
+        await localOrg.updatePassword(username, oldPassword, newPassword)
+        res.status(200).send({
+            message: "Password updated successfully!"
+        })
+    } catch (error) {
+        res.status(500).send({
+            message: "Unable to update password"
+        })
+    }
 }
 
 const deleteLocalUser = async (req, res) => {
@@ -76,8 +82,7 @@ const deleteLocalUser = async (req, res) => {
 const getAllLocalUsers = async (req, res) => {
 
     try {
-        const organization = req.organization
-        //const organization = req.headers.organization
+        const organization = req.headers.organization
         const localUsers = await localOrg.getAllLocalUsers(organization)
         res.status(200).send(localUsers)
     } catch(error) {
@@ -105,11 +110,10 @@ const getCurrentUserMapping = (req, res) => {
 }
 
 module.exports = {
-    loginLocalUser,
     registerLocalUser,
     createOrganization,
     addLocalUser,
-    updateLocalUser,
+    updatePassword,
     deleteLocalUser,
     getAllLocalUsers,
     getAllUserMappings,

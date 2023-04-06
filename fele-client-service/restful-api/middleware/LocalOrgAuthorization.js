@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET
 
 class LocalOrgAuthorization {
-    Authorize = async (req, res, next, role) => {
+    Authorize = async (req, res, next, role, any=false) => {
         const token = req.cookies.access_token
 
         if(!token) {
@@ -14,7 +14,7 @@ class LocalOrgAuthorization {
 
         try{
             const userData = jwt.verify(token, JWT_SECRET)
-            if(userData.role == role) {
+            if((userData.role == role) || any) {
                 req.username = userData.username
                 req.userRole = userData.role
                 req.organization = userData.organization
@@ -37,6 +37,9 @@ class LocalOrgAuthorization {
     }
     Writer = (req, res, next) => {
         this.Authorize(req, res, next, "Writer")
+    }
+    Any = (req, res, next) => {
+        this.Authorize(req, res, next, "Any", true)
     }
 }
 

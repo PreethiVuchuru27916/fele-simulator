@@ -6,7 +6,6 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 class LocalOrgAuthentication {
     Authenticate = async (req, res, next) => {
-        //const organization = req.headers.organization
         const organization = req.headers.organization
         console.log(organization)
         if(organization) {
