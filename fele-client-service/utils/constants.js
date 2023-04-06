@@ -1,6 +1,8 @@
 const NETWORK_PREFIX = "fele__"
 const NETWORK_ID_PREFIX = "network~"
 const CHANNEL_ID_PREFIX = "channel~"
+const WALLET_ID_PREFIX = "wallet~"
+const CREDENTIAL_ID_PREFIX = "credential~"
 const ORG_ID_PREFIX = "org~"
 const LORG_ID_PREFIX = "localorg~"
 const LORG_FMT = "LocalOrganization"
@@ -23,5 +25,6 @@ module.exports = {
     LORG_FMT,
     ORG_FMT,
     BID,
-
+    WALLET_ID_PREFIX,
+    CREDENTIAL_ID_PREFIX
 }

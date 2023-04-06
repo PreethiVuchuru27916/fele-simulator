@@ -21,7 +21,6 @@ const createNetwork = async (networkConfig, networkName) => {
         await insertToDatabase(database, networkConfig)
         //To create network folder under chaincode
         const dir = path.join(NETWORK_BASEPATH, networkName);
-
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir)
         }
