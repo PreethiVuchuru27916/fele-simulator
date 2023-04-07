@@ -28,6 +28,16 @@ const getCredentialSelector = (feleUser) => {
     }
 }
 
+const getEnrollmentSelector = (enrollmentId) => {
+    return {
+        selector: {
+            enrollmentId: {
+                $eq: enrollmentId
+            }
+        }
+    }
+}
+
 const generateCertificate = (user,attrs) => {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
       modulusLength: 2048,
@@ -84,6 +94,7 @@ module.exports = {
     sha256,
     getChannelSelector,
     getCredentialSelector,
+    getEnrollmentSelector,
     generateCertificate,
     copyFolderSync
 }
