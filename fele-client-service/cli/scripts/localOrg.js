@@ -27,7 +27,7 @@ const addLocalUserCLI = async(adminUsername, adminPassword, json) => {
     admin = await isAdmin(org, adminUsername, adminPassword)
     if (admin){
       const { message } = await addLocalUser(json);
-      console.log(message)
+      logger.info(message)
     }
     else{
       logger.error("Not an admin. Only admin can add a user.")
@@ -45,7 +45,7 @@ const deleteLocalUserCLI = async(adminUsername, adminPassword, json) => {
     admin = await isAdmin(org, adminUsername, adminPassword)
     if (admin){
       const { message } = await deleteLocalUser(json);
-      console.log(message);
+      logger.info(message);
     }
     else{
       logger.error("Not an admin. Only admin can delete a user.")
@@ -63,7 +63,7 @@ const mapLocalUserCLI = async(adminUsername, adminPassword, json) => {
     admin = await isAdmin(org, adminUsername, adminPassword)
     if (admin){
       const { message } = await mapLocalUser(json);
-      console.log(message);
+      logger.info(message);
     }
     else{
       logger.error("Not an admin. Only admin can map a user.")
@@ -81,7 +81,7 @@ const deleteMappingCLI = async(adminUsername, adminPassword, json) => {
     admin = await isAdmin(org, adminUsername, adminPassword)
     if (admin){
       const { message } = await deleteMapping(json);
-      console.log(message);
+      logger.info(message);
     }
     else{
       logger.error("Not an admin. Only admin can map a user.")
