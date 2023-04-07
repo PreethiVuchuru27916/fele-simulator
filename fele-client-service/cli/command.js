@@ -4,7 +4,7 @@ const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
 const { registerUserCLI, enrollUserCLI } = require('./scripts/ca')
-const { createOrganizationCLI, addLocalUserCLI, deleteLocalUserCLI, mapLocalUserCLI } = require('./scripts/localOrg')
+const { createOrganizationCLI, addLocalUserCLI, deleteLocalUserCLI, mapLocalUserCLI, deleteMappingCLI } = require('./scripts/localOrg')
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localOrg.json');
@@ -256,6 +256,17 @@ localOrgsCommand
         var json = options.userArgument;
         json = JSON.parse(json);
         return await mapLocalUserCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+localOrgsCommand
+    .command('deleteMapping')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'user details to be mapped in JSON format')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await deleteMappingCLI(options.adminUsername, options.adminPassword, json);
     })
 
 

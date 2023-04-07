@@ -1,7 +1,7 @@
 const { USER_WORKSPACE } = require('../../../globals')
 const path = require('path')
 const logger = require('../../utils/logger')
-const { createOrganization, addLocalUser, deleteLocalUser, mapLocalUser } = require('../../client-api/scripts/localOrg')
+const { createOrganization, addLocalUser, deleteLocalUser, mapLocalUser, deleteMapping } = require('../../client-api/scripts/localOrg')
 const { isAdmin } = require('../../client-api/scripts/authorization')
 
 
@@ -74,9 +74,28 @@ const mapLocalUserCLI = async(adminUsername, adminPassword, json) => {
   }
 }
 
+const deleteMappingCLI = async(adminUsername, adminPassword, json) => {
+  try{
+    const org = json["organization"]
+    var admin = false
+    admin = await isAdmin(org, adminUsername, adminPassword)
+    if (admin){
+      const { message } = await deleteMapping(json);
+      console.log(message);
+    }
+    else{
+      logger.error("Not an admin. Only admin can map a user.")
+    }
+  }
+  catch(e){
+    logger.error(e)
+  }
+}
+
 module.exports = {
     createOrganizationCLI,
     addLocalUserCLI,
     deleteLocalUserCLI,
-    mapLocalUserCLI
+    mapLocalUserCLI,
+    deleteMappingCLI
 }

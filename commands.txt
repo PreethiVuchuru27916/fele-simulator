@@ -1,8 +1,9 @@
 fele localOrgs addUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"Shiva\",\"password\":\"shivapw\",\"role\":\"Writer\"}}"
 
-fele localOrgs deleteUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"user\":{\"username\":\"Shiva\"}}"
+fele localOrgs deleteUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"username\":\"Shiva\"}"
 
 fele localOrgs createLocalOrg -oc create-localOrg.json
 
-fele localOrgs mapUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"fele_network\":\"artemis\",\"fele_user\":\"nasa_artemis.se1\",\"user\":{\"username\":\"Shiva\"}}"
+fele localOrgs mapUser -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"fele_network\":\"artemis\",\"fele_channel\":\"channel1\",\"fele_user\":\"nasa_artemis.se1\",\"username\":\"Shiva\"}"
 
+fele localOrgs deleteMapping -u admin -p adminpw -ua "{\"organization\":\"nasa\",\"fele_network\":\"artemis\",\"fele_channel\":\"channel1\",\"fele_user\":\"nasa_artemis.se1\",\"username\":\"Shiva\"}"
