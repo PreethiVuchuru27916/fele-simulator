@@ -1,10 +1,10 @@
 const { Context } = require("./Context");
 
-class SmartContract extends Context {
+class SmartContract {
   static ctx = new Context();
   
   constructor() {
-    super();
+    
   }
 
   static getState(key) {
