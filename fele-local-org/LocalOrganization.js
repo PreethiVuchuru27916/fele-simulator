@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid')
 const {LORG_ID_PREFIX, LORG_FMT, BID} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
 const {getSelector, selectorForLocalOrganization} = require('../fele-client-service/utils/helpers')
+const { forEach } = require('lodash')
 
 const createOrganization = async (organization, localUsers) => {
     //expected to receive encrypted passwords(local users) from client side
@@ -98,8 +99,25 @@ const deleteLocalUser = async (organization, username) => {
         })
     
         docs[0].localUsers = localUsers
+        const networks = Object.keys(docs[0].feleNetworks)
+        const feleNetworks = docs[0].feleNetworks
+        const updatedFeleNetworks = await deleteUserMappingsInAllNetworks(feleNetworks, networks, username)  
+        docs[0].feleNetworks = updatedFeleNetworks
         await updateDocument(BID, docs[0])
+        
     }
+}
+
+const deleteUserMappingsInAllNetworks = async (feleNetworks, networks, username) => {
+    networks.forEach(network => {
+        const mappings = feleNetworks[network].mappings
+        const updatedMap = mappings.filter((mapping) => {
+            return mapping.from !== username
+        })
+        feleNetworks[network].mappings = updatedMap
+    })
+    return feleNetworks
+    
 }
 
 const getAllLocalUsers = async (organization) => {
@@ -148,6 +166,91 @@ const addCertToWallet = async (feleUser, credentialId) => {
     return walletId
 }
 
+const getCurrentUserMapping = async (username, organization, network) => {
+    console.log(organization)
+    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
+    console.log(docs)
+    if(docs.length > 0) {
+        const feleNet = docs[0].feleNetworks[network]
+        if(feleNet) {
+            const mappedIndex = feleNet.mappings.findIndex((mapping => mapping.from == username))
+            let mapping = {}
+            if(mappedIndex == -1) {
+                mapping.mapped = false
+                mapping.feleUser = ""
+            } else {
+                mapping.mapped = true
+                mapping.feleUser = feleNet.mappings[mappedIndex].to
+                mapping.walletId = feleNet.feleUsers.filter((user) => user.feleUserId == mapping.feleUser)[0].walletId
+            }
+            mapping.localUser = username
+            return mapping
+        }
+        throw new Error("Network not found in local organization")
+    }
+    throw new Error("Local organization not found")
+}
+
+const getAllUserMappings = async (organization, network) => {
+    console.log(organization)
+    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
+    console.log(docs)
+    if(docs.length > 0) {
+        const feleNet = docs[0].feleNetworks[network]
+        if(feleNet) {
+            const mappings =  feleNet.mappings.map((mapping)=> {
+                return {
+                    localUser: mapping.from,
+                    feleUser: mapping.to,
+                    walletId: feleNet.feleUsers.filter((user) => user.feleUserId == mapping.to)[0].walletId
+                }
+            })
+            return mappings
+        }
+        throw new Error("Network not found in local organization")
+    }
+    throw new Error("Local organization not found")
+}
+
+const addNewMapping = async (organization, network, from, to) => {
+    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
+    if(docs.length > 0) {
+        console.log(docs[0])
+        const feleNet = docs[0].feleNetworks[network]
+        console.log(feleNet)
+        if(feleNet) {
+            const mapIdx = feleNet.mappings.findIndex((mapping => mapping.from == from))
+            if(mapIdx == -1) {
+                docs[0].feleNetworks[network].mappings.push({from, to})
+            } else {
+                docs[0].feleNetworks[network].mappings[mapIdx].to = to
+            }
+            await updateDocument(BID, docs[0])
+            return
+        }
+        throw new Error("Network not found in local organization")
+    }
+    throw new Error("Local organization not found")
+}
+
+const deleteMappping = async (organization, network, username) => {
+    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
+    if(docs.length > 0) {
+        const feleNet = docs[0].feleNetworks[network]
+        if(feleNet) {
+            const mappings = docs[0].feleNetworks[network].mappings
+            const updatedMap = mappings.filter((mapping) => {
+                return mapping.from !== username
+            })
+            docs[0].feleNetworks[network].mappings = updatedMap
+            await updateDocument(BID, docs[0])
+            return
+        }
+        throw new Error("Network not found in local organization")
+    }
+    throw new Error("Local organization not found")
+}
+
 module.exports = {
     createOrganization,
     addLocalUser,
@@ -155,5 +258,9 @@ module.exports = {
     getAllLocalUsers,
     updatePassword,
     addCertToWallet,
-    addNetworkToLocalOrgConfig
+    addNetworkToLocalOrgConfig,
+    getCurrentUserMapping,
+    getAllUserMappings,
+    addNewMapping,
+    deleteMappping
 }

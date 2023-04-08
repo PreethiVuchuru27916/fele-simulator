@@ -119,22 +119,79 @@ const addCertToWallet = async (req, res) => {
     }
 }
 
-const getAllUserMappings = (req, res) => {
-
-}
-
-const addNewMapping = (req, res) => {
+const getAllUserMappings = async (req, res) => {
     const {organization} = req
-
-
+    const network = req.query.network
+    if(!network) {
+        res.status(400).send({
+            message: "network query param is missing! "
+        })
+        return
+    }
+    try {
+        const mappings = await localOrg.getAllUserMappings(organization, network)
+        res.status(200).send(mappings)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
 }
 
-const deleteMappping = (req, res) => {
-
+const addNewMapping = async (req, res) => {
+    const {organization} = req
+    const network = req.query.network
+    const {from, to} = req.body
+    try {
+        await localOrg.addNewMapping(organization, network, from, to)
+        res.status(200).send({
+            message: "User mapped to "+to+" successfully"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
 }
 
-const getCurrentUserMapping = (req, res) => {
+const deleteMappping = async (req, res) => {
+    const {organization, username} = req
+    const {network, username: localUser} = req.query
+    if(username == localUser) {
+        res.status(500).send({
+            message: "Admin (user) cannot delete his own mapping"
+        })
+        return
+    }
+    try{
+        await localOrg.deleteMappping(organization, network, localUser)
+        res.status(200).send({
+            message: "User mapped deleted"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
 
+const getCurrentUserMapping = async (req, res) => {
+    const {organization, username} = req
+    const network =req.query.network
+    if(!network) {
+        res.status(400).send({
+            message: "network query param is missing! "
+        })
+        return
+    }
+    try {
+        const mapping = await localOrg.getCurrentUserMapping(username, organization, network)
+        res.status(200).send(mapping)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
 }
 
 module.exports = {

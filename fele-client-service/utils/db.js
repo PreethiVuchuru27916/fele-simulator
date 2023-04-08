@@ -72,7 +72,6 @@ const getDocumentByID = async (databaseName, documentId) => {
  */
 const updateDocument = async (databaseName, updatedDocument) => {
     try {
-        console.log(updatedDocument)
         const update = await couch.update(databaseName, updatedDocument)
         return update
     } catch (e) {

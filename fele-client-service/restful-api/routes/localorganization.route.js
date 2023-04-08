@@ -11,11 +11,11 @@ router.post('/add-network', Authorize.Admin, localOrg.addNetworkToLocalOrgConfig
 router.post('/add-user', Authorize.Admin, localOrg.addLocalUser) //DONE VERIIFED
 router.delete('/delete-user/:username', Authorize.Admin, localOrg.deleteLocalUser) //DONE VERIFIED
 router.put('/user/update-password', Authorize.Any, localOrg.updatePassword) //DONE VERIFIED
-router.get('/get-all-users', localOrg.getAllLocalUsers)  //DONE VERIFIED
-router.post('/wallet/add-cert', localOrg.addCertToWallet)
-router.get('/mappings', Authorize.Admin, localOrg.getAllUserMappings) 
-router.get('/mappings/current-user', localOrg.getCurrentUserMapping)
-router.post('/mappings/add', Authorize.Admin, localOrg.addNewMapping)
-router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping)
+router.get('/get-all-users', Authorize.Admin, localOrg.getAllLocalUsers)  //DONE VERIFIED
+router.post('/wallet/add-cert', Authorize.Any, localOrg.addCertToWallet) //DONE VERIFIED
+router.get('/mappings', Authorize.Admin, localOrg.getAllUserMappings) //DONE
+router.get('/mappings/current-user', Authorize.Any, localOrg.getCurrentUserMapping) //DONE VERIFIED
+router.post('/mappings/add', Authorize.Admin, localOrg.addNewMapping) //DONE VERIFIED
+router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping) //DONE VERFIED
 
 module.exports = router
