@@ -25,7 +25,7 @@ const registerUser = (options) => {
     }
 }
 
-const enrollUser = async(options) => {
+const enrollUser = async(options, unique=true) => {
     const args = { orgName: options.mspId };
     
     const dbStatus = await checkIfDatabaseExists(BID)
@@ -33,9 +33,12 @@ const enrollUser = async(options) => {
         await createDatabase(BID)
     }
 
-    const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
-    if (docs.length > 0) {
-        throw new Error(`Fele user ${options.enrollmentID} exists. please choose a differnet name`)
+    if(unique) {
+        const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
+    
+        if (docs.length > 0) {
+            throw new Error(`Fele user ${options.enrollmentId} exists. please choose a differnet name`)
+        }
     }
     
     const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
@@ -87,7 +90,7 @@ const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization)
             } finally {
                 await deleteDocument(BID, docs[0]._id, docs[0]._rev)
             }
-            
+
         } else {
             throw new Error("Enrollment secret mismatch")
         }

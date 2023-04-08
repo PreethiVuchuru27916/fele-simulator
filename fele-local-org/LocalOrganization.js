@@ -2,7 +2,7 @@ const {createDatabase, insertToDatabase, getDocumentFromDatabase, updateDocument
 const { v4: uuidv4 } = require('uuid')
 const {LORG_ID_PREFIX, LORG_FMT, BID} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
-const {getSelector} = require('../fele-client-service/utils/helpers')
+const {getSelector, selectorForLocalOrganization} = require('../fele-client-service/utils/helpers')
 
 const createOrganization = async (organization, localUsers) => {
     //expected to receive encrypted passwords(local users) from client side
@@ -41,8 +41,32 @@ const createOrganization = async (organization, localUsers) => {
 
 }
 
-const addNetworkToLocalOrgConfig = (organization, feleAdminCredentials ) => {
+const addNetworkToLocalOrgConfig = async (networkName, feleAdmin, walletId, organization, username) => {
+    console.log(selectorForLocalOrganization(organization))
+    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
+    console.log(docs)
+    if(docs.length > 0) {
+        docs[0].feleNetworks[networkName] = {
+            feleOrgId: organization,
+            feleChannel: [],
+            feleUsers: [
+                {
+                    feleUserId: feleAdmin,
+                    walletId
+                }
+            ],
+            mappings: [
+                {
+                    from: username,
+                    to: feleAdmin
+                }
+            ]
+        }
 
+        await updateDocument(BID, docs[0])
+    } else {
+        throw new Error("Erro retrieving local organization information")
+    }
 }
 
 const addLocalUser = async (organization, username, password, role) => {
@@ -121,6 +145,7 @@ const addCertToWallet = async (feleUser, credentialId) => {
         docs[0].credentials.push(credentialId)
         await updateDocument(BID, docs[0])
     }
+    return walletId
 }
 
 module.exports = {

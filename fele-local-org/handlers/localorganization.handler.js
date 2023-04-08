@@ -21,8 +21,18 @@ const createOrganization = async (req, res) => {
 }
 
 const addNetworkToLocalOrgConfig = async (req, res) => {
-    const {organization, feleAdmin} = req.body
-    res.send("TO BE DONE")
+    const {networkName, feleAdmin, walletId} = req.body
+    const {organization, username} = req
+    try {
+        await localOrg.addNetworkToLocalOrgConfig(networkName, feleAdmin, walletId, organization, username)
+        res.status(200).send({
+            message: "Network added to local organization configuration"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
 }
 
 const addLocalUser = async (req, res) => {
@@ -115,7 +125,7 @@ const getAllUserMappings = (req, res) => {
 
 const addNewMapping = (req, res) => {
     const {organization} = req
-    
+
 
 }
 

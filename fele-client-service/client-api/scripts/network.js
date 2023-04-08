@@ -20,11 +20,14 @@ const createNetwork = async (networkConfig, networkName, initiator) => {
     }
     
     await createDatabase(database)
+
     const adminCred = await CA.enrollUser({mspId: initiator.organization, enrollmentId: `${initiator.organization.toLowerCase()}.admin`})
     const feleUser = `${initiator.organization.toLowerCase()}.admin`
+
     networkConfig.administrator = feleUser
+
     await insertToDatabase(database, networkConfig)
-    await addCertToWallet(feleUser, adminCred)
+    const walletId = await addCertToWallet(feleUser, adminCred)
     //To create network folder under chaincode
     const dir = path.join(NETWORK_BASEPATH, networkName);
     if (!fs.existsSync(dir)) {
@@ -36,7 +39,8 @@ const createNetwork = async (networkConfig, networkName, initiator) => {
         initiator: {
             organization: initiator.organization,
             feleUser: `${initiator.organization.toLowerCase()}.admin`,
-            credential: adminCred
+            credential: adminCred,
+            walletId
         }
     }
 }

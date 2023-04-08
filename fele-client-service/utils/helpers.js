@@ -44,6 +44,19 @@ const getSelector = (key, value) => {
     return sel
 }
 
+const selectorForLocalOrganization = (orgName) => {
+    return {
+        selector: {
+            fmt: {
+                $eq: "LocalOrganization"
+            },
+            organization: {
+                $eq: orgName
+            }
+        }
+    }
+}
+
 const generateCertificate = (user,attrs) => {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
       modulusLength: 2048,
@@ -102,6 +115,7 @@ module.exports = {
     getChannelSelector,
     getCredentialSelector,
     getEnrollmentSelector,
+    selectorForLocalOrganization,
     getSelector,
     generateCertificate,
     copyFolderSync
