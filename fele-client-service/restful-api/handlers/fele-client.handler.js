@@ -5,18 +5,12 @@ const createNetworkHandler = async (req, res) => {
     try {
         let {networkName} = req.query
         networkName = networkName.toLowerCase()
-        const networkConfig = req.body
-        await createNetwork(networkConfig, networkName)
-        res.status(201).send({
-            message: "Network Created Successfully",
-            data: { 
-                networkName,
-                ...req.body 
-            }
-        })
+        const {networkConfig, initiator} = req.body
+        const response = await createNetwork(networkConfig, networkName, initiator)
+        res.status(201).send(response)
     } catch (e) {
         res.status(500).send({
-            error: e.message
+            message: "Error creating network: "+e.message
         })
     }
 }

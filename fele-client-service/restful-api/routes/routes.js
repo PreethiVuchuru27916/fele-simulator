@@ -16,5 +16,5 @@ module.exports = (app) => {
     app.use('/api/fele/network', networkRoutes)
     app.use('/api/fele/user', userRoutes)
     app.use('/api/localorganization', localOrgRoutes)
-    app.use('/api/fele/ca/user', caRoutes)
+    app.use('/api/fele/ca', caRoutes)
 }

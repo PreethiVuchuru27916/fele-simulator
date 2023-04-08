@@ -24,7 +24,25 @@ const enrollFeleUser = async (req, res) => {
     }
 }
 
+const getAllUserCredentialsForUser = async (req, res) => {
+    const feleUser = req.query.feleUser
+    if(feleUser) {
+        try{
+            const creds = await CA.getAllCredentialsForUser(feleUser)
+            console.log(creds)
+            res.status(200).send(creds)
+        } catch (error) {
+            res.status(500).send({
+                message: error.message
+            })
+        }
+    } else {
+        throw new Error("feleUser is required as query param")
+    }
+}
+
 module.exports = {
     registerFeleUser,
-    enrollFeleUser
+    enrollFeleUser,
+    getAllUserCredentialsForUser
 }

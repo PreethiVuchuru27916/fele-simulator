@@ -2,9 +2,9 @@ const crypto = require("crypto");
 const generator = require('generate-password');
 const forge = require("node-forge");
 const pki = forge.pki;
-const { insertToDatabase, checkIfDatabaseExists, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
+const { insertToDatabase, checkIfDatabaseExists, getDocumentFromDatabase, deleteDocument, createDatabase } = require('../../utils/db')
 const { v4: uuidv4 } = require('uuid')
-const { getCredentialSelector, getEnrollmentSelector, generateCertificate, sha256 } = require('../../utils/helpers')
+const { getCredentialSelector, getEnrollmentSelector, getSelector, generateCertificate, sha256 } = require('../../utils/helpers')
 const { CREDENTIAL_ID_PREFIX } = require('../../utils/constants')
 const {BID} = require('../../utils/constants')
 
@@ -29,27 +29,27 @@ const enrollUser = async(options) => {
     const args = { orgName: options.mspId };
     
     const dbStatus = await checkIfDatabaseExists(BID)
-    if(dbStatus) {
-        const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
-        console.log(docs)
-        if (docs.length > 0) {
-            return null
-        }
-        
-        const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
-     
-        const cred_id = await insertToDatabase(BID, {
-            _id : CREDENTIAL_ID_PREFIX + uuidv4(),
-            fmt : "credential",
-            feleUser,
-            certificate,
-            publicKey,
-            privateKey
-        })
-    
-        return cred_id
+    if(!dbStatus) {
+        await createDatabase(BID)
     }
-    return null 
+
+    const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
+    if (docs.length > 0) {
+        throw new Error(`Fele user ${options.enrollmentID} exists. please choose a differnet name`)
+    }
+    
+    const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
+    
+    const cred_id = await insertToDatabase(BID, {
+        _id : CREDENTIAL_ID_PREFIX + uuidv4(),
+        fmt : "credential",
+        feleUser,
+        certificate,
+        publicKey,
+        privateKey
+    })
+
+    return cred_id
 }
 
 //Stateless
@@ -79,13 +79,29 @@ const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization)
             throw new Error('Enrollment ID not found')
         }
         if(docs[0].enrollmentSecret == enrollmentSecret) {
-            const res = await enrollUser({mspId: organization, enrollmentId})
-            await deleteDocument(BID, docs[0]._id, docs[0]._rev)
-            return res
+            try{
+                const res = await enrollUser({mspId: organization, enrollmentId})
+                return res
+            } catch(error) {
+                throw new Error(error.message)
+            } finally {
+                await deleteDocument(BID, docs[0]._id, docs[0]._rev)
+            }
+            
         } else {
             throw new Error("Enrollment secret mismatch")
         }
     }
+}
+
+const getAllCredentialsForUser = async (feleUser) => {
+    console.log("feleuser: ", getSelector("feleUser", feleUser))
+    const { docs } = await getDocumentFromDatabase(BID, getSelector("feleUser", feleUser))
+    const userCreds = docs.map(cred => {
+        
+        return cred._id
+    })
+    return userCreds
 }
 
 module.exports = {
@@ -93,5 +109,6 @@ module.exports = {
   registerUser,
   enrollUser,
   enrollUserUsingREST,
-  registerUserUsingREST
+  registerUserUsingREST,
+  getAllCredentialsForUser
 }

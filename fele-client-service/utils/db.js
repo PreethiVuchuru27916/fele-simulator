@@ -11,7 +11,7 @@ const couch = new NodeCouchDb({
 
 const createDatabase = async (databaseName) => {
     try{
-        await couch.createDatabase(databaseName)
+        return await couch.createDatabase(databaseName)
     } catch(e) {
         logger.error(e)
         throw new Error(`Error creating database ${databaseName}`)

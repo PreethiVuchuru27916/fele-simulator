@@ -17,8 +17,12 @@ const createOrganization = async (req, res) => {
         res.status(500).send({
             message: error.message
         })
-    }
-    
+    }  
+}
+
+const addNetworkToLocalOrgConfig = async (req, res) => {
+    const {organization, feleAdmin} = req.body
+    res.send("TO BE DONE")
 }
 
 const addLocalUser = async (req, res) => {
@@ -89,11 +93,29 @@ const getAllLocalUsers = async (req, res) => {
     }
 }
 
+const addCertToWallet = async (req, res) => {
+    const {feleUser, credentialId} = req.body
+    try {
+        await localOrg.addCertToWallet(feleUser, credentialId)
+        res.status(200).send({
+            feleUser,
+            walletId: `wallet~${feleUser}`,
+            message: "credential added to wallet"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
 const getAllUserMappings = (req, res) => {
 
 }
 
 const addNewMapping = (req, res) => {
+    const {organization} = req
+    
 
 }
 
@@ -115,5 +137,7 @@ module.exports = {
     getAllUserMappings,
     addNewMapping,
     deleteMappping,
-    getCurrentUserMapping
+    getCurrentUserMapping,
+    addCertToWallet,
+    addNetworkToLocalOrgConfig
 }

@@ -2,6 +2,7 @@ const {createDatabase, insertToDatabase, getDocumentFromDatabase, updateDocument
 const { v4: uuidv4 } = require('uuid')
 const {LORG_ID_PREFIX, LORG_FMT, BID} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
+const {getSelector} = require('../fele-client-service/utils/helpers')
 
 const createOrganization = async (organization, localUsers) => {
     //expected to receive encrypted passwords(local users) from client side
@@ -13,7 +14,8 @@ const createOrganization = async (organization, localUsers) => {
         created_at: timestamp,
         updated_at: timestamp,
         organization,
-        localUsers
+        localUsers,
+        feleNetworks: {}
     }
 
     let docs
@@ -39,6 +41,10 @@ const createOrganization = async (organization, localUsers) => {
 
 }
 
+const addNetworkToLocalOrgConfig = (organization, feleAdminCredentials ) => {
+
+}
+
 const addLocalUser = async (organization, username, password, role) => {
     let docs = await getDocs(organization)
     let localUsers = docs[0].localUsers || []
@@ -54,21 +60,6 @@ const addLocalUser = async (organization, username, password, role) => {
     } else {
         throw new Error(`User ${username} already exists.`)
     }
-    // localUsers.forEach(user => {
-    //     if(user.username === username) {
-    //         duplicateFound = true
-    //         return
-    //     }
-    // });
-
-    // if(duplicateFound) {
-    //     throw new Error(`User ${username} already exists.`)
-    // } else {
-    //     localUsers.push({username, password, role})
-    //     docs[0].localUsers = localUsers
-    
-    //     await updateDocument(BID, docs[0])
-    // }
 }
 
 const deleteLocalUser = async (organization, username) => {
@@ -117,10 +108,27 @@ const updatePassword = async (organization, username, oldPassword, newPassword) 
     }
 }
 
+const addCertToWallet = async (feleUser, credentialId) => {
+    const walletId = `wallet~${feleUser}`
+    const {docs} = await getDocumentFromDatabase(BID, getSelector("_id", walletId))
+    if(docs.length == 0) {
+        await insertToDatabase(BID, {
+            "_id": walletId,
+            fmt: "wallet",
+            credentials: [credentialId]
+        })
+    } else {
+        docs[0].credentials.push(credentialId)
+        await updateDocument(BID, docs[0])
+    }
+}
+
 module.exports = {
     createOrganization,
     addLocalUser,
     deleteLocalUser,
     getAllLocalUsers,
-    updatePassword
+    updatePassword,
+    addCertToWallet,
+    addNetworkToLocalOrgConfig
 }

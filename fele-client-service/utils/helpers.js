@@ -38,6 +38,12 @@ const getEnrollmentSelector = (enrollmentId) => {
     }
 }
 
+const getSelector = (key, value) => {
+    const sel = {selector: {}}
+    sel.selector[key] = {$eq: value}
+    return sel
+}
+
 const generateCertificate = (user,attrs) => {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
       modulusLength: 2048,
@@ -90,11 +96,13 @@ function copyFolderSync(from, to) {
     });
 }
 
+
 module.exports = {
     sha256,
     getChannelSelector,
     getCredentialSelector,
     getEnrollmentSelector,
+    getSelector,
     generateCertificate,
     copyFolderSync
 }
