@@ -119,6 +119,28 @@ const addCertToWallet = async (req, res) => {
     }
 }
 
+const addFeleUserToLOrg = async (req, res) => {
+    const {organization} = req
+    const network = req.query.network
+    const {feleUser} = req.body
+    if(!network) {
+        res.status(400).send({
+            message: "Network query param is missing"
+        })
+        return
+    }
+    try {
+        await localOrg.addFeleUserToLOrg(organization, network, feleUser)
+        res.status(200).send({
+            message: "Fele user added in local organization"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
 const getAllUserMappings = async (req, res) => {
     const {organization} = req
     const network = req.query.network
@@ -206,5 +228,6 @@ module.exports = {
     deleteMappping,
     getCurrentUserMapping,
     addCertToWallet,
-    addNetworkToLocalOrgConfig
+    addNetworkToLocalOrgConfig,
+    addFeleUserToLOrg
 }

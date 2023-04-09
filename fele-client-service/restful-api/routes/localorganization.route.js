@@ -17,5 +17,6 @@ router.get('/mappings', Authorize.Admin, localOrg.getAllUserMappings) //DONE
 router.get('/mappings/current-user', Authorize.Any, localOrg.getCurrentUserMapping) //DONE VERIFIED
 router.post('/mappings/add', Authorize.Admin, localOrg.addNewMapping) //DONE VERIFIED
 router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping) //DONE VERFIED
+router.post('/add-feleuser', Authorize.Admin, localOrg.addFeleUserToLOrg)
 
 module.exports = router
