@@ -163,12 +163,13 @@ const addCertToWallet = async (feleUser, credentialId) => {
 
 const addFeleUserToLOrg = async (organization, network, feleUser) => {
     const localOrg = await getLocalOrgDoc(organization)
-    const network = localOrg.feleNetworks[network]
-    if(network) {
+    const feleNet = localOrg.feleNetworks[network]
+    if(feleNet) {
         localOrg.feleNetworks[network].feleUsers.push({
             feleUserId: feleUser,
             walletId: "wallet~"+feleUser
         })
+        await insertToDatabase(BID, localOrg)
     } else {
         throw new Error("Network not found in local organization")
     }
