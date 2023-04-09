@@ -5,17 +5,12 @@ const createNetworkHandler = async (req, res) => {
     try {
         let {networkName} = req.query
         networkName = networkName.toLowerCase()
-        await createNetwork(JSON.stringify(req.body), networkName)
-        res.status(201).send({
-            message: "Network Created Successfully",
-            data: { 
-                networkName,
-                ...req.body 
-            }
-        })
+        const {networkConfig, initiator} = req.body
+        const response = await createNetwork(networkConfig, networkName, initiator)
+        res.status(201).send(response)
     } catch (e) {
         res.status(500).send({
-            error: e.message
+            message: "Error creating network: "+e.message
         })
     }
 }
@@ -53,7 +48,7 @@ const deleteNetworkHandler = async (req, res) => {
     const { networkName } = req.query
     try {
         await deleteNetwork(networkName)
-        res.status(204).send({
+        res.status(200).send({
             message: `Network ${networkName} Deleted Successfully!`
         })
 

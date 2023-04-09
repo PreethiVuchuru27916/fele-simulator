@@ -1,13 +1,14 @@
 const express = require('express')
 const router = express.Router()
 
-const {loginFabricUserHandler,
-    updateFabricUserHandler,
-    deleteFabricUserHandler
-} = require('../handlers/fabric-user.handler')
+const {
+    updateUserHandler,
+    deleteUserHandler
+} = require('../handlers/user.handler')
+const Auth = require('../middleware/LocalOrgAuthentication')
 
-router.post('/login', loginFabricUserHandler)
-router.post('/update', updateFabricUserHandler)
-router.post('/delete', deleteFabricUserHandler)
+router.post('/:organization/login', Auth.Authenticate)
+router.post('/update', updateUserHandler)
+router.post('/delete', deleteUserHandler)
 
 module.exports = router

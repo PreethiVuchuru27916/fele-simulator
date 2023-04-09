@@ -1,23 +1,47 @@
 const { createDatabase, deleteDatabase, insertToDatabase } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
-const { NETWORK_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
+const { NETWORK_PREFIX, NETWORK_ID_PREFIX, GLOBAL_STATE } = require('../../utils/constants')
 const { NETWORK_BASEPATH } = require('../../../globals')
-const logger = require('../../utils/logger');
+const { v4: uuidv4 } = require('uuid')
+const logger = require('../../utils/logger')
+const CA = require('./ca')
+const {addCertToWallet} = require('../../../fele-local-org/LocalOrganization')
 
-const createNetwork = async (networkConfigJSON, networkName) => {
+const createNetwork = async (networkConfig, networkName, initiator) => {
     const database = NETWORK_PREFIX + networkName
-    try{
-        await createDatabase(database)
-        await insertToDatabase(database, JSON.parse(networkConfigJSON))
-        //To create network folder under chaincode
-        const dir = path.join(NETWORK_BASEPATH, networkName);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir)
-        }
+    const timestamp = new Date().toISOString()
+    networkConfig = {
+        _id: NETWORK_ID_PREFIX + uuidv4(),
+        fmt: "Network",
+        created_at: timestamp,
+        updated_at: timestamp,
+        ...networkConfig
     }
-    catch(err){
-        logger.error(err);
+    
+    await createDatabase(database)
+
+    const adminCred = await CA.enrollUser({mspId: initiator.organization, enrollmentId: `${initiator.organization.toLowerCase()}.admin`})
+    const feleUser = `${initiator.organization.toLowerCase()}.admin`
+
+    networkConfig.administrator = feleUser
+
+    await insertToDatabase(database, networkConfig)
+    const walletId = await addCertToWallet(feleUser, adminCred)
+    //To create network folder under chaincode
+    const dir = path.join(NETWORK_BASEPATH, networkName);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir)
+    }
+    return {
+        networkId: networkConfig._id,
+        networkName, 
+        initiator: {
+            organization: initiator.organization,
+            feleUser: `${initiator.organization.toLowerCase()}.admin`,
+            credential: adminCred,
+            walletId
+        }
     }
 }
 
