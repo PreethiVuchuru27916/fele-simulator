@@ -194,17 +194,21 @@ const getCurrentUserMapping = async (username, organization, network) => {
 const getAllUserMappings = async (organization, network) => {
     console.log(organization)
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    console.log(docs)
+    
     if(docs.length > 0) {
         const feleNet = docs[0].feleNetworks[network]
+        console.log(docs)
         if(feleNet) {
             const mappings =  feleNet.mappings.map((mapping)=> {
+                const wId = feleNet.feleUsers.filter((user) => user.feleUserId == mapping.to)[0].walletId
+                console.log("wallerId: ", wId)
                 return {
                     localUser: mapping.from,
                     feleUser: mapping.to,
-                    walletId: feleNet.feleUsers.filter((user) => user.feleUserId == mapping.to)[0].walletId
+                    //walletId: wId
                 }
             })
+            console.log(mappings)
             return mappings
         }
         throw new Error("Network not found in local organization")
@@ -215,10 +219,11 @@ const getAllUserMappings = async (organization, network) => {
 const addNewMapping = async (organization, network, from, to) => {
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
     if(docs.length > 0) {
-        console.log(docs[0])
         const feleNet = docs[0].feleNetworks[network]
         console.log(feleNet)
         if(feleNet) {
+            checkIfLocalUserExist(docs[0].localUsers, from)
+            checkIfFeleUserExist(feleNet.feleUsers, to)
             const mapIdx = feleNet.mappings.findIndex((mapping => mapping.from == from))
             if(mapIdx == -1) {
                 docs[0].feleNetworks[network].mappings.push({from, to})
@@ -233,18 +238,37 @@ const addNewMapping = async (organization, network, from, to) => {
     throw new Error("Local organization not found")
 }
 
+const checkIfLocalUserExist = (localUsers, username) => {
+    const idx = localUsers.findIndex((user => user.username == username))
+    if(idx == -1) {
+        throw new Error(`Local user ${username} not found`)
+    }
+}
+
+const checkIfFeleUserExist = (feleUsers, username) => {
+    const idx = feleUsers.findIndex((user => user.feleUserId == username))
+    if(idx == -1) {
+        throw new Error(`Fele user ${username} not found`)
+    }
+}
+
 const deleteMappping = async (organization, network, username) => {
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
     if(docs.length > 0) {
         const feleNet = docs[0].feleNetworks[network]
         if(feleNet) {
             const mappings = docs[0].feleNetworks[network].mappings
-            const updatedMap = mappings.filter((mapping) => {
-                return mapping.from !== username
-            })
-            docs[0].feleNetworks[network].mappings = updatedMap
-            await updateDocument(BID, docs[0])
-            return
+            let userObj = mappings.findIndex(mapping => mapping.from == username)
+            if(userObj == -1) {
+                throw new Error("User not found")
+            } else{
+                const updatedMap = mappings.filter((mapping) => {
+                    return mapping.from !== username
+                })
+                docs[0].feleNetworks[network].mappings = updatedMap
+                await updateDocument(BID, docs[0])
+                return
+            }
         }
         throw new Error("Network not found in local organization")
     }
