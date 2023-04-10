@@ -121,16 +121,16 @@ const addCertToWallet = async (req, res) => {
 
 const addFeleUserToLOrg = async (req, res) => {
     const {organization} = req
-    const network = req.query.network
+    const {network, channel} = req.headers
     const {feleUser} = req.body
-    if(!network) {
+    if(!network || !channel) {
         res.status(400).send({
-            message: "Network query param is missing"
+            message: "Network and Channel (headers) information is required"
         })
         return
     }
     try {
-        await localOrg.addFeleUserToLOrg(organization, network, feleUser)
+        await localOrg.addFeleUserToLOrg(organization, network, channel, feleUser)
         res.status(200).send({
             message: "Fele user added in local organization"
         })

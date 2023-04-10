@@ -6,7 +6,6 @@ const {getSelector, selectorForLocalOrganization} = require('../fele-client-serv
 
 const createOrganization = async (organization, localUsers) => {
     //expected to receive encrypted passwords(local users) from client side
-
     const timestamp = new Date().toISOString()
     const organizationConfig = {
         _id: LORG_ID_PREFIX + uuidv4(),
@@ -38,7 +37,6 @@ const createOrganization = async (organization, localUsers) => {
     } else {
         await insertToDatabase(BID, organizationConfig)
     }
-
 }
 
 const addNetworkToLocalOrgConfig = async (networkName, organization, channels = []) => {
@@ -58,9 +56,9 @@ const addNetworkToLocalOrgConfig = async (networkName, organization, channels = 
                     })
                 })
             }
-            docs.feleNetworks.push({
+            docs[0].feleNetworks.push({
                 feleNetId: networkName,
-                feleOrgId: `${networkName}_${organization}`,
+                feleOrgId: `${organization}_${networkName}`,
                 feleChannels: channelsArr
             })
         }
@@ -95,25 +93,24 @@ const deleteLocalUser = async (organization, username) => {
         })
     
         docs[0].localUsers = localUsers
-        const networks = Object.keys(docs[0].feleNetworks)
         const feleNetworks = docs[0].feleNetworks
-        const updatedFeleNetworks = await deleteUserMappingsInAllNetworks(feleNetworks, networks, username)  
+        const updatedFeleNetworks = await deleteAllUserMappings(feleNetworks, username)  
         docs[0].feleNetworks = updatedFeleNetworks
         await updateDocument(BID, docs[0])
         
     }
 }
 
-const deleteUserMappingsInAllNetworks = async (feleNetworks, networks, username) => {
-    networks.forEach(network => {
-        const mappings = feleNetworks[network].mappings
-        const updatedMap = mappings.filter((mapping) => {
-            return mapping.from !== username
+const deleteAllUserMappings = async (feleNetworks, username) => {
+    
+    feleNetworks = feleNetworks.map(network => {
+        network.feleChannels = network.feleChannels.map(channel => {
+            channel.mappings = channel.mappings.filter((mapping => mapping.from == username))
+            return channel
         })
-        feleNetworks[network].mappings = updatedMap
+        return network
     })
     return feleNetworks 
-    
 }
 
 const getAllLocalUsers = async (organization) => {
@@ -141,7 +138,7 @@ const updatePassword = async (organization, username, oldPassword, newPassword) 
         docs[0].localUsers = localUsers
         await updateDocument(BID, docs[0])
     } else {
-        throw new Error("Password doesnt match with the record")
+        throw new Error("Password doesn't match with the record")
     }
 }
 
@@ -161,15 +158,20 @@ const addCertToWallet = async (feleUser, credentialId) => {
     return walletId
 }
 
-const addFeleUserToLOrg = async (organization, network, feleUser) => {
+const addFeleUserToLOrg = async (organization, network, channel, feleUser) => {
     const localOrg = await getLocalOrgDoc(organization)
-    const feleNet = localOrg.feleNetworks[network]
-    if(feleNet) {
-        localOrg.feleNetworks[network].feleUsers.push({
-            feleUserId: feleUser,
-            walletId: "wallet~"+feleUser
-        })
-        await insertToDatabase(BID, localOrg)
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId = network))
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName = channel))
+        if(channelIdx > -1) {
+            localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.push({
+                feleUserId: feleUser,
+                walletId: "wallet~"+feleUser
+            })
+            await insertToDatabase(BID, localOrg)
+        } else {
+            throw new Error("Channel not found")
+        }
     } else {
         throw new Error("Network not found in local organization")
     }
