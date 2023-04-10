@@ -28,6 +28,35 @@ const getCredentialSelector = (feleUser) => {
     }
 }
 
+const getEnrollmentSelector = (enrollmentId) => {
+    return {
+        selector: {
+            enrollmentId: {
+                $eq: enrollmentId
+            }
+        }
+    }
+}
+
+const getSelector = (key, value) => {
+    const sel = {selector: {}}
+    sel.selector[key] = {$eq: value}
+    return sel
+}
+
+const selectorForLocalOrganization = (orgName) => {
+    return {
+        selector: {
+            fmt: {
+                $eq: "LocalOrganization"
+            },
+            organization: {
+                $eq: orgName
+            }
+        }
+    }
+}
+
 const generateCertificate = (user,attrs) => {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
       modulusLength: 2048,
@@ -80,10 +109,14 @@ function copyFolderSync(from, to) {
     });
 }
 
+
 module.exports = {
     sha256,
     getChannelSelector,
     getCredentialSelector,
+    getEnrollmentSelector,
+    selectorForLocalOrganization,
+    getSelector,
     generateCertificate,
     copyFolderSync
 }

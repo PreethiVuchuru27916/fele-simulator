@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\t\n\t\"_id\": \"state.fele.felenet~root\",\n\t\"fmt\": \"felenet\",\n\t\"fmId\": \"root\",\n\t\"includeLedger\": false,\n\t\"transactionAware\": false,\n\t\"blockAware\": false,\n\t\"timestamping\": false,\n\t\"walletUnaware\": false\n}",
+					"raw": "{\n    \"networkConfig\": {\n        \"includeLedger\": false,\n        \"transactionAware\": false,\n        \"blockAware\": false,\n        \"timestamping\": false,\n        \"walletUnaware\": false\n    },\n    \"initiator\": {\n        \"organization\": \"isro\"\n    } \n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,18 +20,20 @@
 					}
 				},
 				"url": {
-					"raw": "{{base-path}}/network/create?networkName=artemis",
+					"raw": "{{base-path}}/api/fele/network/create?networkName=ISRO",
 					"host": [
 						"{{base-path}}"
 					],
 					"path": [
+						"api",
+						"fele",
 						"network",
 						"create"
 					],
 					"query": [
 						{
 							"key": "networkName",
-							"value": "artemis"
+							"value": "ISRO"
 						}
 					]
 				}
@@ -222,6 +224,362 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Network",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base-path}}/network/create",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"network",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Local Organization",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"organization\": \"uhcl\",\n    \"localUsers\": [\n        {\n            \"username\": \"ramcpetla\",\n            \"password\": \"ramcpetla\",\n            \"role\": \"Admin\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{create-localorganization}}",
+					"host": [
+						"{{base-path}}{{create-localorganization}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Local user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"ram\",\n    \"password\": \"seshu\",\n    \"role\": \"Admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/api/localorganization/add-user",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"localorganization",
+						"add-user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Organization",
+						"value": "uhcl",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"ram\",\n    \"password\": \"seshureddy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{login}}",
+					"host": [
+						"{{base-path}}{{login}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/user/update",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"user",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-all-users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "organization",
+						"value": "uhcl",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}/api/localorganization/get-all-users",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"localorganization",
+						"get-all-users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-user",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/delete-user/rameshbabu",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"delete-user",
+						"rameshbabu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"oldPassword\": \"seshu\",\n    \"newPassword\": \"seshureddy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/user/update-password",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"user",
+						"update-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registerFeleUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"affiliation\" : \"uhcl\",\n    \"id\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/api/fele/ca/user/register",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"fele",
+						"ca",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enrollFeleUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "organization",
+						"value": "uhcl",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"enrollmentId\": \"uhcl.admin\",\n    \"enrollmentSecret\": \"354366b9e9c7a609ab7e3f8a5efa7f6694973db16d702f509b0a7de0ea003d46\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}/api/fele/ca/user/enroll",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"fele",
+						"ca",
+						"user",
+						"enroll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-credentials",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "add-cert to wallet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"feleUser\": \"uhcl.admin\",\n    \"credentialId\": \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/wallet/add-cert",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"wallet",
+						"add-cert"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddNetworkToLocalOrg",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "getCurrentUserMapping",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "getAllMappings",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "AddNewMapping",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "deleteMapping",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/mappings/delete?username=rameshbabu&network=dallasmemphis",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"mappings",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "rameshbabu"
+						},
+						{
+							"key": "network",
+							"value": "dallasmemphis"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -248,6 +606,21 @@
 		{
 			"key": "base-path",
 			"value": "http://localhost:8005",
+			"type": "default"
+		},
+		{
+			"key": "create-localorganization",
+			"value": "/api/localorganization/create",
+			"type": "default"
+		},
+		{
+			"key": "login",
+			"value": "/api/localorganization/login",
+			"type": "default"
+		},
+		{
+			"key": "local-organization",
+			"value": "/api/localorganization",
 			"type": "default"
 		}
 	]
