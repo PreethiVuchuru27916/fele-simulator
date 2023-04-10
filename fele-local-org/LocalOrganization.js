@@ -126,7 +126,8 @@ const getLocalOrgDoc = async (organization) => {
             }
         }     
     })
-    return docs
+    if(docs.length > 0) return docs[0] 
+    else throw new Error("Local organization not found")
 }
 
 const updatePassword = async (organization, username, oldPassword, newPassword) => {
@@ -169,6 +170,7 @@ const addFeleUserToLOrg = async (organization, network, channel, feleUser) => {
                 walletId: "wallet~"+feleUser
             })
             await insertToDatabase(BID, localOrg)
+            return
         } else {
             throw new Error("Channel not found")
         }
