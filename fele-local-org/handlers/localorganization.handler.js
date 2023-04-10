@@ -21,10 +21,10 @@ const createOrganization = async (req, res) => {
 }
 
 const addNetworkToLocalOrgConfig = async (req, res) => {
-    const {networkName, feleAdmin, walletId} = req.body
-    const {organization, username} = req
+    const {networkName} = req.body
+    const {organization} = req
     try {
-        await localOrg.addNetworkToLocalOrgConfig(networkName, feleAdmin, walletId, organization, username)
+        await localOrg.addNetworkToLocalOrgConfig(networkName, organization)
         res.status(200).send({
             message: "Network added to local organization configuration"
         })

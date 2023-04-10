@@ -41,7 +41,7 @@ const createOrganization = async (organization, localUsers) => {
 
 }
 
-const addNetworkToLocalOrgConfig = async (networkName, feleAdmin, walletId, organization, username, channels = []) => {
+const addNetworkToLocalOrgConfig = async (networkName, organization, channels = []) => {
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
     if(docs.length > 0) {
         const networkCheckIdx = docs[0].feleNetworks.findIndex((network => network.feleNetId == networkName))
