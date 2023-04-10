@@ -39,18 +39,24 @@ const createOrganization = async (organization, localUsers) => {
     }
 }
 
-const addNetworkToLocalOrgConfig = async (networkName, organization, channels = []) => {
+const getChannelsInNetwork = async (network) => {
+    const {docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel"))
+    return docs.map(channel =>  channel.channelName).sort()
+}
+
+const addNetworkToLocalOrgConfig = async (networkName, organization) => {
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
     if(docs.length > 0) {
         const networkCheckIdx = docs[0].feleNetworks.findIndex((network => network.feleNetId == networkName))
         if(networkCheckIdx > -1) {
             throw new Error("Network exists in local org configuration")
         } else {
+            let channels = await getChannelsInNetwork(networkName)
             let channelsArr = []
             if(channels.length > 0) {
                 channels.forEach(channel => {
                     channelsArr.push({
-                        channelName: channel.channelName,
+                        channelName: channel,
                         feleUsers: [],
                         mappings: []
                     })
@@ -68,22 +74,47 @@ const addNetworkToLocalOrgConfig = async (networkName, organization, channels = 
     }
 }
 
-const addLocalUser = async (organization, username, password, role) => {
-    let docs = await getLocalOrgDoc(organization)
-    let localUsers = docs[0].localUsers || []
+// const syncLocalOrg = async (organization) => {
+//     networkCheck()
+//     channelCheck()
+// }
+
+const addChannelToNetwork = async (network, channel, organization) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId = network)
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex(chnl => chnl.channelName == channel)
+        if(channelIdx > -1) {
+            throw new Error("Channel Exists in the network.")
+        } else {
+            localOrg.feleNetworks[netIdx].feleChannels.push({
+                channelName: channel,
+                feleUsers: [],
+                mappings: []
+            })
+            await updateDocument(BID, localOrg)
+        }
+    } else {
+        throw new Error("Network not found in local organization")
+    }
+}
+
+const addLocalUser = async (organization, username, password, role, userDetails = {}) => {
+    let doc = await getLocalOrgDoc(organization)
+    let localUsers = doc.localUsers || []
     const userObj = localUsers.findIndex((user => user.username == username))
     if(userObj == -1) {
-        localUsers.push({username, password, role})
-        docs[0].localUsers = localUsers
-        await updateDocument(BID, docs[0])
+        localUsers.push({username, password, role, personalDetails: userDetails})
+        doc.localUsers = localUsers
+        await updateDocument(BID, doc)
     } else {
         throw new Error(`User ${username} already exists.`)
     }
 }
 
 const deleteLocalUser = async (organization, username) => {
-    const docs = await getLocalOrgDoc(organization)
-    let localUsers = docs[0].localUsers || []
+    const doc = await getLocalOrgDoc(organization)
+    let localUsers = doc.localUsers || []
     let userObj = localUsers.findIndex((user => user.username == username))
     if(userObj == -1) {
         throw new Error("Local user not found")
@@ -92,11 +123,11 @@ const deleteLocalUser = async (organization, username) => {
             return user.username !== username
         })
     
-        docs[0].localUsers = localUsers
-        const feleNetworks = docs[0].feleNetworks
+        doc.localUsers = localUsers
+        const feleNetworks = doc.feleNetworks
         const updatedFeleNetworks = await deleteAllUserMappings(feleNetworks, username)  
-        docs[0].feleNetworks = updatedFeleNetworks
-        await updateDocument(BID, docs[0])
+        doc.feleNetworks = updatedFeleNetworks
+        await updateDocument(BID, doc)
         
     }
 }
@@ -105,7 +136,7 @@ const deleteAllUserMappings = async (feleNetworks, username) => {
     
     feleNetworks = feleNetworks.map(network => {
         network.feleChannels = network.feleChannels.map(channel => {
-            channel.mappings = channel.mappings.filter((mapping => mapping.from == username))
+            channel.mappings = channel.mappings.filter((mapping => mapping.from != username))
             return channel
         })
         return network
@@ -114,8 +145,8 @@ const deleteAllUserMappings = async (feleNetworks, username) => {
 }
 
 const getAllLocalUsers = async (organization) => {
-    const docs = await getLocalOrgDoc(organization)
-    return docs[0].localUsers || []
+    const doc = await getLocalOrgDoc(organization)
+    return doc.localUsers || []
 }
 
 const getLocalOrgDoc = async (organization) => {
@@ -131,13 +162,13 @@ const getLocalOrgDoc = async (organization) => {
 }
 
 const updatePassword = async (organization, username, oldPassword, newPassword) => {
-    let docs = await getLocalOrgDoc(organization)
-    let localUsers = docs[0].localUsers || []
+    let doc = await getLocalOrgDoc(organization)
+    let localUsers = doc.localUsers || []
     let userObj = localUsers.findIndex((user => user.username == username))
     if(localUsers[userObj].password == oldPassword){
         localUsers[userObj].password = newPassword
-        docs[0].localUsers = localUsers
-        await updateDocument(BID, docs[0])
+        doc.localUsers = localUsers
+        await updateDocument(BID, doc)
     } else {
         throw new Error("Password doesn't match with the record")
     }
@@ -292,5 +323,6 @@ module.exports = {
     getAllUserMappings,
     addNewMapping,
     deleteMappping,
-    addFeleUserToLOrg
+    addFeleUserToLOrg,
+    addChannelToNetwork
 }

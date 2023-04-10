@@ -35,12 +35,26 @@ const addNetworkToLocalOrgConfig = async (req, res) => {
     }
 }
 
-const addLocalUser = async (req, res) => {
-    const {username, password, role} = req.body
+const addChannelToNetwork = async (req, res) => {
+    const {network, channel} = req.headers
     const {organization} = req
-    console.log(username, password, role, organization)
+    try {
+        await localOrg.addChannelToNetwork(network, channel, organization)
+        res.status(200).send({
+            message: "Channel added in the network"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
+const addLocalUser = async (req, res) => {
+    const {username, password, role, userDetails} = req.body
+    const {organization} = req
     try{
-        await localOrg.addLocalUser(organization, username, password, role)
+        await localOrg.addLocalUser(organization, username, password, role, userDetails)
         res.status(500).send({
             message: `user ${username} added successfully`
         })
@@ -229,5 +243,6 @@ module.exports = {
     getCurrentUserMapping,
     addCertToWallet,
     addNetworkToLocalOrgConfig,
-    addFeleUserToLOrg
+    addFeleUserToLOrg,
+    addChannelToNetwork
 }
