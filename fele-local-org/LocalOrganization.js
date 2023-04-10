@@ -15,7 +15,7 @@ const createOrganization = async (organization, localUsers) => {
         updated_at: timestamp,
         organization,
         localUsers,
-        feleNetworks: {}
+        feleNetworks: []
     }
 
     let docs
@@ -41,29 +41,32 @@ const createOrganization = async (organization, localUsers) => {
 
 }
 
-const addNetworkToLocalOrgConfig = async (networkName, feleAdmin, walletId, organization, username) => {
+const addNetworkToLocalOrgConfig = async (networkName, feleAdmin, walletId, organization, username, channels = []) => {
     const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
     if(docs.length > 0) {
-        docs[0].feleNetworks[networkName] = {
-            feleOrgId: organization,
-            feleChannel: [],
-            feleUsers: [
-                {
-                    feleUserId: feleAdmin,
-                    walletId
-                }
-            ],
-            mappings: [
-                {
-                    from: username,
-                    to: feleAdmin
-                }
-            ]
+        const networkCheckIdx = docs[0].feleNetworks.findIndex((network => network.feleNetId == networkName))
+        if(networkCheckIdx > -1) {
+            throw new Error("Network exists in local org configuration")
+        } else {
+            let channelsArr = []
+            if(channels.length > 0) {
+                channels.forEach(channel => {
+                    channelsArr.push({
+                        channelName: channel.channelName,
+                        feleUsers: [],
+                        mappings: []
+                    })
+                })
+            }
+            docs.feleNetworks.push({
+                feleNetId: networkName,
+                feleOrgId: `${networkName}_${organization}`,
+                feleChannels: channelsArr
+            })
         }
-
         await updateDocument(BID, docs[0])
     } else {
-        throw new Error("Erro retrieving local organization information")
+        throw new Error("Error retrieving local organization information")
     }
 }
 
@@ -109,10 +112,7 @@ const deleteUserMappingsInAllNetworks = async (feleNetworks, networks, username)
         })
         feleNetworks[network].mappings = updatedMap
     })
-    return feleNetworks
-    return feleNetworks
-    
-    return feleNetworks  
+    return feleNetworks 
     
 }
 
