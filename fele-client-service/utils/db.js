@@ -55,6 +55,15 @@ const checkIfDatabaseExists = async (databaseName) => {
     }
 }
 
+const listAllNetworks = async () => {
+    try {
+        const dbs = await couch.listDatabases()
+        return dbs.map(db => db.split('__')[1]).filter(db => db != "bid")
+    } catch(error) {
+        throw new Error("Error listing databases")
+    }
+}
+
 const getDocumentByID = async (databaseName, documentId) => {
     try {
         const { data } = await couch.get(databaseName, documentId);
@@ -110,5 +119,6 @@ module.exports = {
     getDocumentFromDatabase,
     deleteDocument,
     getDocumentByID,
-    updateDocument
+    updateDocument,
+    listAllNetworks
 }

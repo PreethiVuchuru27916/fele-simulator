@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "cef80b6d-a580-4f64-8572-cd8f557f89e9",
+		"_postman_id": "9ddb2dd5-05cf-455b-8ea5-a8ccab54082a",
 		"name": "fele-simulator",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25685794"
 	},
 	"item": [
 		{
@@ -12,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"networkConfig\": {\n        \"includeLedger\": false,\n        \"transactionAware\": false,\n        \"blockAware\": false,\n        \"timestamping\": false,\n        \"walletUnaware\": false\n    },\n    \"initiator\": {\n        \"organization\": \"isro\"\n    } \n}",
+					"raw": "{\n    \"networkConfig\" :{\n        \"includeLedger\": false,\n        \"transactionAware\": false,\n        \"blockAware\": false,\n        \"timestamping\": false,\n        \"walletUnaware\": false\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{base-path}}/api/fele/network/create?networkName=ISRO",
+					"raw": "{{base-path}}/api/fele/network/create?networkName=dallas",
 					"host": [
 						"{{base-path}}"
 					],
@@ -33,7 +34,7 @@
 					"query": [
 						{
 							"key": "networkName",
-							"value": "ISRO"
+							"value": "dallas"
 						}
 					]
 				}
@@ -47,7 +48,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "\n{\n    \"networkName\" : \"artemis\",\n    \"channelConfig\": \n    { \n        \"channelName\": \"uhcl_isd_p\",\n        \"organizations\": [\n            {\n            \"mspid\": \"uhclMSP\",\n            \"root_ca\": \"walletID234\"\n            },\n            {\n            \"mspid\": \"utdMSP\",\n            \"root_ca\": \"walletID567\"\n            }\n        ],\n        \"mod_policy\": \"Admins\",\n        \"policies\": [\n            {\n            \"name\": \"Readers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Readers\"\n            },\n            {\n            \"name\": \"Writers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Writers\"\n            },\n            {\n            \"name\": \"Admins\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"MAJORITY Admins\"\n            }\n        ]\n    }\n}\n",
+					"raw": "\n{\n    \"networkName\" : \"dallas\",\n    \"channelConfig\": \n    { \n        \"channelName\": \"uhcl\",\n        \"organizations\": [\n            {\n            \"mspid\": \"uhclMSP\",\n            \"root_ca\": \"walletID234\"\n            },\n            {\n            \"mspid\": \"utdMSP\",\n            \"root_ca\": \"walletID567\"\n            }\n        ],\n        \"mod_policy\": \"Admins\",\n        \"policies\": [\n            {\n            \"name\": \"Readers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Readers\"\n            },\n            {\n            \"name\": \"Writers\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"ANY Writers\"\n            },\n            {\n            \"name\": \"Admins\",\n            \"type\": \"ImplicitMeta\",\n            \"rule\": \"MAJORITY Admins\"\n            }\n        ]\n    }\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -55,11 +56,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base-path}}/channel/create",
+					"raw": "{{base-path}}/api/fele/channel/create",
 					"host": [
 						"{{base-path}}"
 					],
 					"path": [
+						"api",
+						"fele",
 						"channel",
 						"create"
 					]
@@ -205,7 +208,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"networkName\": \"artemis\",\n    \"channelName\": \"uhcl_isd_p\"\n}",
+					"raw": "{\n    \"networkName\": \"artemis\",\n    \"channelName\": \"uhcl\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -213,11 +216,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base-path}}/channel/delete",
+					"raw": "{{base-path}}/api/channel/delete",
 					"host": [
 						"{{base-path}}"
 					],
 					"path": [
+						"api",
 						"channel",
 						"delete"
 					]
@@ -231,13 +235,20 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{base-path}}/network/create",
+					"raw": "{{base-path}}/api/network/delete?networkName=artemis",
 					"host": [
 						"{{base-path}}"
 					],
 					"path": [
+						"api",
 						"network",
-						"create"
+						"delete"
+					],
+					"query": [
+						{
+							"key": "networkName",
+							"value": "artemis"
+						}
 					]
 				}
 			},
@@ -273,7 +284,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"ram\",\n    \"password\": \"seshu\",\n    \"role\": \"Admin\"\n}",
+					"raw": "{\n    \"username\": \"kumar\",\n    \"password\": \"kumar\",\n    \"role\": \"reader\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -307,7 +318,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"ram\",\n    \"password\": \"seshureddy\"\n}",
+					"raw": "{\n    \"username\": \"ramcpetla\",\n    \"password\": \"ramcpetla\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -324,33 +335,6 @@
 			"response": []
 		},
 		{
-			"name": "Update User",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base-path}}/user/update",
-					"host": [
-						"{{base-path}}"
-					],
-					"path": [
-						"user",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "get-all-users",
 			"request": {
 				"method": "GET",
@@ -358,7 +342,7 @@
 					{
 						"key": "organization",
 						"value": "uhcl",
-						"type": "default"
+						"type": "text"
 					}
 				],
 				"url": {
@@ -381,13 +365,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{base-path}}{{local-organization}}/delete-user/rameshbabu",
+					"raw": "{{base-path}}{{local-organization}}/delete-user/seshu",
 					"host": [
 						"{{base-path}}{{local-organization}}"
 					],
 					"path": [
 						"delete-user",
-						"rameshbabu"
+						"seshu"
 					]
 				}
 			},
@@ -400,7 +384,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"oldPassword\": \"seshu\",\n    \"newPassword\": \"seshureddy\"\n}",
+					"raw": "{\n    \"oldPassword\": \"seshu25\",\n    \"newPassword\": \"seshu\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -427,7 +411,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"affiliation\" : \"uhcl\",\n    \"id\": \"admin\"\n}",
+					"raw": "{\n    \"affiliation\" : \"uhcl\",\n    \"id\" : \"reader\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -458,12 +442,12 @@
 					{
 						"key": "organization",
 						"value": "uhcl",
-						"type": "default"
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"enrollmentId\": \"uhcl.admin\",\n    \"enrollmentSecret\": \"354366b9e9c7a609ab7e3f8a5efa7f6694973db16d702f509b0a7de0ea003d46\"\n}",
+					"raw": "{\n    \"enrollmentId\": \"uhcl.reader\",\n    \"enrollmentSecret\": \"2844032b51d2d072d812f45e410cb48435f2f839588f6c4f721b5fa10860d7d1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -490,7 +474,26 @@
 			"name": "get-credentials",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "{{base-path}}/api/fele/ca/user/get-credentials?feleUser=uhcl.admin",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"fele",
+						"ca",
+						"user",
+						"get-credentials"
+					],
+					"query": [
+						{
+							"key": "feleUser",
+							"value": "uhcl.admin"
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -501,7 +504,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"feleUser\": \"uhcl.admin\",\n    \"credentialId\": \n}",
+					"raw": "{\n    \"feleUser\" : \"uhcl.reader\",\n    \"credentialId\" : \"credential~b1e08345-b349-42d4-b77b-25d9a7f40ed8\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -525,7 +528,25 @@
 			"name": "AddNetworkToLocalOrg",
 			"request": {
 				"method": "POST",
-				"header": []
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"networkName\" : \"artemis\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/add-network",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"add-network"
+					]
+				}
 			},
 			"response": []
 		},
@@ -533,7 +554,30 @@
 			"name": "getCurrentUserMapping",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [
+					{
+						"key": "network",
+						"value": "artemis",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}/api/localorganization/mappings/current-user",
+					"host": [
+						"{{base-path}}"
+					],
+					"path": [
+						"api",
+						"localorganization",
+						"mappings",
+						"current-user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -541,15 +585,65 @@
 			"name": "getAllMappings",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [
+					{
+						"key": "network",
+						"value": "artemis",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/mappings",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"mappings"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "AddNewMapping",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [
+					{
+						"key": "network",
+						"value": "artemis",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"from\" : \"seshu\",\n    \"to\" : \"uhcl.writer\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/mappings/add",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"mappings",
+						"add"
+					]
+				}
 			},
 			"response": []
 		},
@@ -557,9 +651,20 @@
 			"name": "deleteMapping",
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "network",
+						"value": "artemis",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch1",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "{{base-path}}{{local-organization}}/mappings/delete?username=rameshbabu&network=dallasmemphis",
+					"raw": "{{base-path}}{{local-organization}}/mappings/delete?username=ramcpetla",
 					"host": [
 						"{{base-path}}{{local-organization}}"
 					],
@@ -570,12 +675,146 @@
 					"query": [
 						{
 							"key": "username",
-							"value": "rameshbabu"
-						},
-						{
-							"key": "network",
-							"value": "dallasmemphis"
+							"value": "ramcpetla"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addfeleuser to channels",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "network",
+						"value": "ar",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"feleUser\" : \"uhcl.writer1111\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/add-feleuser",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"add-feleuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddChannelToNetwork",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "network",
+						"value": "artemis",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "uhcl_ch6",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/add-channel",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"add-channel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sync",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/sync",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"sync"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListNetworks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/network/list",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"network",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListChannels",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "network",
+						"value": "art",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base-path}}{{local-organization}}/channels/list",
+					"host": [
+						"{{base-path}}{{local-organization}}"
+					],
+					"path": [
+						"channels",
+						"list"
 					]
 				}
 			},
