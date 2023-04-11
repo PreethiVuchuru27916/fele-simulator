@@ -234,7 +234,7 @@ const getCurrentUserMapping = async (req, res) => {
 const listAllNetworks = async (req, res) => {
     const {organization} = req
     try {
-        const nets = await localOrg.listAllNetworks(organization)
+        const nets = await localOrg.listAllNetworksinLocalOrg(organization)
         res.status(200).send(nets)
     } catch(error) {
         res.status(500).send({

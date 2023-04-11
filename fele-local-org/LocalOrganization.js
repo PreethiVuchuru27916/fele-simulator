@@ -74,7 +74,7 @@ const addNetworkToLocalOrgConfig = async (networkName, organization) => {
     }
 }
 
-const listAllNetworks = async(organization) => {
+const listAllNetworksinLocalOrg = async(organization) => {
     const localOrg = await getLocalOrgDoc(organization)
     return localOrg.feleNetworks.map(network => network.feleNetId)
 }
@@ -376,5 +376,5 @@ module.exports = {
     addChannelToNetwork,
     syncLocalOrg,
     listAllChannelsInNetwork,
-    listAllNetworks
+    listAllNetworksinLocalOrg
 }
