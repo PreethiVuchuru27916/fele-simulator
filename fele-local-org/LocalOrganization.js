@@ -1,6 +1,6 @@
-const {createDatabase, insertToDatabase, getDocumentFromDatabase, updateDocument} = require('../fele-client-service/utils/db')
+const {createDatabase, insertToDatabase, getDocumentFromDatabase, updateDocument, listAllNetworks} = require('../fele-client-service/utils/db')
 const { v4: uuidv4 } = require('uuid')
-const {LORG_ID_PREFIX, LORG_FMT, BID} = require('../fele-client-service/utils/constants')
+const {LORG_ID_PREFIX, LORG_FMT, BID, NETWORK_PREFIX} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
 const {getSelector, selectorForLocalOrganization} = require('../fele-client-service/utils/helpers')
 
@@ -74,10 +74,28 @@ const addNetworkToLocalOrgConfig = async (networkName, organization) => {
     }
 }
 
-// const syncLocalOrg = async (organization) => {
-//     networkCheck()
-//     channelCheck()
-// }
+const syncLocalOrg = async (organization) => {
+    console.log("sync start")
+    const localOrg = await getLocalOrgDoc(organization)
+    const feleNetworks = await listAllNetworks()
+    const localNetworks = localOrg.feleNetworks.map(network => network.feleNetId)
+    //Adding out ofsync networks
+    feleNetworks.filter(network => localNetworks.indexOf(network) == -1).map(async network => {
+        await addNetworkToLocalOrgConfig(network, organization)
+        return
+    })
+
+    const inSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) > -1)
+    inSyncNetworks.map(async network => {
+        const networkconfig = localOrg.feleNetworks[localOrg.feleNetworks.findIndex(net => net.feleNetId == network)]
+        const localChannels = networkconfig.feleChannels.map(channel => channel.channelName)
+        const {docs} = await getDocumentFromDatabase(NETWORK_PREFIX+network, getSelector("fmt", "channel"))
+        docs.filter(channel => localChannels.indexOf(channel.channelName) == -1).map(async channel => {
+            await addChannelToNetwork(network, channel.channelName, organization)
+            return
+        })
+    })
+}
 
 const addChannelToNetwork = async (network, channel, organization) => {
     const localOrg = await getLocalOrgDoc(organization)
@@ -340,5 +358,6 @@ module.exports = {
     addNewMapping,
     deleteMappping,
     addFeleUserToLOrg,
-    addChannelToNetwork
+    addChannelToNetwork,
+    syncLocalOrg
 }

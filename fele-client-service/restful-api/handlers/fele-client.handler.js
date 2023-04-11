@@ -5,8 +5,8 @@ const createNetworkHandler = async (req, res) => {
     try {
         let {networkName} = req.query
         networkName = networkName.toLowerCase()
-        const {networkConfig, initiator} = req.body
-        const response = await createNetwork(networkConfig, networkName, initiator)
+        const {networkConfig} = req.body
+        const response = await createNetwork(networkConfig, networkName)
         res.status(201).send(response)
     } catch (e) {
         res.status(500).send({

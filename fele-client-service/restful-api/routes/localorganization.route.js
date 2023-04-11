@@ -19,5 +19,8 @@ router.get('/mappings/current-user', Authorize.Any, localOrg.getCurrentUserMappi
 router.post('/mappings/add', Authorize.Admin, localOrg.addNewMapping) //DONE VERIFIED
 router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping) //DONE VERFIED
 router.post('/add-feleuser', Authorize.Admin, localOrg.addFeleUserToLOrg)
+router.get('/sync', Authorize.Any, localOrg.syncLocalOrg)
+router.get('/network/list', Authorize.Any)
+router.get('/channels/list', Authorize.Any)
 
 module.exports = router

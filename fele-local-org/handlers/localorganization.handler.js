@@ -231,6 +231,41 @@ const getCurrentUserMapping = async (req, res) => {
     }
 }
 
+const listAllNetworks = async (req, res) => {
+    const {organization} = req
+    try {
+        res.status(200).send(mapping)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
+const listAllChannels = async (req, res) => {
+    const {organization} = req
+    const {network} = req.headers
+
+    try {
+        res.status(200).send(mapping)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+    
+}
+
+const syncLocalOrg = async (req, res) => {
+    const {organization} = req
+    try {
+        await localOrg.syncLocalOrg(organization)
+        res.sendStatus(200)
+    } catch(error) {
+        res.sendStatus(500)
+    }
+}
+
 module.exports = {
     registerLocalUser,
     createOrganization,
@@ -245,5 +280,6 @@ module.exports = {
     addCertToWallet,
     addNetworkToLocalOrgConfig,
     addFeleUserToLOrg,
-    addChannelToNetwork
+    addChannelToNetwork,
+    syncLocalOrg
 }
