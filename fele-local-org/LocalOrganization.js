@@ -3,6 +3,9 @@ const { v4: uuidv4 } = require('uuid')
 const {LORG_ID_PREFIX, LORG_FMT, BID, NETWORK_PREFIX} = require('../fele-client-service/utils/constants')
 const logger = require('../fele-client-service/utils/logger')
 const {getSelector, selectorForLocalOrganization} = require('../fele-client-service/utils/helpers')
+const { forEach } = require('lodash')
+
+let LOCAL_ORG = {}
 
 const createOrganization = async (organization, localUsers) => {
     //expected to receive encrypted passwords(local users) from client side
@@ -41,37 +44,61 @@ const createOrganization = async (organization, localUsers) => {
 
 const getChannelsInNetwork = async (network) => {
     const {docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel"))
-    return docs.map(channel =>  channel.channelName).sort()
+    return docs.map(channel => channel.channelName)
 }
 
-const addNetworkToLocalOrgConfig = async (networkName, organization) => {
-    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    if(docs.length > 0) {
-        const networkCheckIdx = docs[0].feleNetworks.findIndex((network => network.feleNetId == networkName))
-        if(networkCheckIdx > -1) {
-            throw new Error("Network exists in local org configuration")
-        } else {
-            let channels = await getChannelsInNetwork(networkName)
-            let channelsArr = []
-            if(channels.length > 0) {
-                channels.forEach(channel => {
-                    channelsArr.push({
-                        channelName: channel,
-                        feleUsers: [],
-                        mappings: []
-                    })
-                })
+const getChannelsAndItsFeleUsersInNetwork = async (network, organization) => {
+    const {docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel"))
+    
+    const channels = docs.filter(channel => channel.organizations.findIndex(org => org.mspid == `${organization}_${network}`) > -1)
+    console.log(channels)
+    return channels.map(channel => {
+        const orgIdx = channel.organizations.findIndex(org => org.mspid == `${organization}_${network}`)
+        const feleUsers = channel.organizations[orgIdx].feleUsers.map(user => {
+            return {
+                feleUserId: user.feleUserId,
+                walletId: `wallet~${user.feleUserId}`
             }
-            docs[0].feleNetworks.push({
-                feleNetId: networkName,
-                feleOrgId: `${organization}_${networkName}`,
-                feleChannels: channelsArr
+        })
+        return {
+            channelName: channel.channelName,
+            feleUsers
+        }
+    })
+}
+
+const addNetworkToLocalOrgConfig = async (networkName, organization, doUpdate=true) => {
+    let localOrg = {}
+    if(doUpdate) {
+        localOrg = await getLocalOrgDoc(organization)
+    } else {
+        localOrg = LOCAL_ORG
+    }
+    const networkCheckIdx = localOrg.feleNetworks.findIndex((network => network.feleNetId == networkName))
+    if(networkCheckIdx > -1) {
+        throw new Error("Network exists in local org configuration")
+    } else {
+        let channelsInfo = await getChannelsAndItsFeleUsersInNetwork(networkName, organization)
+        console.log("channelInfo", channelsInfo)
+        let channelsArr = []
+        if(channelsInfo.length > 0) {
+            channelsInfo.forEach(channelInfo => {
+                channelsArr.push({
+                    channelName: channelInfo.channelName,
+                    feleUsers: channelInfo.feleUsers,
+                    mappings: []
+                })
             })
         }
-        await updateDocument(BID, docs[0])
-    } else {
-        throw new Error("Error retrieving local organization information")
+        localOrg.feleNetworks.push({
+            feleNetId: networkName,
+            feleOrgId: `${organization}_${networkName}`,
+            feleChannels: channelsArr
+        })
     }
+    if(doUpdate)
+        await updateDocument(BID, localOrg)
+    else return localOrg
 }
 
 const listAllNetworksinLocalOrg = async(organization) => {
@@ -90,30 +117,38 @@ const listAllChannelsInNetwork = async(organization, network) => {
 }
 
 const syncLocalOrg = async (organization) => {
-    console.log("sync start")
-    const localOrg = await getLocalOrgDoc(organization)
+    LOCAL_ORG = await getLocalOrgDoc(organization)
     const feleNetworks = await listAllNetworks()
-    const localNetworks = localOrg.feleNetworks.map(network => network.feleNetId)
+    const localNetworks = LOCAL_ORG.feleNetworks.map(network => network.feleNetId)
     //Adding out ofsync networks
-    feleNetworks.filter(network => localNetworks.indexOf(network) == -1).map(async network => {
-        await addNetworkToLocalOrgConfig(network, organization)
-        return
-    })
+    const outOfSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) == -1)
+
+    for(var i=0; i<outOfSyncNetworks.length; i++) {
+        LOCAL_ORG = await addNetworkToLocalOrgConfig(outOfSyncNetworks[i], organization, false)
+    }
 
     const inSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) > -1)
+
     inSyncNetworks.map(async network => {
-        const networkconfig = localOrg.feleNetworks[localOrg.feleNetworks.findIndex(net => net.feleNetId == network)]
+        const networkconfig = LOCAL_ORG.feleNetworks[LOCAL_ORG.feleNetworks.findIndex(net => net.feleNetId == network)]
         const localChannels = networkconfig.feleChannels.map(channel => channel.channelName)
         const {docs} = await getDocumentFromDatabase(NETWORK_PREFIX+network, getSelector("fmt", "channel"))
         docs.filter(channel => localChannels.indexOf(channel.channelName) == -1).map(async channel => {
-            await addChannelToNetwork(network, channel.channelName, organization)
+            const feleUsers = channel.organi
+            LOCAL_ORG = await addChannelToNetwork(network, channel.channelName, organization, false)
             return
         })
     })
+    await updateDocument(BID, LOCAL_ORG)
 }
 
-const addChannelToNetwork = async (network, channel, organization) => {
-    const localOrg = await getLocalOrgDoc(organization)
+const addChannelToNetwork = async (network, channel, organization, doUpdate=true) => {
+    let localOrg = {}
+    if(doUpdate) {
+        localOrg = await getLocalOrgDoc(organization)
+    } else {
+        localOrg = LOCAL_ORG
+    }
     const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId == network)
     if(netIdx > -1) {
         const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex(chnl => chnl.channelName == channel)
@@ -125,7 +160,9 @@ const addChannelToNetwork = async (network, channel, organization) => {
                 feleUsers: [],
                 mappings: []
             })
-            await updateDocument(BID, localOrg)
+            if(doUpdate)
+                await updateDocument(BID, localOrg)
+            else return localOrg
         }
     } else {
         throw new Error("Network not found in local organization")
