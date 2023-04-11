@@ -81,7 +81,7 @@ const addNetworkToLocalOrgConfig = async (networkName, organization) => {
 
 const addChannelToNetwork = async (network, channel, organization) => {
     const localOrg = await getLocalOrgDoc(organization)
-    const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId = network)
+    const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId == network)
     if(netIdx > -1) {
         const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex(chnl => chnl.channelName == channel)
         if(channelIdx > -1) {
@@ -192,16 +192,21 @@ const addCertToWallet = async (feleUser, credentialId) => {
 
 const addFeleUserToLOrg = async (organization, network, channel, feleUser) => {
     const localOrg = await getLocalOrgDoc(organization)
-    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId = network))
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId == network))
     if(netIdx > -1) {
-        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName = channel))
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName == channel))
         if(channelIdx > -1) {
-            localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.push({
-                feleUserId: feleUser,
-                walletId: "wallet~"+feleUser
-            })
-            await insertToDatabase(BID, localOrg)
-            return
+            let userObj = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.findIndex(user => user.feleUserId == feleUser)
+            if(userObj == -1) {
+                 localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.push({
+                    feleUserId: feleUser,
+                    walletId: "wallet~"+feleUser
+                    })
+                await updateDocument(BID, localOrg)
+                return
+            } else {
+                throw new Error("Fele User already Exists")
+            }
         } else {
             throw new Error("Channel not found")
         }
@@ -210,20 +215,22 @@ const addFeleUserToLOrg = async (organization, network, channel, feleUser) => {
     }
 }
 
-const getCurrentUserMapping = async (username, organization, network) => {
-    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    if(docs.length > 0) {
-        const feleNet = docs[0].feleNetworks[network]
-        if(feleNet) {
-            const mappedIndex = feleNet.mappings.findIndex((mapping => mapping.from == username))
+const getCurrentUserMapping = async (username, organization, network, channel) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    checkIfLocalUserExist(localOrg.localUsers, username)
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId == network))
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName == channel))
+        if(channelIdx > -1) {
+            const mappedIndex = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings.findIndex((mapping => mapping.from == username))
             let mapping = {}
             if(mappedIndex == -1) {
                 mapping.mapped = false
                 mapping.feleUser = ""
             } else {
                 mapping.mapped = true
-                mapping.feleUser = feleNet.mappings[mappedIndex].to
-                mapping.walletId = feleNet.feleUsers.filter((user) => user.feleUserId == mapping.feleUser)[0].walletId
+                mapping.feleUser = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings[mappedIndex].to
+                mapping.walletId = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.filter((user) => user.feleUserId == mapping.feleUser)[0].walletId
             }
             mapping.localUser = username
             return mapping
@@ -233,45 +240,52 @@ const getCurrentUserMapping = async (username, organization, network) => {
     throw new Error("Local organization not found")
 }
 
-const getAllUserMappings = async (organization, network) => {
-    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    if(docs.length > 0) {
-        const feleNet = docs[0].feleNetworks[network]
-        if(feleNet) {
-            const mappings =  feleNet.mappings.map((mapping)=> {
+
+const getAllUserMappings = async (organization, network, channel) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId == network))
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName == channel))
+        if(channelIdx > -1) {
+            const mappings =  localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings.map((mapping)=> {
                 return {
                     localUser: mapping.from,
                     feleUser: mapping.to,
-                    walletId: feleNet.feleUsers.filter((user) => user.feleUserId == mapping.to)[0].walletId
+                    walletId: localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.filter((user) => user.feleUserId == mapping.to)[0].walletId
                 }
             })
             return mappings
         }
-        throw new Error("Network not found in local organization")
+        throw new Error("Channel not found")
     }
-    throw new Error("Local organization not found")
+    throw new Error("Network not found in local organization")
 }
 
-const addNewMapping = async (organization, network, from, to) => {
-    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    if(docs.length > 0) {
-        const feleNet = docs[0].feleNetworks[network]
-        console.log(feleNet)
-        if(feleNet) {
-            checkIfLocalUserExist(docs[0].localUsers, from)
-            checkIfFeleUserExist(feleNet.feleUsers, to)
-            const mapIdx = feleNet.mappings.findIndex((mapping => mapping.from == from))
-            if(mapIdx == -1) {
-                docs[0].feleNetworks[network].mappings.push({from, to})
+
+const addNewMapping = async (organization, network, channel, from, to) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    checkIfLocalUserExist(localOrg.localUsers, from)
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId == network))
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName == channel))
+        if(channelIdx > -1) {
+            checkIfFeleUserExist(localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers, to)
+            let userObj = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings.findIndex(map => {
+                return map.from == from && map.to == to
+            })
+            if(userObj == -1) {
+                localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings.push({from,to})
+                await updateDocument(BID, localOrg)
+                return
             } else {
-                docs[0].feleNetworks[network].mappings[mapIdx].to = to
+                throw new Error("Mapping already exists")
             }
-            await updateDocument(BID, docs[0])
-            return
+        } else {
+            throw new Error("Channel not found")
         }
+    } else {
         throw new Error("Network not found in local organization")
     }
-    throw new Error("Local organization not found")
 }
 
 const checkIfLocalUserExist = (localUsers, username) => {
@@ -288,12 +302,14 @@ const checkIfFeleUserExist = (feleUsers, username) => {
     }
 }
 
-const deleteMappping = async (organization, network, username) => {
-    const {docs} = await getDocumentFromDatabase(BID, selectorForLocalOrganization(organization))
-    if(docs.length > 0) {
-        const feleNet = docs[0].feleNetworks[network]
-        if(feleNet) {
-            const mappings = docs[0].feleNetworks[network].mappings
+
+const deleteMappping = async (organization, network, username, channel) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId = network))
+    if(netIdx > -1) {
+        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName = channel))
+        if(channelIdx > -1) {
+            const mappings = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings
             let userObj = mappings.findIndex(mapping => mapping.from == username)
             if(userObj == -1) {
                 throw new Error("Mapping not found")
@@ -301,14 +317,14 @@ const deleteMappping = async (organization, network, username) => {
                 const updatedMap = mappings.filter((mapping) => {
                     return mapping.from !== username
                 })
-                docs[0].feleNetworks[network].mappings = updatedMap
-                await updateDocument(BID, docs[0])
+                localOrg.feleNetworks[netIdx].feleChannels[channelIdx].mappings = updatedMap
+                await updateDocument(BID, localOrg)
                 return
             }
         }
-        throw new Error("Network not found in local organization")
+        throw new Error("Channel not found")
     }
-    throw new Error("Local organization not found")
+    throw new Error("Network not found in local organization")
 }
 
 module.exports = {

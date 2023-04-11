@@ -83,8 +83,8 @@ const updatePassword = async (req, res) => {
 
 const deleteLocalUser = async (req, res) => {
     const {username} = req.params
-    const organization = req.organization
-    if(username == req.username) {
+    const {organization, username: loggedUser} = req
+    if(username == loggedUser) {
         res.status(500).send({
             message: "User(Admin) cannot delete himself"
         })
@@ -105,8 +105,7 @@ const deleteLocalUser = async (req, res) => {
 
 const getAllLocalUsers = async (req, res) => {
     try {
-        const organization = req.headers.organization
-        console.log("org: ", organization)
+        const {organization} = req
         const localUsers = await localOrg.getAllLocalUsers(organization)
         res.status(200).send(localUsers)
     } catch(error) {
@@ -157,7 +156,7 @@ const addFeleUserToLOrg = async (req, res) => {
 
 const getAllUserMappings = async (req, res) => {
     const {organization} = req
-    const network = req.query.network
+    const {network, channel} = req.headers
     if(!network) {
         res.status(400).send({
             message: "network query param is missing! "
@@ -165,7 +164,7 @@ const getAllUserMappings = async (req, res) => {
         return
     }
     try {
-        const mappings = await localOrg.getAllUserMappings(organization, network)
+        const mappings = await localOrg.getAllUserMappings(organization, network, channel)
         res.status(200).send(mappings)
     } catch(error) {
         res.status(500).send({
@@ -176,10 +175,10 @@ const getAllUserMappings = async (req, res) => {
 
 const addNewMapping = async (req, res) => {
     const {organization} = req
-    const network = req.query.network
+    const {network, channel} = req.headers
     const {from, to} = req.body
     try {
-        await localOrg.addNewMapping(organization, network, from, to)
+        await localOrg.addNewMapping(organization, network, channel, from, to)
         res.status(200).send({
             message: "User mapped to "+to+" successfully"
         })
@@ -192,7 +191,8 @@ const addNewMapping = async (req, res) => {
 
 const deleteMappping = async (req, res) => {
     const {organization, username} = req
-    const {network, username: localUser} = req.query
+    const {username: localUser} = req.query
+    const {network, channel} = req.headers
     if(username == localUser) {
         res.status(500).send({
             message: "Admin (user) cannot delete his own mapping"
@@ -200,7 +200,7 @@ const deleteMappping = async (req, res) => {
         return
     }
     try{
-        await localOrg.deleteMappping(organization, network, localUser)
+        await localOrg.deleteMappping(organization, network, localUser, channel)
         res.status(200).send({
             message: "User mapped deleted"
         })
@@ -213,7 +213,8 @@ const deleteMappping = async (req, res) => {
 
 const getCurrentUserMapping = async (req, res) => {
     const {organization, username} = req
-    const network =req.query.network
+    //const network =req.query.network
+    const {network, channel} = req.headers
     if(!network) {
         res.status(400).send({
             message: "network query param is missing! "
@@ -221,7 +222,7 @@ const getCurrentUserMapping = async (req, res) => {
         return
     }
     try {
-        const mapping = await localOrg.getCurrentUserMapping(username, organization, network)
+        const mapping = await localOrg.getCurrentUserMapping(username, organization, network, channel)
         res.status(200).send(mapping)
     } catch(error) {
         res.status(500).send({
