@@ -4,7 +4,7 @@ const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
 const { registerUserCLI, enrollUserCLI } = require('./scripts/ca')
-const { createOrganizationCLI, addLocalUserCLI, deleteLocalUserCLI, mapLocalUserCLI, deleteMappingCLI } = require('./scripts/localOrg')
+const { createOrganizationCLI, addNetworktoLocalOrgCLI, addChannelToNetworkCLI, addLocalUserCLI, deleteLocalUserCLI, getAllLocalUsersCLI, updatePasswordCLI, addCertToWalletCLI, addFeleUserToLOrgCLI, getCurrentUserMappingCLI, getAllUserMappingsCLI, addNewMappingCLI, deleteMappingCLI, syncLocalOrgCLI, listAllNetworksinLocalOrgCLI, listAllChannelsInNetworkCLI } = require('./scripts/localOrg')
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localOrg.json');
@@ -224,10 +224,62 @@ localOrgsCommand
     })
 
 localOrgsCommand
+    .command('addNetworkToLocalOrg')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization and network names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addNetworktoLocalOrgCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('addChannelToNetwork')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network and channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addChannelToNetworkCLI(options.adminUsername, options.adminPassword, json); 
+    });
+  
+localOrgsCommand
+    .command('syncLocalOrg')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await syncLocalOrgCLI(options.Username, options.Password, options.organization);
+    })
+
+localOrgsCommand
+    .command('listAllNetworksinLocalOrg')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await listAllNetworksinLocalOrgCLI(options.Username, options.Password, options.organization);
+    })
+
+localOrgsCommand
+    .command('listAllChannelsInNetwork')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .option('-n, --network <network>', 'network name')
+    .action(async(options) => {
+        return await listAllChannelsInNetworkCLI(options.Username, options.Password, options.organization, options.network);
+    })
+
+localOrgsCommand
     .command('addUser')
     .option('-u, --adminUsername <adminUsername>', 'admin username')
     .option('-p, --adminPassword <adminPassword>', 'admin password')
-    .option('-ua, --userArgument <userArgument>', 'new user details in JSON format')
+    .option('-ua, --userArgument <userArgument>', 'organization, username, password, role, userDetails details.')
     .action(async(options) => {
         var json = options.userArgument;
         json = JSON.parse(json);
@@ -239,7 +291,7 @@ localOrgsCommand
     .command('deleteUser')
     .option('-u, --adminUsername <adminUsername>', 'admin username')
     .option('-p, --adminPassword <adminPassword>', 'admin password')
-    .option('-ua, --userArgument <userArgument>', 'user details to be deleted in JSON format')
+    .option('-ua, --userArgument <userArgument>', 'organization and username details.')
     .action(async(options) => {
         var json = options.userArgument;
         json = JSON.parse(json);
@@ -248,21 +300,86 @@ localOrgsCommand
     });
 
 localOrgsCommand
-    .command('mapUser')
+    .command('getAllLocalUsers')
     .option('-u, --adminUsername <adminUsername>', 'admin username')
     .option('-p, --adminPassword <adminPassword>', 'admin password')
-    .option('-ua, --userArgument <userArgument>', 'user details to be mapped in JSON format')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await getAllLocalUsersCLI(options.adminUsername, options.adminPassword, options.organization);
+    })
+
+localOrgsCommand
+    .command('updatePassword')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .option('-np, --newPassword <newPassword>', 'New Password to be updated')
+    .action(async(options) => {
+        return await updatePasswordCLI(options.Username, options.Password, options.organization, options.newPassword);
+    })
+
+localOrgsCommand
+    .command('addCertToWallet')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-ua, --userArgument <userArgument>', 'Fele User and Certificate details in JSON format.')
     .action(async(options) => {
         var json = options.userArgument;
         json = JSON.parse(json);
-        return await mapLocalUserCLI(options.adminUsername, options.adminPassword, json);
+        //console.log("User Argument", json);
+        return await addCertToWalletCLI(options.Username, options.Password, json);
+    }) 
+
+localOrgsCommand
+    .command('addFeleUserToLOrg')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel, fele_user names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addFeleUserToLOrgCLI(options.adminUsername, options.adminPassword, json);
+    }) 
+
+localOrgsCommand
+    .command('getCurrentUserMapping')
+    .option('-u, --Username <adminUsername>', 'username')
+    .option('-p, --Password <adminPassword>', 'password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await getCurrentUserMappingCLI(options.Username, options.Password, json);
+    })
+
+localOrgsCommand
+    .command('getAllUserMappings')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await getAllUserMappingsCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+localOrgsCommand
+    .command('addNewMapping')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, fele_network, fele_channel, fele_user and username details.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await addNewMappingCLI(options.adminUsername, options.adminPassword, json);
     })
 
 localOrgsCommand
     .command('deleteMapping')
     .option('-u, --adminUsername <adminUsername>', 'admin username')
     .option('-p, --adminPassword <adminPassword>', 'admin password')
-    .option('-ua, --userArgument <userArgument>', 'user details to be mapped in JSON format')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel, username details.')
     .action(async(options) => {
         var json = options.userArgument;
         json = JSON.parse(json);
