@@ -234,7 +234,8 @@ const getCurrentUserMapping = async (req, res) => {
 const listAllNetworks = async (req, res) => {
     const {organization} = req
     try {
-        res.status(200).send(mapping)
+        const nets = await localOrg.listAllNetworks(organization)
+        res.status(200).send(nets)
     } catch(error) {
         res.status(500).send({
             message: error.message
@@ -242,12 +243,12 @@ const listAllNetworks = async (req, res) => {
     }
 }
 
-const listAllChannels = async (req, res) => {
+const listAllChannelsInNetwork = async (req, res) => {
     const {organization} = req
     const {network} = req.headers
-
     try {
-        res.status(200).send(mapping)
+        const channles = await localOrg.listAllChannelsInNetwork(organization, network)
+        res.status(200).send(channles)
     } catch(error) {
         res.status(500).send({
             message: error.message
@@ -281,5 +282,7 @@ module.exports = {
     addNetworkToLocalOrgConfig,
     addFeleUserToLOrg,
     addChannelToNetwork,
-    syncLocalOrg
+    syncLocalOrg,
+    listAllNetworks,
+    listAllChannelsInNetwork
 }

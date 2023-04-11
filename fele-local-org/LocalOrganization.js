@@ -74,6 +74,21 @@ const addNetworkToLocalOrgConfig = async (networkName, organization) => {
     }
 }
 
+const listAllNetworks = async(organization) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    return localOrg.feleNetworks.map(network => network.feleNetId)
+}
+
+const listAllChannelsInNetwork = async(organization, network) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId == network)
+    if(netIdx > -1) {
+        const feleNet = localOrg.feleNetworks[netIdx]
+        return feleNet.feleChannels.map(channel => channel.channelName)
+    }
+    throw new Error("Network not found")
+}
+
 const syncLocalOrg = async (organization) => {
     console.log("sync start")
     const localOrg = await getLocalOrgDoc(organization)
@@ -359,5 +374,7 @@ module.exports = {
     deleteMappping,
     addFeleUserToLOrg,
     addChannelToNetwork,
-    syncLocalOrg
+    syncLocalOrg,
+    listAllChannelsInNetwork,
+    listAllNetworks
 }
