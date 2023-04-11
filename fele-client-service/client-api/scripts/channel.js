@@ -13,7 +13,7 @@ const createChannel = async (networkName, channelConfig) => {
     const timestamp = new Date().toISOString()
     channelConfig = {
         _id: CHANNEL_ID_PREFIX + uuidv4(),
-        fmt: "Channel",
+        fmt: "channel",
         created_at: timestamp,
         updated_at: timestamp,
         ...channelConfig

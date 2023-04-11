@@ -8,7 +8,7 @@ const logger = require('../../utils/logger')
 const CA = require('./ca')
 const {addCertToWallet} = require('../../../fele-local-org/LocalOrganization')
 
-const createNetwork = async (networkConfig, networkName, initiator) => {
+const createNetwork = async (networkConfig, networkName) => {
     const database = NETWORK_PREFIX + networkName
     const timestamp = new Date().toISOString()
     networkConfig = {
@@ -21,13 +21,13 @@ const createNetwork = async (networkConfig, networkName, initiator) => {
     
     await createDatabase(database)
 
-    const adminCred = await CA.enrollUser({mspId: initiator.organization, enrollmentId: `${initiator.organization.toLowerCase()}.admin`})
-    const feleUser = `${initiator.organization.toLowerCase()}.admin`
+    // const adminCred = await CA.enrollUser({mspId: initiator.organization, enrollmentId: `${initiator.organization.toLowerCase()}.admin`})
+    // const feleUser = `${initiator.organization.toLowerCase()}.admin`
 
-    networkConfig.administrator = feleUser
+    // networkConfig.administrator = feleUser
 
     await insertToDatabase(database, networkConfig)
-    const walletId = await addCertToWallet(feleUser, adminCred)
+    //const walletId = await addCertToWallet(feleUser, adminCred)
     //To create network folder under chaincode
     const dir = path.join(NETWORK_BASEPATH, networkName);
     if (!fs.existsSync(dir)) {
@@ -36,12 +36,12 @@ const createNetwork = async (networkConfig, networkName, initiator) => {
     return {
         networkId: networkConfig._id,
         networkName, 
-        initiator: {
-            organization: initiator.organization,
-            feleUser: `${initiator.organization.toLowerCase()}.admin`,
-            credential: adminCred,
-            walletId
-        }
+        // initiator: {
+        //     organization: initiator.organization,
+        //     feleUser: `${initiator.organization.toLowerCase()}.admin`,
+        //     credential: adminCred,
+        //     walletId
+        // }
     }
 }
 

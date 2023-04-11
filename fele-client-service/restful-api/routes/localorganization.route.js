@@ -7,7 +7,8 @@ const localOrg = require('../../../fele-local-org/handlers/localorganization.han
 
 router.post('/login', Auth.Authenticate) //DONE VERIFIED
 router.post('/create', validateCreateOrganizationPayload, localOrg.createOrganization) //DONE VERIFIED
-router.post('/add-network', Authorize.Admin, localOrg.addNetworkToLocalOrgConfig)
+router.post('/add-network', Authorize.Admin, localOrg.addNetworkToLocalOrgConfig) //DONE VERIFIED
+router.post('/add-channel', Authorize.Admin, localOrg.addChannelToNetwork)
 router.post('/add-user', Authorize.Admin, localOrg.addLocalUser) //DONE VERIIFED
 router.delete('/delete-user/:username', Authorize.Admin, localOrg.deleteLocalUser) //DONE VERIFIED
 router.put('/user/update-password', Authorize.Any, localOrg.updatePassword) //DONE VERIFIED
@@ -18,5 +19,8 @@ router.get('/mappings/current-user', Authorize.Any, localOrg.getCurrentUserMappi
 router.post('/mappings/add', Authorize.Admin, localOrg.addNewMapping) //DONE VERIFIED
 router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping) //DONE VERFIED
 router.post('/add-feleuser', Authorize.Admin, localOrg.addFeleUserToLOrg)
+router.get('/sync', Authorize.Any, localOrg.syncLocalOrg)
+router.get('/network/list', Authorize.Any, localOrg.listAllNetworks)
+router.get('/channels/list', Authorize.Any, localOrg.listAllChannelsInNetwork)
 
 module.exports = router
