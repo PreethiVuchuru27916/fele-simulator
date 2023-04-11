@@ -336,7 +336,7 @@ const checkIfFeleUserExist = (feleUsers, username) => {
 }
 
 
-const deleteMappping = async (organization, network, username, channel) => {
+const deleteMapping = async (organization, network, username, channel) => {
     const localOrg = await getLocalOrgDoc(organization)
     const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId = network))
     if(netIdx > -1) {
@@ -371,7 +371,7 @@ module.exports = {
     getCurrentUserMapping,
     getAllUserMappings,
     addNewMapping,
-    deleteMappping,
+    deleteMapping,
     addFeleUserToLOrg,
     addChannelToNetwork,
     syncLocalOrg,

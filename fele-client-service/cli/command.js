@@ -4,19 +4,20 @@ const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
 const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
 const { registerUserCLI, enrollUserCLI } = require('./scripts/ca')
+const { createOrganizationCLI, addNetworktoLocalOrgCLI, addChannelToNetworkCLI, addLocalUserCLI, deleteLocalUserCLI, getAllLocalUsersCLI, updatePasswordCLI, addCertToWalletCLI, addFeleUserToLOrgCLI, getCurrentUserMappingCLI, getAllUserMappingsCLI, addNewMappingCLI, deleteMappingCLI, syncLocalOrgCLI, listAllNetworksinLocalOrgCLI, listAllChannelsInNetworkCLI } = require('./scripts/localOrg')
 
 const readline = require('readline');
-const defaultLocalOrg = require('../../conf/localorg.json');
+const defaultLocalOrg = require('../../conf/localOrg.json');
 
-const { getDocumentByID } = require('../utils/db');
+const { getDocumentByID, getDocumentFromDatabase } = require('../utils/db');
 const { authenticateUser } = require('../utils/auth');
 const logger = require('../utils/logger');
 const { sha256 } = require('../utils/helpers');
 const { GLOBAL_STATE } = require('../utils/constants');
-const { async } = require('node-couchdb/dist/node-couchdb');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
+const localOrgsCommand = program.command('localOrgs');
 
 const interpreter = new commander.Command();
 const networkCommand = interpreter.command('network');
@@ -170,9 +171,15 @@ userCommand
     .action(async(options) => {
         //authentication
         const hashedPassword = sha256(options.password);
-        GLOBAL_STATE.localOrg = await getDocumentByID("fele_localorg", "localOrg-nasa")
+        GLOBAL_STATE.localOrg = await getDocumentFromDatabase("fele__bid", {
+            selector: {
+                organization: {
+                    $eq: options.mspId
+                }
+            }     
+        })
         //localOrg gets its value from couchdb or from the default localorg.json file
-        GLOBAL_STATE.localOrg = GLOBAL_STATE.localOrg || defaultLocalOrg
+        GLOBAL_STATE.localOrg = GLOBAL_STATE.localOrg.docs[0] || defaultLocalOrg
         
         GLOBAL_STATE.localUser = authenticateUser(options.username, hashedPassword, options.mspId, GLOBAL_STATE.localOrg)
         
@@ -207,6 +214,180 @@ userCommand
             logger.error(`Failed to authenticate username ${options.username}`);
         }
     })
+
+/************************LocalOrg Commands*********************/
+localOrgsCommand
+    .command('createLocalOrg')
+    .option('-oc, --orgConfig <orgConfig>', 'JSON configuration of the local organization')
+    .action(async(options) => {
+        return await createOrganizationCLI(options.orgConfig);
+    })
+
+localOrgsCommand
+    .command('addNetworkToLocalOrg')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization and network names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addNetworktoLocalOrgCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('addChannelToNetwork')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network and channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addChannelToNetworkCLI(options.adminUsername, options.adminPassword, json); 
+    });
+  
+localOrgsCommand
+    .command('syncLocalOrg')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await syncLocalOrgCLI(options.Username, options.Password, options.organization);
+    })
+
+localOrgsCommand
+    .command('listAllNetworksinLocalOrg')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await listAllNetworksinLocalOrgCLI(options.Username, options.Password, options.organization);
+    })
+
+localOrgsCommand
+    .command('listAllChannelsInNetwork')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .option('-n, --network <network>', 'network name')
+    .action(async(options) => {
+        return await listAllChannelsInNetworkCLI(options.Username, options.Password, options.organization, options.network);
+    })
+
+localOrgsCommand
+    .command('addUser')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, username, password, role, userDetails details.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addLocalUserCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('deleteUser')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization and username details.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await deleteLocalUserCLI(options.adminUsername, options.adminPassword, json); 
+    });
+
+localOrgsCommand
+    .command('getAllLocalUsers')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-o, --organization <organization>', 'organization name')
+    .action(async(options) => {
+        return await getAllLocalUsersCLI(options.adminUsername, options.adminPassword, options.organization);
+    })
+
+localOrgsCommand
+    .command('updatePassword')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-o, --organization <organization>', 'organization name')
+    .option('-np, --newPassword <newPassword>', 'New Password to be updated')
+    .action(async(options) => {
+        return await updatePasswordCLI(options.Username, options.Password, options.organization, options.newPassword);
+    })
+
+localOrgsCommand
+    .command('addCertToWallet')
+    .option('-u, --Username <Username>', 'username')
+    .option('-p, --Password <Password>', 'password')
+    .option('-ua, --userArgument <userArgument>', 'Fele User and Certificate details in JSON format.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addCertToWalletCLI(options.Username, options.Password, json);
+    }) 
+
+localOrgsCommand
+    .command('addFeleUserToLOrg')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel, fele_user names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        //console.log("User Argument", json);
+        return await addFeleUserToLOrgCLI(options.adminUsername, options.adminPassword, json);
+    }) 
+
+localOrgsCommand
+    .command('getCurrentUserMapping')
+    .option('-u, --Username <adminUsername>', 'username')
+    .option('-p, --Password <adminPassword>', 'password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await getCurrentUserMappingCLI(options.Username, options.Password, json);
+    })
+
+localOrgsCommand
+    .command('getAllUserMappings')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel names.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await getAllUserMappingsCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+localOrgsCommand
+    .command('addNewMapping')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, fele_network, fele_channel, fele_user and username details.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await addNewMappingCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+localOrgsCommand
+    .command('deleteMapping')
+    .option('-u, --adminUsername <adminUsername>', 'admin username')
+    .option('-p, --adminPassword <adminPassword>', 'admin password')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel, username details.')
+    .action(async(options) => {
+        var json = options.userArgument;
+        json = JSON.parse(json);
+        return await deleteMappingCLI(options.adminUsername, options.adminPassword, json);
+    })
+
+
+
 module.exports = {
   program,
   interpreter

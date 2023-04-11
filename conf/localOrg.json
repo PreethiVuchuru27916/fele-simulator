@@ -1,35 +1,131 @@
-{   
-	"_id": "b806e024-9e63-11ed-a8fc-0242ac120002_nasa",
-	"organization_id": "b806e024-9e63-11ed-a8fc-0242ac120002",  
-    "organization": "nasa",  
+{
+	"_id": "organization~05aa7e22-5c13-4410-a892-2a5b6c50b437",
+	"_rev": "49-38c313397b5e47284efd7e3acabbc4a9",
+	"fmt": "Organization",
+	"organization": "nasa",
+	"created_at": "2023-04-03T09:37:45.787Z",
+	"updated_at": "2023-04-03T09:37:45.787Z",
 	"localUsers": [
-		{	"username": "preethi",
-			"password": "8a4faf06aa44973bf837fa68f1155e2096660d0f97b2c699840f56b38bf3b244" 
-		},
-		{	"username": "sha",
-			"password": "d600474b1b8e50d3633c91c0cf1efc454b79c9624a43fd7de441ee71745726ab"
-		}
-	],	
-	"felenetworks":[	
-		{  "felenetId": "artemis",
-		   "feleOrgId": "nasa_artemis",
-		   "feleusers": [
-				{  
-				   "feleuserId": "nasa_artemis.admin1",  
-				   "walletId": "wallet_19230"
-				},
-				{  "feleuserId": "nasa_artemis.se1",
-				   "walletId": "wallet_194560"
-				}
-		   ],
-		   "mappings" : [
-				{   "from": "preethi",
-					"to": "nasa_artemis.admin1"
-				},
-				{   "from": "sha",
-					"to": "nasa_artemis.se1"
-				}
-		  ]
-		}
-    ]
-}
+	  {
+		"username": "preethi",
+		"password": "8a4faf06aa44973bf837fa68f1155e2096660d0f97b2c699840f56b38bf3b244",
+		"role": "Admin"
+	  },
+	  {
+		"username": "sha",
+		"password": "d600474b1b8e50d3633c91c0cf1efc454b79c9624a43fd7de441ee71745726ab",
+		"role": "Reader"
+	  },
+	  {
+		"username": "admin",
+		"password": "5fcf82bc15aef42cd3ec93e6d4b51c04df110cf77ee715f62f3f172ff8ed9de9",
+		"role": "Admin"
+	  }
+	],
+	"felenetworks": [
+	  {
+		"felenetId": "artemis",
+		"feleOrgId": "nasa_artemis",
+		"feleChannel": [
+		  {
+			"channelName": "channel1",
+			"feleusers": [
+			  {
+				"feleuserId": "nasa_artemis.admin1",
+				"walletId": "wallet_preethi"
+			  },
+			  {
+				"feleuserId": "nasa_artemis.se1",
+				"walletId": "wallet_sha"
+			  }
+			],
+			"mappings": [
+			  {
+				"from": "preethi",
+				"to": "nasa_artemis.admin1"
+			  },
+			  {
+				"from": "sha",
+				"to": "nasa_artemis.se1"
+			  }
+			]
+		  },
+		  {
+			"channelName": "channel2",
+			"feleusers": [
+			  {
+				"feleuserId": "nasa_artemis.admin2",
+				"walletId": "wallet_preethi"
+			  },
+			  {
+				"feleuserId": "nasa_artemis.se2",
+				"walletId": "wallet_sha"
+			  }
+			],
+			"mappings": [
+			  {
+				"from": "preethi",
+				"to": "nasa_artemis.admin2"
+			  },
+			  {
+				"from": "sha",
+				"to": "nasa_artemis.se2"
+			  }
+			]
+		  }
+		]
+	  },
+	  {
+		"felenetId": "art",
+		"feleOrgId": "nasa_art",
+		"feleChannel": [
+		  {
+			"channelName": "channel1",
+			"feleusers": [
+			  {
+				"feleuserId": "nasa_art.admin1",
+				"walletId": "wallet_preethi"
+			  },
+			  {
+				"feleuserId": "nasa_art.se1",
+				"walletId": "wallet_sha"
+			  }
+			],
+			"mappings": [
+			  {
+				"from": "preethi",
+				"to": "nasa_art.admin1"
+			  },
+			  {
+				"from": "sha",
+				"to": "nasa_art.se1"
+			  }
+			]
+		  },
+		  {
+			"channelName": "channel2",
+			"feleusers": [
+			  {
+				"feleuserId": "nasa_art.admin2",
+				"walletId": "wallet_preethi"
+			  },
+			  {
+				"feleuserId": "nasa_art.se2",
+				"walletId": "wallet_sha"
+			  }
+			],
+			"mappings": [
+			  {
+				"from": "preethi",
+				"to": "nasa_artemis.admin2"
+			  },
+			  {
+				"from": "sha",
+				"to": "nasa_artemis.se2"
+			  }
+			]
+		  }
+		]
+	  }
+	]
+  }
