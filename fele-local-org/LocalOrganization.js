@@ -42,16 +42,15 @@ const createOrganization = async (organization, localUsers) => {
     }
 }
 
-const getChannelsInNetwork = async (network) => {
-    const {docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel"))
-    return docs.map(channel => channel.channelName)
-}
-
-const getChannelsAndItsFeleUsersInNetwork = async (network, organization) => {
-    const {docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel"))
+const getChannelsAndItsFeleUsersInNetwork = async (network, organization, chs) => {
+    let docs = []
+    if(chs){
+        docs = chs
+    } else {
+        ({docs} = await getDocumentFromDatabase("fele__"+network,  getSelector("fmt", "channel")))
+    }
     
     const channels = docs.filter(channel => channel.organizations.findIndex(org => org.mspid == `${organization}_${network}`) > -1)
-    console.log(channels)
     return channels.map(channel => {
         const orgIdx = channel.organizations.findIndex(org => org.mspid == `${organization}_${network}`)
         const feleUsers = channel.organizations[orgIdx].feleUsers.map(user => {
@@ -120,7 +119,7 @@ const syncLocalOrg = async (organization) => {
     LOCAL_ORG = await getLocalOrgDoc(organization)
     const feleNetworks = await listAllNetworks()
     const localNetworks = LOCAL_ORG.feleNetworks.map(network => network.feleNetId)
-    //Adding out ofsync networks
+    //Adding out of sync networks
     const outOfSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) == -1)
 
     for(var i=0; i<outOfSyncNetworks.length; i++) {
@@ -128,20 +127,39 @@ const syncLocalOrg = async (organization) => {
     }
 
     const inSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) > -1)
-    console.log("inSync: ", inSyncNetworks)
-    inSyncNetworks.map(async network => {
+    //Checking existing networks to sync channels and feleuserIds
+    for(let i = 0; i< inSyncNetworks.length; i++) {
+        const network = inSyncNetworks[i]
+        const netIdx = LOCAL_ORG.feleNetworks.findIndex(net => net.feleNetId == network)
         const networkconfig = LOCAL_ORG.feleNetworks[LOCAL_ORG.feleNetworks.findIndex(net => net.feleNetId == network)]
         const localChannels = networkconfig.feleChannels.map(channel => channel.channelName)
-        console.log("local channels: ", localChannels)
+
+        //getting all channels in network
         const {docs} = await getDocumentFromDatabase(NETWORK_PREFIX+network, getSelector("fmt", "channel"))
-        console.log(docs.length)
-        docs.filter(channel => localChannels.indexOf(channel.channelName) == -1).map(async channel => {
-            const org = channel.organizations
-            console.log("orgs: ", org)
-            LOCAL_ORG = await addChannelToNetwork(network, channel.channelName, organization, false)
-            return
+        //filtering channels that this organization is part of
+        const channels = docs.filter(channel => channel.organizations.findIndex(org => org.mspid == `${organization}_${network}`) > -1)
+        //synchronize channels in local organization with channels in network
+        //Remove channels from localorg if any, that are not in network
+        const toRemove = localChannels.filter(channel => channels.findIndex(ch=>ch.channelName == channel) == -1)
+        LOCAL_ORG.feleNetworks[netIdx].feleChannels = LOCAL_ORG.feleNetworks[netIdx].feleChannels.filter(channel => toRemove.findIndex(ch => ch == channel.channelName) == -1)
+
+        const channelsInfo = await getChannelsAndItsFeleUsersInNetwork(network, organization, docs)
+        //Checking fele users
+        channelsInfo.filter(channelInfo => localChannels.indexOf(channelInfo.channelName) > -1).map(channelInfo => {
+            const chIdx = LOCAL_ORG.feleNetworks[netIdx].feleChannels.findIndex(ch => ch.channelName == channelInfo.channelName)
+            LOCAL_ORG.feleNetworks[netIdx].feleChannels[chIdx].feleUsers = channelInfo.feleUsers
+            return 
         })
-    })
+        //Adding channels to localorg that are missing 
+        channelsInfo.filter(channelInfo => localChannels.indexOf(channelInfo.channelName) == -1).map(channelInfo => {
+            LOCAL_ORG.feleNetworks[netIdx].feleChannels.push({
+                channelName: channelInfo.channelName,
+                feleUsers: channelInfo.feleUsers,
+                mappings: []
+            })
+            return 
+        })
+    }
     await updateDocument(BID, LOCAL_ORG)
 }
 
