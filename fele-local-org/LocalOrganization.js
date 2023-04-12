@@ -286,31 +286,6 @@ const addCertToWallet = async (feleUser, credentialId) => {
     return walletId
 }
 
-const addFeleUserToLOrg = async (organization, network, channel, feleUser) => {
-    const localOrg = await getLocalOrgDoc(organization)
-    const netIdx = localOrg.feleNetworks.findIndex((net => net.feleNetId == network))
-    if(netIdx > -1) {
-        const channelIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex((chnl => chnl.channelName == channel))
-        if(channelIdx > -1) {
-            let userObj = localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.findIndex(user => user.feleUserId == feleUser)
-            if(userObj == -1) {
-                 localOrg.feleNetworks[netIdx].feleChannels[channelIdx].feleUsers.push({
-                    feleUserId: feleUser,
-                    walletId: "wallet~"+feleUser
-                    })
-                await updateDocument(BID, localOrg)
-                return
-            } else {
-                throw new Error("Fele User already Exists")
-            }
-        } else {
-            throw new Error("Channel not found")
-        }
-    } else {
-        throw new Error("Network not found in local organization")
-    }
-}
-
 const getCurrentUserMapping = async (username, organization, network, channel) => {
     const localOrg = await getLocalOrgDoc(organization)
     checkIfLocalUserExist(localOrg.localUsers, username)
@@ -435,7 +410,6 @@ module.exports = {
     getAllUserMappings,
     addNewMapping,
     deleteMapping,
-    addFeleUserToLOrg,
     addChannelToNetwork,
     syncLocalOrg,
     listAllChannelsInNetwork,

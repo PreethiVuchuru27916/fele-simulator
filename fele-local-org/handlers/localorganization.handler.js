@@ -132,28 +132,6 @@ const addCertToWallet = async (req, res) => {
     }
 }
 
-const addFeleUserToLOrg = async (req, res) => {
-    const {organization} = req
-    const {network, channel} = req.headers
-    const {feleUser} = req.body
-    if(!network || !channel) {
-        res.status(400).send({
-            message: "Network and Channel (headers) information is required"
-        })
-        return
-    }
-    try {
-        await localOrg.addFeleUserToLOrg(organization, network, channel, feleUser)
-        res.status(200).send({
-            message: "Fele user added in local organization"
-        })
-    } catch(error) {
-        res.status(500).send({
-            message: error.message
-        })
-    }
-}
-
 const getAllUserMappings = async (req, res) => {
     const {organization} = req
     const {network, channel} = req.headers
@@ -280,7 +258,6 @@ module.exports = {
     getCurrentUserMapping,
     addCertToWallet,
     addNetworkToLocalOrgConfig,
-    addFeleUserToLOrg,
     addChannelToNetwork,
     syncLocalOrg,
     listAllNetworks,
