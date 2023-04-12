@@ -128,13 +128,16 @@ const syncLocalOrg = async (organization) => {
     }
 
     const inSyncNetworks = feleNetworks.filter(network => localNetworks.indexOf(network) > -1)
-
+    console.log("inSync: ", inSyncNetworks)
     inSyncNetworks.map(async network => {
         const networkconfig = LOCAL_ORG.feleNetworks[LOCAL_ORG.feleNetworks.findIndex(net => net.feleNetId == network)]
         const localChannels = networkconfig.feleChannels.map(channel => channel.channelName)
+        console.log("local channels: ", localChannels)
         const {docs} = await getDocumentFromDatabase(NETWORK_PREFIX+network, getSelector("fmt", "channel"))
+        console.log(docs.length)
         docs.filter(channel => localChannels.indexOf(channel.channelName) == -1).map(async channel => {
-            const feleUsers = channel.organi
+            const org = channel.organizations
+            console.log("orgs: ", org)
             LOCAL_ORG = await addChannelToNetwork(network, channel.channelName, organization, false)
             return
         })
@@ -215,8 +218,13 @@ const deleteAllUserMappings = async (feleNetworks, username) => {
 }
 
 const getAllLocalUsers = async (organization) => {
-    const doc = await getLocalOrgDoc(organization)
-    return doc.localUsers || []
+    const localOrg = await getLocalOrgDoc(organization)
+    return localOrg.localUsers.map(user => {
+        return {
+            username: user.username,
+            role: user.role
+        }
+    })
 }
 
 const getLocalOrgDoc = async (organization) => {

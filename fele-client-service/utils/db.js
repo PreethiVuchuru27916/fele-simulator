@@ -95,7 +95,7 @@ const getDocumentFromDatabase = async (databaseName, selector) => {
         return data
     }
     catch (e) {
-        logger.error(e)
+        logger.error(`Error retrieving data from ${databaseName}`)
         throw new Error(`Error retrieving data from ${databaseName}`)
     }
 }

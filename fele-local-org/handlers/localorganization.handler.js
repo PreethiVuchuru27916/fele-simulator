@@ -263,7 +263,7 @@ const syncLocalOrg = async (req, res) => {
         await localOrg.syncLocalOrg(organization)
         res.sendStatus(200)
     } catch(error) {
-        res.sendStatus(500)
+        res.status(500).send({message: error.message})
     }
 }
 
