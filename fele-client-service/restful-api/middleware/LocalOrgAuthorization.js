@@ -3,11 +3,11 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 class LocalOrgAuthorization {
     Authorize = async (req, res, next, role, any=false) => {
-        const token = req.body.token
+        const token = req.headers.authorization
 
         if(!token) {
             res.status(403).send({
-                message: "Access Token required"
+                message: "Authorization header required"
             })
             return
         }
