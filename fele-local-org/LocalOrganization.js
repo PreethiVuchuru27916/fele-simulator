@@ -245,6 +245,21 @@ const getAllLocalUsers = async (organization) => {
     })
 }
 
+const listAllFeleUsersInChannel = async (organization, network, channel) => {
+    const localOrg = await getLocalOrgDoc(organization)
+    const netIdx = localOrg.feleNetworks.findIndex(net => net.feleNetId == network)
+    if(netIdx > -1) {
+        const chnlIdx = localOrg.feleNetworks[netIdx].feleChannels.findIndex(chnl => chnl.channelName == channel)
+        if(chnlIdx > -1) {
+            const feleUsers = localOrg.feleNetworks[netIdx].feleChannels[chnlIdx].feleUsers
+            return feleUsers.map(user => user.feleUserId)
+        }
+        throw new Error("Channel not found")
+    }
+    throw new Error("Network not found")
+
+}
+
 const getLocalOrgDoc = async (organization) => {
     const {docs} = await getDocumentFromDatabase(BID, {
         selector: {
@@ -413,5 +428,6 @@ module.exports = {
     addChannelToNetwork,
     syncLocalOrg,
     listAllChannelsInNetwork,
-    listAllNetworksinLocalOrg
+    listAllNetworksinLocalOrg,
+    listAllFeleUsersInChannel
 }

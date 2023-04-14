@@ -21,5 +21,6 @@ router.delete('/mappings/delete', Authorize.Admin, localOrg.deleteMappping) //DO
 router.get('/sync', Authorize.Any, localOrg.syncLocalOrg)
 router.get('/network/list', Authorize.Any, localOrg.listAllNetworks)
 router.get('/channels/list', Authorize.Any, localOrg.listAllChannelsInNetwork)
+router.get('/channel/feleusers/list', Authorize.Admin, localOrg.listAllFeleUsersInChannel)
 
 module.exports = router

@@ -225,6 +225,7 @@ const listAllChannelsInNetwork = async (req, res) => {
     const {organization} = req
     const {network} = req.headers
     try {
+        if(!network) throw new Error("Mandatory header 'network' is required")
         const channles = await localOrg.listAllChannelsInNetwork(organization, network)
         res.status(200).send(channles)
     } catch(error) {
@@ -245,6 +246,20 @@ const syncLocalOrg = async (req, res) => {
     }
 }
 
+const listAllFeleUsersInChannel = async (req, res) => {
+    const {organization} = req
+    const {network, channel} = req.headers
+    try {
+        if(!network || !channel) throw new Error("network and channel headers are required")
+        const feleUsers = await localOrg.listAllFeleUsersInChannel(organization, network, channel)
+        res.status(200).send(feleUsers)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
     registerLocalUser,
     createOrganization,
@@ -261,5 +276,6 @@ module.exports = {
     addChannelToNetwork,
     syncLocalOrg,
     listAllNetworks,
-    listAllChannelsInNetwork
+    listAllChannelsInNetwork,
+    listAllFeleUsersInChannel
 }

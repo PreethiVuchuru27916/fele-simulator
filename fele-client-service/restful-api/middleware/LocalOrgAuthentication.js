@@ -37,6 +37,7 @@ class LocalOrgAuthentication {
     
                 if(isAuthenticated) { 
                     res.status(200).send({
+                        username,
                         message: `user '${username}' logged in successfully`,
                         token
                     })
