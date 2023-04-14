@@ -7,7 +7,14 @@ Simulator for Hyperledger fabric that is a framework to develop permissioned blo
 
 [3] Perform npm install for downloading dependencies. 
 
-[4] Try entering fele in the terminal. It should list Usage, Options and Commands. 
+[4] Try entering fele in the terminal. It should list Usage, Options and Commands.
+
+[5] create ```.env``` file and add couchDB credentials and secret for JWT
+```javascript
+    COUCH_DB_USERNAME=your_username
+    COUCH_DB_PASSWORD=your_password
+    JWT_SECRET=your_jwt_secret
+```
 
 [5] Run `npm run dev` for starting the server
 
