@@ -135,9 +135,9 @@ const addCertToWallet = async (req, res) => {
 const getAllUserMappings = async (req, res) => {
     const {organization} = req
     const {network, channel} = req.headers
-    if(!network) {
+    if(!network || !channel) {
         res.status(400).send({
-            message: "network query param is missing! "
+            message: "Network and channel headers are required"
         })
         return
     }
