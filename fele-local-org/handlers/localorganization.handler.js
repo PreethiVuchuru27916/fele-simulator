@@ -178,7 +178,7 @@ const deleteMappping = async (req, res) => {
         return
     }
     try{
-        await localOrg.deleteMappping(organization, network, localUser, channel)
+        await localOrg.deleteMapping(organization, network, localUser, channel)
         res.status(200).send({
             message: "User mapped deleted"
         })
