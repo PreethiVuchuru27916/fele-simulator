@@ -55,7 +55,7 @@ const addLocalUser = async (req, res) => {
     const {organization} = req
     try{
         await localOrg.addLocalUser(organization, username, password, role, userDetails)
-        res.status(500).send({
+        res.status(200).send({
             message: `user ${username} added successfully`
         })
     } catch(error) {
