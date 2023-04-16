@@ -2,9 +2,10 @@
 const commander = require('commander')
 const { createNetworkCLI, deleteNetworkCLI, useNetworkCLI } = require('./scripts/network')
 const { createChaincodeCLI, invokeChaincodeCLI } = require('./scripts/chaincode');
-const { createChannelCLI, deleteChannelCLI } = require('./scripts/channel');
+const { createChannelCLI, deleteChannelCLI, addFeleUsersInChannelCLI } = require('./scripts/channel');
 const { registerUserCLI, enrollUserCLI } = require('./scripts/ca')
-const { createOrganizationCLI, addNetworktoLocalOrgCLI, addChannelToNetworkCLI, addLocalUserCLI, deleteLocalUserCLI, getAllLocalUsersCLI, updatePasswordCLI, addCertToWalletCLI, addFeleUserToLOrgCLI, getCurrentUserMappingCLI, getAllUserMappingsCLI, addNewMappingCLI, deleteMappingCLI, syncLocalOrgCLI, listAllNetworksinLocalOrgCLI, listAllChannelsInNetworkCLI } = require('./scripts/localOrg')
+const { createFeleOrgCLI, deleteFeleOrgCLI } = require('../cli/scripts/feleOrg')
+const { createOrganizationCLI, addNetworktoLocalOrgCLI, addChannelToNetworkCLI, addLocalUserCLI, deleteLocalUserCLI, getAllLocalUsersCLI, updatePasswordCLI, addCertToWalletCLI, listAllFeleUsersInChannelCLI, getCurrentUserMappingCLI, getAllUserMappingsCLI, addNewMappingCLI, deleteMappingCLI, syncLocalOrgCLI, listAllNetworksinLocalOrgCLI, listAllChannelsInNetworkCLI } = require('./scripts/localOrg')
 
 const readline = require('readline');
 const defaultLocalOrg = require('../../conf/localOrg.json');
@@ -14,6 +15,7 @@ const { authenticateUser } = require('../utils/auth');
 const logger = require('../utils/logger');
 const { sha256 } = require('../utils/helpers');
 const { GLOBAL_STATE } = require('../utils/constants');
+const { options } = require('node-forge');
 
 const program = new commander.Command();
 const userCommand = program.command('user');
@@ -24,6 +26,7 @@ const networkCommand = interpreter.command('network');
 const chaincodeCommand = interpreter.command('chaincode');
 const channelCommand = interpreter.command('channel');
 const caCommand = interpreter.command('ca');
+const feleOrgCommand = interpreter.command('feleOrg');
 
 /************************CA Register and enroll Commands*********************/
 caCommand
@@ -40,8 +43,8 @@ caCommand
         console.log("enrollmentID : "+enrollmentID);
         console.log("enrollmentSecret : "+enrollmentSecret);
         //fele user -u preethi -p preethi -o nasa
-        //ca register -id admin -a nasa_artemis
-        //ca enroll -id nasa.admin -s 3bUR9gy9slAgH0 -m nasa
+        //ca register -id admin -a uhcl_artemis
+        //ca enroll -id uhcl_artemis.admin -s 3bUR9gy9slAgH0 -m uhcl -n artemis
 
         //Simulate generating enrollment id that is combination of orgname and user to have nasa_artemis.admin1
         //Simulate generating random password by the ca and giving the enrollment id and password to the user for performing the enroll step
@@ -57,6 +60,7 @@ caCommand
     .option('-id, --enrollmentId <enrollmentId>', 'id for the fele user')
     .option('-s, --enrollmentSecret <enrollmentSecret>', 'secret for the fele user')
     .option('-m, --mspId <mspId>', 'secret for the fele user')
+    .option('-n, --network <network>', 'name of the network')
     .action(async(options) => {
         //Prepare a csr to send & generate a certificate for the fele user 
         if(interpreter.enrollmentID == options.enrollmentId && interpreter.enrollmentSecret == options.enrollmentSecret) {
@@ -68,6 +72,25 @@ caCommand
             console.log("Credentials Invalid")
         }
     });
+
+/************************FeleOrg Commands*********************/
+feleOrgCommand
+    .command('create')
+    .description('create a fele organization')
+    .option('-nn, --networkName <networkName>', 'Name of the network')
+    .option('-on, --orgName <orgName>', 'name of fele organiztion')
+    .action(async(options) => {
+        return createFeleOrgCLI(options.networkName, options.orgName)
+    })
+
+feleOrgCommand
+    .command('delete')
+    .description('delete a fele organization')
+    .option('-nn, --networkName <networkName>', 'Name of the network')
+    .option('-on, --orgName <orgName>', 'name of fele organiztion')
+    .action(async(options) => {
+        return deleteFeleOrgCLI(options.networkName, options.orgName)
+    })
 
 /************************Network Commands*********************/
 networkCommand
@@ -122,6 +145,17 @@ channelCommand
     .option('-cn, --channelName <channelName>', 'Channel name to be passed')
     .action(async(options) => {
         return deleteChannelCLI(options.networkName, options.channelName);
+    });
+
+channelCommand
+    .command('addFeleUser')
+    .option('-cn, --channelName <channelName>', 'Channel name to be passed')
+    .option('-on, --orgName <orgName>', 'Name of the organization')
+    .option('-fu, --feleUsers <feleUsers>', 'Fele user names')
+    .action(async(options) => {
+        options.feleUsers = options.feleUsers.replace(/[\[\]"]/g, '');
+        let feleUsers = options.feleUsers.split(",")
+        return addFeleUsersInChannelCLI(options.networkName, options.channelName, options.orgName, feleUsers);
     });
 
 channelCommand.commands.forEach((cmd) => {
@@ -331,15 +365,15 @@ localOrgsCommand
     }) 
 
 localOrgsCommand
-    .command('addFeleUserToLOrg')
+    .command('listAllFeleUsersInChannel')
     .option('-u, --adminUsername <adminUsername>', 'admin username')
     .option('-p, --adminPassword <adminPassword>', 'admin password')
-    .option('-ua, --userArgument <userArgument>', 'organization, network, channel, fele_user names.')
+    .option('-ua, --userArgument <userArgument>', 'organization, network, channel.')
     .action(async(options) => {
         var json = options.userArgument;
         json = JSON.parse(json);
         //console.log("User Argument", json);
-        return await addFeleUserToLOrgCLI(options.adminUsername, options.adminPassword, json);
+        return await listAllFeleUsersInChannelCLI(options.adminUsername, options.adminPassword, json);
     }) 
 
 localOrgsCommand

@@ -2,10 +2,11 @@ const crypto = require("crypto");
 const generator = require('generate-password');
 const forge = require("node-forge");
 const pki = forge.pki;
-const { insertToDatabase, checkIfDatabaseExists, getDocumentFromDatabase, deleteDocument, createDatabase } = require('../../utils/db')
+const logger = require('../../utils/logger')
+const { insertToDatabase, checkIfDatabaseExists, getDocumentFromDatabase, deleteDocument, createDatabase, updateDocument } = require('../../utils/db')
 const { v4: uuidv4 } = require('uuid')
 const { getCredentialSelector, getEnrollmentSelector, getSelector, generateCertificate, sha256 } = require('../../utils/helpers')
-const { CREDENTIAL_ID_PREFIX } = require('../../utils/constants')
+const { CREDENTIAL_ID_PREFIX, NETWORK_PREFIX, ORG_FMT } = require('../../utils/constants')
 const {BID} = require('../../utils/constants')
 
 // A possible overlook.
@@ -26,33 +27,50 @@ const registerUser = (options) => {
 }
 
 const enrollUser = async(options, unique=true) => {
-    const args = { orgName: options.mspId };
-    
-    const dbStatus = await checkIfDatabaseExists(BID)
-    if(!dbStatus) {
-        await createDatabase(BID)
-    }
-
-    if(unique) {
-        const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
-    
-        if (docs.length > 0) {
-            throw new Error(`Fele user ${options.enrollmentId} exists. please choose a differnet name`)
+    try{
+        const args = { orgName: options.mspId};
+        const dbStatus = await checkIfDatabaseExists(BID)
+        if(!dbStatus) {
+            await createDatabase(BID)
         }
-    }
-    
-    const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
-    
-    const cred_id = await insertToDatabase(BID, {
-        _id : CREDENTIAL_ID_PREFIX + uuidv4(),
-        fmt : "credential",
-        feleUser,
-        certificate,
-        publicKey,
-        privateKey
-    })
 
-    return cred_id
+        if(unique) {
+            const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
+            if (docs.length > 0) {
+                throw new Error(`Fele user ${options.enrollmentId} exists. please choose a differnet name`)
+            }
+        }
+        
+        const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
+        
+        const cred_id = await insertToDatabase(BID, {
+            _id : CREDENTIAL_ID_PREFIX + uuidv4(),
+            fmt : "credential",
+            feleUser,
+            certificate,
+            publicKey,
+            privateKey
+        })
+        console.log(cred_id)
+        const database = NETWORK_PREFIX + options.network
+        const dbExist = checkIfDatabaseExists(database)
+        if(dbExist){
+            let {docs} = await getDocumentFromDatabase(database, getSelector(ORG_FMT,args.orgName))
+            if(docs.length>0){
+                docs[0].feleUsers.push({feleUser,publicKey})
+                await updateDocument(database, docs[0])
+            }
+            else{
+                logger.error(`Fele Organization ${args.orgName} does not exist.`)
+            }
+        }
+        else{
+            logger.error(`Fele Network ${options.network} does not exist.`)
+        }
+        return cred_id
+    }catch(e){
+        logger.error(e)
+    }
 }
 
 //Stateless

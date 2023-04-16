@@ -1,4 +1,4 @@
-const { createChannel, deleteChannel } = require('../../client-api/scripts/channel')
+const { createChannel, deleteChannel, addFeleUsersInChannel } = require('../../client-api/scripts/channel')
 const { USER_WORKSPACE } = require('../../../globals')
 const path = require('path')
 const logger = require('../../utils/logger')
@@ -27,7 +27,17 @@ const deleteChannelCLI = async (networkName, channelName) => {
   }
 }
 
+const addFeleUsersInChannelCLI = async (networkName, channelName, orgName, feleUsers) => {
+  try {
+    const { message } = await addFeleUsersInChannel(networkName, channelName, orgName, feleUsers)
+    logger.info(message)
+  } catch (e) {
+    logger.error(e.message)
+  }
+}
+
 module.exports = {
   createChannelCLI,
-  deleteChannelCLI
+  deleteChannelCLI,
+  addFeleUsersInChannelCLI
 }
