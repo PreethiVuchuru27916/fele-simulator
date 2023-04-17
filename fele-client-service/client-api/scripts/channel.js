@@ -1,11 +1,11 @@
-const { checkIfDatabaseExists, insertToDatabase, getDocumentFromDatabase, deleteDocument } = require('../../utils/db')
+const { checkIfDatabaseExists, insertToDatabase, getDocumentFromDatabase, deleteDocument, updateDocument } = require('../../utils/db')
 const path = require("path");
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid')
 const logger = require('../../utils/logger');
-const { CHANNEL_ID_PREFIX, NETWORK_PREFIX } = require('../../utils/constants')
+const { CHANNEL_ID_PREFIX, NETWORK_PREFIX, ORG_FMT } = require('../../utils/constants')
 const { NETWORK_BASEPATH } = require('../../../globals')
-const { getChannelSelector } = require('../../utils/helpers')
+const { getChannelSelector, getSelector } = require('../../utils/helpers');
 
 const createChannel = async (networkName, channelConfig) => {
     const channelName = channelConfig.channelName
@@ -66,7 +66,53 @@ const deleteChannel = async (networkName, channelName) => {
     throw new Error(`Network ${networkName} not found`)
 }
 
+const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUsers) => {
+    networkName = NETWORK_PREFIX + networkName
+    const dbStatus = await checkIfDatabaseExists(networkName)
+    if (!dbStatus) {
+        throw new Error(`Network ${networkName} not found`)
+    }
+
+    const [{ docs: channelDocs = [] }, { docs: orgDocs = [] }] = await Promise.all([
+        getDocumentFromDatabase(networkName, getChannelSelector(channelName)),
+        getDocumentFromDatabase(networkName, getSelector(ORG_FMT, orgName))
+    ])
+    const users = orgDocs[0]?.feleUsers?.map(({ feleUser, publicKey }) => ({ feleUser, publicKey })) ?? []
+    const newFeleUsers = users.filter(user => feleUsers.includes(user.feleUser))
+    const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUser }) => feleUser === user));
+    if(notFeleUsers.length>0){
+        logger.error(`The users who are not Fele Users: ${notFeleUsers.join(', ')}`)
+    }
+    const chOrg = channelDocs[0]?.organizations ?? []
+    const chOrg_orgName = chOrg.filter(org => org.mspid == orgName)
+    const chOrg_orgName_feleUsers = chOrg_orgName[0]?.feleUsers?.map(({ feleUser }) => feleUser.toString()) ?? [];
+    const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUser));
+    if (sameFeleUsers.length>0){
+        logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUser).join(', ')} already in channel`);
+    }
+    const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUser));
+    if(filteredNewFeleUsers.length>0){
+        if (!chOrg_orgName[0].hasOwnProperty('feleUsers')) {
+            chOrg_orgName[0].feleUsers = filteredNewFeleUsers;
+        }else {
+            chOrg_orgName[0].feleUsers.push(...filteredNewFeleUsers);
+        }
+        chOrg.filter(org => org.mspid == orgName)[0] = chOrg_orgName[0]
+        channelDocs[0].organizations = chOrg
+        await updateDocument(networkName,channelDocs[0])
+        return {
+            message: `Fele Users added successfully in channel. New users added: ${filteredNewFeleUsers.map(user => user.feleUser).join(', ')}`
+        }
+    }else{
+        return {
+            message: `No Fele Users were added into channel.`
+        }
+    }
+}
+
+
 module.exports = {
     createChannel,
-    deleteChannel
+    deleteChannel,
+    addFeleUsersInChannel
 }

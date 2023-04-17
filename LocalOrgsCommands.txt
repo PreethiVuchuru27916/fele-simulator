@@ -20,8 +20,7 @@ fele localOrgs listAllChannelsInNetwork -u admin -p adminpw -o uhcl -n artemis
 fele localOrgs addCertToWallet -u Thomas -p thomas12 -ua "{\"organization\":\"uhcl\",\"feleUser\":\"nasa_artemis.admin\",\"credentialId\":\"credential~01b53956-93ce-4da9-bb52-921eb661de64\"}"
 fele localOrgs addCertToWallet -u Thomas -p thomas12 -ua "{\"organization\":\"uhcl\",\"feleUser\":\"nasa_artemis.se\",\"credentialId\":\"credential~1d43c1aa-815a-4534-99f5-31d8cc95ba12\"}"
 
-fele localOrgs addFeleUserToLOrg -u admin -p adminpw -ua "{\"organization\":\"uhcl\",\"network\":\"artemis\",\"channel\":\"channel1\",\"feleUser\":\"nasa_artemis.admin\"}"
-fele localOrgs addFeleUserToLOrg -u admin -p adminpw -ua "{\"organization\":\"uhcl\",\"network\":\"artemis\",\"channel\":\"channel1\",\"feleUser\":\"nasa_artemis.se\"}" 
+fele localOrgs listAllFeleUsersInChannel -u admin -p adminpw -ua "{\"organization\":\"uhcl\",\"network\":\"artemis\",\"channel\":\"channel1\"}"
 
 fele localOrgs addNewMapping -u admin -p adminpw -ua "{\"organization\":\"uhcl\",\"network\":\"artemis\",\"channel\":\"channel1\",\"feleUser\":\"nasa_artemis.se\",\"username\":\"Thomas\"}"
 fele localOrgs addNewMapping -u admin -p adminpw -ua "{\"organization\":\"uhcl\",\"network\":\"artemis\",\"channel\":\"channel1\",\"feleUser\":\"nasa_artemis.admin\",\"username\":\"Shiva\"}"

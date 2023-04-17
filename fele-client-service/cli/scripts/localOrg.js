@@ -2,7 +2,7 @@ const { USER_WORKSPACE } = require('../../../globals')
 const path = require('path')
 const logger = require('../../utils/logger')
 const { sha256 } = require('../../utils/helpers')
-const { createOrganization, addLocalUser, deleteLocalUser, getAllLocalUsers, updatePassword, addCertToWallet, addNetworkToLocalOrgConfig, getCurrentUserMapping, getAllUserMappings, addNewMapping, deleteMapping, addFeleUserToLOrg, addChannelToNetwork, syncLocalOrg, listAllNetworksinLocalOrg, listAllChannelsInNetwork } = require('../../../fele-local-org/LocalOrganization')
+const { createOrganization, addLocalUser, deleteLocalUser, getAllLocalUsers, updatePassword, addCertToWallet, addNetworkToLocalOrgConfig, getCurrentUserMapping, getAllUserMappings, addNewMapping, deleteMapping, addChannelToNetwork, syncLocalOrg, listAllNetworksinLocalOrg, listAllChannelsInNetwork, listAllFeleUsersInChannel } = require('../../../fele-local-org/LocalOrganization')
 const { isAdmin, isUser } = require('../../client-api/scripts/authorization')
 
 
@@ -127,6 +127,24 @@ const listAllChannelsInNetworkCLI = async(username, password, organization, netw
   }
 }
 
+const listAllFeleUsersInChannelCLI = async(adminUsername, adminPassword, json) => {
+  try{
+    let {organization, network, channel} = json
+    var admin = false
+    admin = await isAdmin(organization, adminUsername, adminPassword)
+    if (admin){
+      const result = await listAllFeleUsersInChannel(organization,network,channel);
+      console.log(result)
+    }
+    else{
+      logger.error("Not an admin. Only admin can list fele users.")
+    }
+  }
+  catch(e){
+    logger.error(e)
+  }
+}
+
 const deleteLocalUserCLI = async(adminUsername, adminPassword, json) => {
   try{
     let {organization, username} = json
@@ -217,24 +235,6 @@ const getCurrentUserMappingCLI = async(username, password, json) => {
   }
 }
 
-const addFeleUserToLOrgCLI = async(adminUsername, adminPassword, json) => {
-  try{
-    let {organization, network, channel, feleUser} = json
-    var admin = false
-    admin = await isAdmin(organization, adminUsername, adminPassword)
-    if (admin){
-      await addFeleUserToLOrg(organization, network, channel, feleUser);
-      logger.info(`Fele User ${feleUser} added successfully.`)
-    }
-    else{
-      logger.error("Not an admin. Only admin can delete a user.")
-    }
-  }
-  catch(e){
-    logger.error(e)
-  }
-}
-
 const getAllUserMappingsCLI = async(adminUsername, adminPassword, json) => {
   try{
     let {organization, network, channel} = json
@@ -298,12 +298,12 @@ module.exports = {
     getAllLocalUsersCLI,
     updatePasswordCLI,
     addCertToWalletCLI,
-    addFeleUserToLOrgCLI,
     getCurrentUserMappingCLI,
     getAllUserMappingsCLI,
     addNewMappingCLI,
     deleteMappingCLI,
     syncLocalOrgCLI,
     listAllNetworksinLocalOrgCLI,
-    listAllChannelsInNetworkCLI
+    listAllChannelsInNetworkCLI,
+    listAllFeleUsersInChannelCLI
 }
