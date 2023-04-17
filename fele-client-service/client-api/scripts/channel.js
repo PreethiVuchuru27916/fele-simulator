@@ -77,20 +77,26 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
         getDocumentFromDatabase(networkName, getChannelSelector(channelName)),
         getDocumentFromDatabase(networkName, getSelector(ORG_FMT, orgName))
     ])
-    const users = orgDocs[0]?.feleUsers?.map(({ feleUser, publicKey }) => ({ feleUser, publicKey })) ?? []
-    const newFeleUsers = users.filter(user => feleUsers.includes(user.feleUser))
-    const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUser }) => feleUser === user));
+    if(channelDocs.length == 0){
+        throw new Error(`Channel ${channelName} does not exist.`)
+    }
+    if(orgDocs.length == 0){
+        throw new Error(`Fele Organization ${orgName} does not exist.`)
+    }
+    const users = orgDocs[0]?.feleUsers?.map(({ feleUserId, publicKey }) => ({ feleUserId, publicKey })) ?? []
+    const newFeleUsers = users.filter(user => feleUsers.includes(user.feleUserId))
+    const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUserId }) => feleUserId === user));
     if(notFeleUsers.length>0){
         logger.error(`The users who are not Fele Users: ${notFeleUsers.join(', ')}`)
     }
     const chOrg = channelDocs[0]?.organizations ?? []
     const chOrg_orgName = chOrg.filter(org => org.mspid == orgName)
-    const chOrg_orgName_feleUsers = chOrg_orgName[0]?.feleUsers?.map(({ feleUser }) => feleUser.toString()) ?? [];
-    const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUser));
+    const chOrg_orgName_feleUsers = chOrg_orgName[0]?.feleUsers?.map(({ feleUserId }) => feleUserId.toString()) ?? [];
+    const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUserId));
     if (sameFeleUsers.length>0){
-        logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUser).join(', ')} already in channel`);
+        logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUserId).join(', ')} already in channel`);
     }
-    const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUser));
+    const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUserId));
     if(filteredNewFeleUsers.length>0){
         if (!chOrg_orgName[0].hasOwnProperty('feleUsers')) {
             chOrg_orgName[0].feleUsers = filteredNewFeleUsers;
@@ -101,7 +107,7 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
         channelDocs[0].organizations = chOrg
         await updateDocument(networkName,channelDocs[0])
         return {
-            message: `Fele Users added successfully in channel. New users added: ${filteredNewFeleUsers.map(user => user.feleUser).join(', ')}`
+            message: `Fele Users added successfully in channel. New users added: ${filteredNewFeleUsers.map(user => user.feleUserId).join(', ')}`
         }
     }else{
         return {
