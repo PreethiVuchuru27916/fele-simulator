@@ -47,19 +47,23 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
                     const txnResult = await chClass[functionToCall](...functionArgs)
                     console.log(txnResult)
                     logger.info("Transaction successful");
+                    return txnResult
                 }
                 catch(err){
                     console.log(err);
                     logger.error(err);
+                    throw new Error(err.message)
                 }
             }
             catch(err){
                 console.log(err);
                 logger.error(chaincodeName + " does not exist.");
+                throw new Error(chaincodeName + " does not exist.")
             }
         }
         else{
             logger.error("Channel \""+channelName+"\" not found in "+networkName);
+            throw new Error("Channel " + channelName +  " not found in " + networkName)
         }
     }
 }

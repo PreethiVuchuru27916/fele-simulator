@@ -50,6 +50,11 @@ class EmployeeAsset extends SmartContract {
         return result;
     }
 
+    async readAssets(key) {
+        const result = await SmartContract.getState(key);
+        return result;
+    }
+
     async updateAsset(key, name = "", designation = "", salary = "") {
         const asset = await this.AssetExists(key);
         if (asset) {
@@ -69,7 +74,7 @@ class EmployeeAsset extends SmartContract {
             return await SmartContract.deleteState(key);
         }
         else throw new Error("Asset ID does not exists")
-    } 
+    }  
 }
 
 module.exports={

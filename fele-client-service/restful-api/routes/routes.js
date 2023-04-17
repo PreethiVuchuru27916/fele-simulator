@@ -7,7 +7,7 @@ const networkRoutes = require('./network.route')
 const userRoutes = require('./user.route')
 const localOrgRoutes = require('./localorganization.route')
 const caRoutes = require('./ca.route')
-const assetRoutes = require('./asset.route')
+const chaincodeRoutes = require('./chaincode.route')
 
 module.exports = (app) => {
     app.use(cors())
@@ -19,6 +19,6 @@ module.exports = (app) => {
     app.use('/api/fele/user', userRoutes)
     app.use('/api/localorganization', localOrgRoutes)
     app.use('/api/fele/ca', caRoutes)
-    app.use('/api/fele/asset', assetRoutes)
+    app.use('/api/fele/chaincode', chaincodeRoutes)
 }
 
