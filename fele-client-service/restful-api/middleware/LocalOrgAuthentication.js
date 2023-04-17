@@ -9,6 +9,7 @@ class LocalOrgAuthentication {
         const organization = req.headers.organization
         if(organization) {
             const {username, password} = req.body
+            let role = ""
             try {
                 let {docs} = await getDocumentFromDatabase(BID, {
                     selector: {
@@ -30,6 +31,7 @@ class LocalOrgAuthentication {
                             role: user.role
                     
                         }, JWT_SECRET)
+                        role = user.role
                         isAuthenticated = true
                         return
                     }
@@ -38,6 +40,7 @@ class LocalOrgAuthentication {
                 if(isAuthenticated) { 
                     res.status(200).send({
                         username,
+                        role,
                         message: `user '${username}' logged in successfully`,
                         token
                     })

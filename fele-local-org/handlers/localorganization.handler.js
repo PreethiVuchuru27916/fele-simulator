@@ -55,7 +55,7 @@ const addLocalUser = async (req, res) => {
     const {organization} = req
     try{
         await localOrg.addLocalUser(organization, username, password, role, userDetails)
-        res.status(500).send({
+        res.status(200).send({
             message: `user ${username} added successfully`
         })
     } catch(error) {
@@ -178,7 +178,7 @@ const deleteMappping = async (req, res) => {
         return
     }
     try{
-        await localOrg.deleteMappping(organization, network, localUser, channel)
+        await localOrg.deleteMapping(organization, network, localUser, channel)
         res.status(200).send({
             message: "User mapped deleted"
         })
