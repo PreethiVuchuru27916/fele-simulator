@@ -10,7 +10,7 @@ const createFeleOrg = async(network, organization) => {
         if (dbStatus) {
             let {docs} = await getDocumentFromDatabase(database, {
                 selector: {
-                    organization: {
+                    [ORG_FMT]: {
                         $eq: organization
                     }
                 }
@@ -49,7 +49,7 @@ const deleteFeleOrg = async(network, organization) => {
         if (dbStatus) {
             let {docs} = await getDocumentFromDatabase(database, {
                 selector: {
-                    organization: {
+                    [ORG_FMT]: {
                         $eq: organization
                     }
                 }
