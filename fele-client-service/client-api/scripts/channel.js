@@ -77,20 +77,25 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
         getDocumentFromDatabase(networkName, getChannelSelector(channelName)),
         getDocumentFromDatabase(networkName, getSelector(ORG_FMT, orgName))
     ])
-    const users = orgDocs[0]?.feleUsers?.map(({ feleUser, publicKey }) => ({ feleUser, publicKey })) ?? []
-    const newFeleUsers = users.filter(user => feleUsers.includes(user.feleUser))
-    const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUser }) => feleUser === user));
+    const users = orgDocs[0]?.feleUsers?.map(({ feleUserId, publicKey }) => ({ feleUserId, publicKey })) ?? []
+    console.log(users)
+    const newFeleUsers = users.filter(user => feleUsers.includes(user.feleUserId))
+    console.log(newFeleUsers)
+    const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUserId }) => feleUserId === user));
+    console.log(notFeleUsers)
     if(notFeleUsers.length>0){
         logger.error(`The users who are not Fele Users: ${notFeleUsers.join(', ')}`)
     }
     const chOrg = channelDocs[0]?.organizations ?? []
     const chOrg_orgName = chOrg.filter(org => org.mspid == orgName)
-    const chOrg_orgName_feleUsers = chOrg_orgName[0]?.feleUsers?.map(({ feleUser }) => feleUser.toString()) ?? [];
-    const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUser));
+    const chOrg_orgName_feleUsers = chOrg_orgName[0]?.feleUsers?.map(({ feleUserId }) => feleUserId.toString()) ?? [];
+    const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUserId));
+    console.log(sameFeleUsers)
     if (sameFeleUsers.length>0){
-        logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUser).join(', ')} already in channel`);
+        logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUserId).join(', ')} already in channel`);
     }
-    const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUser));
+    const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUserId));
+    console.log(filteredNewFeleUsers)
     if(filteredNewFeleUsers.length>0){
         if (!chOrg_orgName[0].hasOwnProperty('feleUsers')) {
             chOrg_orgName[0].feleUsers = filteredNewFeleUsers;
@@ -101,7 +106,7 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
         channelDocs[0].organizations = chOrg
         await updateDocument(networkName,channelDocs[0])
         return {
-            message: `Fele Users added successfully in channel. New users added: ${filteredNewFeleUsers.map(user => user.feleUser).join(', ')}`
+            message: `Fele Users added successfully in channel. New users added: ${filteredNewFeleUsers.map(user => user.feleUserId).join(', ')}`
         }
     }else{
         return {
