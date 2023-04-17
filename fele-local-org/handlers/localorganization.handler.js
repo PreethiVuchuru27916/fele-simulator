@@ -55,7 +55,7 @@ const addLocalUser = async (req, res) => {
     const {organization} = req
     try{
         await localOrg.addLocalUser(organization, username, password, role, userDetails)
-        res.status(500).send({
+        res.status(200).send({
             message: `user ${username} added successfully`
         })
     } catch(error) {
@@ -132,34 +132,12 @@ const addCertToWallet = async (req, res) => {
     }
 }
 
-const addFeleUserToLOrg = async (req, res) => {
-    const {organization} = req
-    const {network, channel} = req.headers
-    const {feleUser} = req.body
-    if(!network || !channel) {
-        res.status(400).send({
-            message: "Network and Channel (headers) information is required"
-        })
-        return
-    }
-    try {
-        await localOrg.addFeleUserToLOrg(organization, network, channel, feleUser)
-        res.status(200).send({
-            message: "Fele user added in local organization"
-        })
-    } catch(error) {
-        res.status(500).send({
-            message: error.message
-        })
-    }
-}
-
 const getAllUserMappings = async (req, res) => {
     const {organization} = req
     const {network, channel} = req.headers
-    if(!network) {
+    if(!network || !channel) {
         res.status(400).send({
-            message: "network query param is missing! "
+            message: "Network and channel headers are required"
         })
         return
     }
@@ -200,7 +178,7 @@ const deleteMappping = async (req, res) => {
         return
     }
     try{
-        await localOrg.deleteMappping(organization, network, localUser, channel)
+        await localOrg.deleteMapping(organization, network, localUser, channel)
         res.status(200).send({
             message: "User mapped deleted"
         })
@@ -247,6 +225,7 @@ const listAllChannelsInNetwork = async (req, res) => {
     const {organization} = req
     const {network} = req.headers
     try {
+        if(!network) throw new Error("Mandatory header 'network' is required")
         const channles = await localOrg.listAllChannelsInNetwork(organization, network)
         res.status(200).send(channles)
     } catch(error) {
@@ -263,7 +242,21 @@ const syncLocalOrg = async (req, res) => {
         await localOrg.syncLocalOrg(organization)
         res.sendStatus(200)
     } catch(error) {
-        res.sendStatus(500)
+        res.status(500).send({message: error.message})
+    }
+}
+
+const listAllFeleUsersInChannel = async (req, res) => {
+    const {organization} = req
+    const {network, channel} = req.headers
+    try {
+        if(!network || !channel) throw new Error("network and channel headers are required")
+        const feleUsers = await localOrg.listAllFeleUsersInChannel(organization, network, channel)
+        res.status(200).send(feleUsers)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
     }
 }
 
@@ -280,9 +273,9 @@ module.exports = {
     getCurrentUserMapping,
     addCertToWallet,
     addNetworkToLocalOrgConfig,
-    addFeleUserToLOrg,
     addChannelToNetwork,
     syncLocalOrg,
     listAllNetworks,
-    listAllChannelsInNetwork
+    listAllChannelsInNetwork,
+    listAllFeleUsersInChannel
 }

@@ -3,11 +3,11 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 class LocalOrgAuthorization {
     Authorize = async (req, res, next, role, any=false) => {
-        const token = req.cookies.access_token
+        const token = req.headers.authorization
 
         if(!token) {
             res.status(403).send({
-                message: "Access Token required"
+                message: "Authorization header required"
             })
             return
         }
@@ -20,7 +20,7 @@ class LocalOrgAuthorization {
                 req.organization = userData.organization
                 next()
             } else {
-                throw new Error("Access Admin role required to access this resource")
+                throw new Error(`Access ${role} role required to access this resource`)
             }
         } catch(error) {
             res.status(401).send({

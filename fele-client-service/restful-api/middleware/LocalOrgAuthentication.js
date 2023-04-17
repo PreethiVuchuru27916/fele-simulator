@@ -7,9 +7,9 @@ const JWT_SECRET = process.env.JWT_SECRET
 class LocalOrgAuthentication {
     Authenticate = async (req, res, next) => {
         const organization = req.headers.organization
-        console.log(organization)
         if(organization) {
             const {username, password} = req.body
+            let role = ""
             try {
                 let {docs} = await getDocumentFromDatabase(BID, {
                     selector: {
@@ -31,14 +31,18 @@ class LocalOrgAuthentication {
                             role: user.role
                     
                         }, JWT_SECRET)
+                        role = user.role
                         isAuthenticated = true
                         return
                     }
                 });
     
                 if(isAuthenticated) { 
-                    res.cookie("access_token", token, {httpOnly: true}).status(200).send({
-                        message: `user '${username}' logged in successfully`
+                    res.status(200).send({
+                        username,
+                        role,
+                        message: `user '${username}' logged in successfully`,
+                        token
                     })
                 } else {
                     throw new Error("Credentials not found")
