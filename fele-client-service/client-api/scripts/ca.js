@@ -57,7 +57,7 @@ const enrollUser = async(options, unique=true) => {
         if(dbExist){
             let {docs} = await getDocumentFromDatabase(database, getSelector(ORG_FMT,args.orgName))
             if(docs.length>0){
-                docs[0].feleUsers.push({feleUser,publicKey})
+                docs[0].feleUsers.push({feleUserId:feleUser,publicKey})
                 await updateDocument(database, docs[0])
             }
             else{

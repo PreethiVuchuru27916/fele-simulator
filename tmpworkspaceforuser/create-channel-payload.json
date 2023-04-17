@@ -2,11 +2,11 @@
     "channelName": "uhcl-international1",
     "organizations": [
         {
-        "mspid": "uhclMSP",
+        "mspid": "uhcl",
         "root_ca": "walletID234"
         },
         {
-        "mspid": "utdMSP",
+        "mspid": "utd",
         "root_ca": "walletID567"
         }
     ],
