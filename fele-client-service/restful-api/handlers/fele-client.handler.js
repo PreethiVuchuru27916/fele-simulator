@@ -15,7 +15,6 @@ const createNetworkHandler = async (req, res) => {
     }
 }
 
-
 const createChannelHandler = async (req, res) => {
     const { networkName, channelConfig } = req.body
     try {

@@ -47,7 +47,6 @@ const createChannel = async (networkName, channelConfig) => {
     }
 }
 
-
 const deleteChannel = async (networkName, channelName) => {
     networkName = NETWORK_PREFIX + networkName
     const dbStatus = await checkIfDatabaseExists(networkName)
@@ -115,7 +114,6 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
         }
     }
 }
-
 
 module.exports = {
     createChannel,

@@ -1,22 +1,24 @@
 const { NETWORK_PREFIX } = require("../fele-client-service/utils/constants");
-const { getDocumentByID, insertToDatabase, deleteDocument, updateDocument } = require("../fele-client-service/utils/db");
+const { getDocumentByID, insertToDatabase, deleteDocument, updateDocument, getDocumentFromDatabase } = require("../fele-client-service/utils/db");
 
 class Context {
-  #globalState = {
+  static globalState = {
     networkName: '',
-    channelName: ''
+    channelName: '',
+    invokerName: ''
   };
 
   constructor() {
-    this.#globalState = {
-      networkName: 'artemis2',
-      channelName: 'nasa',
-      invokerName: ''
-    };
+    console.log("Constructor state", Context.globalState);
+  }
+
+  initState(networkName, channelName, invokerName) {
+    Context.globalState = { networkName, channelName, invokerName };
+    console.log("Static Global State", Context.globalState);
   }
   
   async getState(key) {
-    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
+    const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
       if (result) return result;
@@ -27,9 +29,18 @@ class Context {
   }
 
   async putState(key, value) {
-    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
+    const { networkName, channelName, invokerName } = Context.globalState
+    console.log("Network Name"+networkName)
+    console.log("Channel Name"+channelName)
+    console.log("invoker Name"+invokerName)
+
+    const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
     try {
+      value.channelName = Context.globalState.channelName
+      value.invokerName = Context.globalState.invokerName
+      value.fmt = "Asset"
       const document = { ...value, _id: key };
+
       const assetExists = await getDocumentByID(databaseName, key);
       if (assetExists) {
         document._rev = assetExists._rev;
@@ -42,7 +53,7 @@ class Context {
   }
 
   async deleteState(key) {
-    const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
+    const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
       if (result) return deleteDocument(databaseName, key, result._rev)
@@ -51,6 +62,19 @@ class Context {
       throw new Error(error);
     }
   }
+
+  async getQueryByResult(query) {
+    const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
+    const channelName = Context.globalState.channelName;
+    
+    try{
+      const result = getDocumentFromDatabase(databaseName, query)
+      return result
+    } catch(error) {
+      throw new Error(error);
+    }
+  }
+
 }
 
 module.exports = {

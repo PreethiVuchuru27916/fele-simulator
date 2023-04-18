@@ -1,3 +1,4 @@
+const { Context } = require('../../../../../fele-smart-contract/Context');
 const { SmartContract } = require('../../../../../fele-smart-contract/SmartContract');
 const { v4: uuidv4 } = require('uuid');
 
@@ -50,9 +51,20 @@ class EmployeeAsset extends SmartContract {
         return result;
     }
 
-    async readAssets(key) {
-        const result = await SmartContract.getState(key);
-        return result;
+    async getAllAssets() {
+        const query = { 
+            "selector": {
+                "fmt": {
+                    "$eq": "Asset"
+                },
+                "channelName": {
+                    "$eq": Context.globalState.channelName
+                }
+            }
+        }
+        const result = await SmartContract.getQueryByResult(query);
+        console.log("Result is"+result.docs)
+        return result.docs;
     }
 
     async updateAsset(key, name = "", designation = "", salary = "") {

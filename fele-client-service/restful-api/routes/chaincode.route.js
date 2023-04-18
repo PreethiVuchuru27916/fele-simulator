@@ -1,9 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { invokeChaincodeHandler } = require('../handlers/fele-chaincode.handler')
+const { invokeChaincodeHandlerGet, invokeChaincodeHandlerPost, invokeChaincodeHandlerPut, invokeChaincodeHandlerDelete } = require('../handlers/fele-chaincode.handler')
 
 //Chaincode Routes
-router.post('/invoke-chaincode', invokeChaincodeHandler)
-// router.get('/read-chaincode', readAllAssets) 
+router.get('/invoke-chaincode', invokeChaincodeHandlerGet)
+router.post('/invoke-chaincode', invokeChaincodeHandlerPost)
+router.put('/invoke-chaincode', invokeChaincodeHandlerPut)
+router.delete('/invoke-chaincode', invokeChaincodeHandlerDelete)
 
 module.exports = router
