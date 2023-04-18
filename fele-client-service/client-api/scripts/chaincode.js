@@ -8,7 +8,7 @@ const { getChannelSelector, copyFolderSync } = require('../../utils/helpers');
 const { Context } = require('../../../fele-smart-contract/Context');
 
 
-async function createChaincode(networkName, channelName, chaincodeName) {
+async function createChaincode(networkName, channelName, invokerName, chaincodeName) {
 
     const database = NETWORK_PREFIX + networkName;
     const dbStatus = await checkIfDatabaseExists(database)

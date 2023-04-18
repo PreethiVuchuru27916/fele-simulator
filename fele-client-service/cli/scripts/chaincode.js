@@ -10,9 +10,9 @@ async function createChaincodeCLI(networkName, channelName, chaincodeName) {
   }
 }
 
-async function invokeChaincodeCLI(networkName, channelName, chaincodeName, argumentJSON) {
+async function invokeChaincodeCLI(networkName, channelName, invokerName, chaincodeName, argumentJSON) {
   try{
-    await invokeChaincode(networkName, channelName, chaincodeName, argumentJSON);
+    await invokeChaincode(networkName, channelName, invokerName, chaincodeName, argumentJSON);
   }
   catch(err){
     logger.error(err);
