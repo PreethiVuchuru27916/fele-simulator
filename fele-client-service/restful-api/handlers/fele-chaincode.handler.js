@@ -2,6 +2,7 @@ const { invokeChaincode } = require('../../client-api/scripts/chaincode')
 
 const invokeChaincodeHandlerGet = async (req, res) => {   
     console.log("get request params is "+JSON.stringify(req.query)) 
+        
     const { network, channel, chaincodeName, chaincodeAction } = req.query;
     const chaincodeArgument = { "Args": [chaincodeAction] };
 

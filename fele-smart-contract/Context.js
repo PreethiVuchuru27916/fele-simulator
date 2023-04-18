@@ -65,7 +65,6 @@ class Context {
 
   async getQueryByResult(query) {
     const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
-    const channelName = Context.globalState.channelName;
     
     try{
       const result = getDocumentFromDatabase(databaseName, query)
