@@ -62,10 +62,12 @@ const enrollUser = async(options, unique=true) => {
             }
             else{
                 logger.error(`Fele Organization ${args.orgName} does not exist.`)
+                throw new Error(`Fele Organization ${args.orgName} does not exist.`)
             }
         }
         else{
             logger.error(`Fele Network ${options.network} does not exist.`)
+            throw new Error(`Fele Network ${options.network} does not exist.`)
         }
         return cred_id
     }catch(e){

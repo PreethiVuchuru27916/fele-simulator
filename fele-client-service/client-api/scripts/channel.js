@@ -87,6 +87,7 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
     const notFeleUsers = feleUsers.filter(user => !newFeleUsers.some(({ feleUserId }) => feleUserId === user));
     if(notFeleUsers.length>0){
         logger.error(`The users who are not Fele Users: ${notFeleUsers.join(', ')}`)
+        throw new Error(`The users who are not Fele Users: ${notFeleUsers.join(', ')}`)
     }
     const chOrg = channelDocs[0]?.organizations ?? []
     const chOrg_orgName = chOrg.filter(org => org.mspid == orgName)
@@ -94,6 +95,7 @@ const addFeleUsersInChannel = async (networkName, channelName, orgName, feleUser
     const sameFeleUsers = newFeleUsers.filter(user => chOrg_orgName_feleUsers.includes(user.feleUserId));
     if (sameFeleUsers.length>0){
         logger.error(`Fele Users ${sameFeleUsers.map(user => user.feleUserId).join(', ')} already in channel`);
+        throw new Error(`Fele Users ${sameFeleUsers.map(user => user.feleUserId).join(', ')} already in channel`)
     }
     const filteredNewFeleUsers = newFeleUsers.filter(user => !chOrg_orgName_feleUsers.includes(user.feleUserId));
     if(filteredNewFeleUsers.length>0){
