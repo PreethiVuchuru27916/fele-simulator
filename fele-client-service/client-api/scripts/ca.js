@@ -51,7 +51,7 @@ const enrollUser = async(options, unique=true) => {
             publicKey,
             privateKey
         })
-        console.log(cred_id)
+        console.log("Cred_Id", cred_id)
         const database = NETWORK_PREFIX + options.network
         const dbExist = checkIfDatabaseExists(database)
         if(dbExist){
@@ -72,6 +72,7 @@ const enrollUser = async(options, unique=true) => {
         return cred_id
     }catch(e){
         logger.error(e)
+        throw new Error(e.message)
     }
 }
 
@@ -93,8 +94,7 @@ const registerUserUsingREST = async (affiliation, id) => {
 
 }
 
-const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization) => {
-    
+const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization, network) => {
     const dbStatus = await checkIfDatabaseExists(BID)
     if(dbStatus) {
         const { docs } = await getDocumentFromDatabase(BID, getEnrollmentSelector(enrollmentId))
@@ -103,7 +103,7 @@ const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization)
         }
         if(docs[0].enrollmentSecret == enrollmentSecret) {
             try{
-                const res = await enrollUser({mspId: organization, enrollmentId})
+                const res = await enrollUser({mspId: organization, enrollmentId, network})
                 return res
             } catch(error) {
                 throw new Error(error.message)
