@@ -3,11 +3,11 @@ const { invokeChaincode } = require('../../client-api/scripts/chaincode')
 const invokeChaincodeHandlerGet = async (req, res) => {   
     console.log("get request params is "+JSON.stringify(req.query)) 
         
-    const { network, channel, chaincodeName, chaincodeAction } = req.query;
+    const { network, channel, chaincodeName, invokerName, chaincodeAction } = req.query;
     const chaincodeArgument = { "Args": [chaincodeAction] };
 
     try{
-        const result = await invokeChaincode(network, channel, "user", chaincodeName, chaincodeArgument)
+        const result = await invokeChaincode(network, channel, invokerName, chaincodeName, chaincodeArgument)
         res.status(200).send(result)
     }catch(error) {
         res.status(500).send({
@@ -19,11 +19,11 @@ const invokeChaincodeHandlerGet = async (req, res) => {
 
 const invokeChaincodeHandlerPost = async (req, res) => { 
     console.log("here")   
-    const { network, channel, chaincodeName, chaincodeAction, data } = req.body;
+    const { network, channel, chaincodeName, invokerName, chaincodeAction, data } = req.body;
     const chaincodeArgument = { "Args": [chaincodeAction, ...Object.values(data)] };
     
     try{
-        const result = await invokeChaincode(network, channel, "user", chaincodeName, chaincodeArgument)
+        const result = await invokeChaincode(network, channel, invokerName, chaincodeName, chaincodeArgument)
         res.status(200).send(result)
     }catch(error) {
         res.status(500).send({
@@ -33,12 +33,12 @@ const invokeChaincodeHandlerPost = async (req, res) => {
 }
 
 const invokeChaincodeHandlerPut = async (req, res) => {    
-    const { network, channel, chaincodeName, chaincodeAction, assetId, data } = req.query;
+    const { network, channel, chaincodeName, chaincodeAction, assetId, invokerName, data } = req.query;
     console.log(data)
     const chaincodeArgument = { "Args": [ chaincodeAction, assetId, ...Object.values(data)] };
     
     try{
-        const result = await invokeChaincode(network, channel, "user", chaincodeName, chaincodeArgument)
+        const result = await invokeChaincode(network, channel, invokerName, chaincodeName, chaincodeArgument)
         res.status(200).send(result)
     }catch(error) {
         res.status(500).send({
@@ -48,11 +48,11 @@ const invokeChaincodeHandlerPut = async (req, res) => {
 }
 
 const invokeChaincodeHandlerDelete = async (req, res) => {    
-    const { network, channel, chaincodeName, chaincodeAction, assetId } = req.query;
+    const { network, channel, chaincodeName, chaincodeAction, invokerName, assetId } = req.query;
     const chaincodeArgument = { "Args": [chaincodeAction, assetId] };
     
     try{
-        const result = await invokeChaincode(network, channel, "user", chaincodeName, chaincodeArgument)
+        const result = await invokeChaincode(network, channel, invokerName, chaincodeName, chaincodeArgument)
         res.status(200).send(result)
     }catch(error) {
         res.status(500).send({
