@@ -34,7 +34,7 @@ async function createChaincode(networkName, channelName, invokerName, chaincodeN
 }
 
 async function invokeChaincode(networkName, channelName, invokerName, chaincodeName, argumentJSON) {
-    console.log("Invoker", networkName, channelName, invokerName);
+    console.log("argumentJson"+JSON.stringify(argumentJSON));
     const ctx = new Context();
     ctx.initState(networkName, channelName, invokerName);
     const database = NETWORK_PREFIX + networkName;
