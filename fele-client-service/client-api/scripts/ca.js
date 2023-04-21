@@ -12,8 +12,8 @@ const {BID} = require('../../utils/constants')
 // A possible overlook.
 // What if the admin register user using cli and user wants to enroll using client application using REST
 // Below is Function designed to use when state is maintained
-const registerUser = (options) => {
-    let enrollmentID = options.affiliation+"."+options.id;
+const registerUser = async(affiliation,id) => {
+    let enrollmentID = affiliation+"."+id;
     
     let enrollmentSecret = generator.generate({
         length: 14,
@@ -26,22 +26,22 @@ const registerUser = (options) => {
     }
 }
 
-const enrollUser = async(options, unique=true) => {
+const enrollUser = async(enrollmentId, mspId, network, unique=true) => {
     try{
-        const args = { orgName: options.mspId};
+        const args = { orgName: mspId};
         const dbStatus = await checkIfDatabaseExists(BID)
         if(!dbStatus) {
             await createDatabase(BID)
         }
 
         if(unique) {
-            const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(options.enrollmentId))
+            const { docs } = await getDocumentFromDatabase(BID, getCredentialSelector(enrollmentId))
             if (docs.length > 0) {
-                throw new Error(`Fele user ${options.enrollmentId} exists. please choose a differnet name`)
+                throw new Error(`Fele user ${enrollmentId} exists. please choose a differnet name`)
             }
         }
         
-        const { feleUser, certificate, publicKey, privateKey } = generateCertificate(options.enrollmentId, args);
+        const { feleUser, certificate, publicKey, privateKey } = generateCertificate(enrollmentId, args);
         
         const cred_id = await insertToDatabase(BID, {
             _id : CREDENTIAL_ID_PREFIX + uuidv4(),
@@ -52,7 +52,7 @@ const enrollUser = async(options, unique=true) => {
             privateKey
         })
         console.log(cred_id)
-        const database = NETWORK_PREFIX + options.network
+        const database = NETWORK_PREFIX + network
         const dbExist = checkIfDatabaseExists(database)
         if(dbExist){
             let {docs} = await getDocumentFromDatabase(database, getSelector(ORG_FMT,args.orgName))
@@ -65,7 +65,7 @@ const enrollUser = async(options, unique=true) => {
             }
         }
         else{
-            logger.error(`Fele Network ${options.network} does not exist.`)
+            logger.error(`Fele Network ${network} does not exist.`)
         }
         return cred_id
     }catch(e){
