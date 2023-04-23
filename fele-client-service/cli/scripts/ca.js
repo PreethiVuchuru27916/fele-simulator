@@ -1,11 +1,11 @@
 const { registerUser, enrollUser} = require('../../client-api/scripts/ca');
 
-const registerUserCLI = (options) => {
-    return registerUser(options)
+const registerUserCLI = async(affiliation,id) => {
+    return registerUser(affiliation,id)
 }
 
-const enrollUserCLI = async(options) => {
-    return enrollUser(options)
+const enrollUserCLI = async(enrollmentId, mspId, network) => {
+    return enrollUser(enrollmentId, mspId, network)
 }
 
 module.exports = {

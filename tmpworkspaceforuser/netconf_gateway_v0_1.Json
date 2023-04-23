@@ -1,5 +1,4 @@
 {
-	"netName": "Gateway",
 	"includeLedger": false,
 	"transactionAware": false,
 	"blockAware": false,

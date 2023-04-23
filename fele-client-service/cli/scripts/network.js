@@ -3,7 +3,7 @@ const {
   deleteNetwork,
   useNetwork
 } = require("../../client-api/scripts/network");
-
+const path = require('path')
 const { USER_WORKSPACE } = require('../../../globals');
 const logger = require('../../utils/logger');
 
@@ -13,14 +13,12 @@ async function useNetworkCLI(username, localOrg, networkName) {
 
 async function createNetworkCLI(networkConfig, networkName) {
   if (networkConfig.includes(".json")) {
-    //When networkConfig is a file
-    const fileName = USER_WORKSPACE +'/'+ networkConfig;
-    networkConfig = require(fileName); //Get contents of file as object
-    networkConfig = JSON.stringify(networkConfig); //Convert object to string
+    const filePath = path.join(USER_WORKSPACE, networkConfig)
+    networkConfig = require(filePath)
   } else {
-    networkConfig = networkConfig.replace(/\\/g, "");
+    networkConfig = JSON.parse(networkConfig)
   }
-  logger.info("after removing chars" + networkConfig);
+  logger.info("after removing chars" + JSON.stringify(networkConfig));
 
   try {
     createNetwork(networkConfig, networkName);
