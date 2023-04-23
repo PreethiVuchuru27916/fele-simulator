@@ -75,7 +75,7 @@ const enrollUser = async(enrollmentId, mspId, network, unique=true) => {
 
 //Stateless
 const registerUserUsingREST = async (affiliation, id) => {
-    const enrollCredentials = registerUser({affiliation, id})
+    const enrollCredentials = registerUser(affiliation, id)
     try {
         await insertToDatabase(BID, {
             _id : "enrollment~" + uuidv4(),
@@ -91,7 +91,7 @@ const registerUserUsingREST = async (affiliation, id) => {
 
 }
 
-const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization) => {
+const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization, network) => {
     
     const dbStatus = await checkIfDatabaseExists(BID)
     if(dbStatus) {
@@ -101,7 +101,7 @@ const enrollUserUsingREST = async (enrollmentId, enrollmentSecret, organization)
         }
         if(docs[0].enrollmentSecret == enrollmentSecret) {
             try{
-                const res = await enrollUser({mspId: organization, enrollmentId})
+                const res = await enrollUser(enrollmentId, organization, network)
                 return res
             } catch(error) {
                 throw new Error(error.message)
