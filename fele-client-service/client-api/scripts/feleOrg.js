@@ -30,7 +30,7 @@ const createFeleOrg = async(network, organization) => {
                 console.log(`Fele Organization ${organization} created successfully`)
                 const { enrollmentID } = await registerUser(organization+"_"+network,"admin")
                 const cred_id = await enrollUser(enrollmentID, organization, network)
-                console.log(`Fele User Admin ${organization}_${network}.admin created successfully with credential ID = ${cred_id}`)
+                console.log(`Fele User Admin ${enrollmentID} created successfully with credential ID = ${cred_id}`)
                 return;
             }
             else{
