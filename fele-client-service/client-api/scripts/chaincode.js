@@ -44,7 +44,7 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
                 const functionToCall = argumentJSON.Args[0];
                 const functionArgs = argumentJSON.Args.slice(1);
                 try{
-                    const txnResult = await chClass[functionToCall](...functionArgs)
+                    const txnResult = await chClass[functionToCall](...functionArgs, networkName)
                     console.log(txnResult)
                     logger.info("Transaction successful");
                 }

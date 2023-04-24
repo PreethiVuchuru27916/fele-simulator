@@ -7,16 +7,16 @@ class SmartContract {
     
   }
 
-  static getState(key) {
-    return this.ctx.getState(key);
+  static getState(key, network) {
+    return this.ctx.getState(key, network);
   }
 
-  static putState(key, value) {
-    return this.ctx.putState(key, value);
+  static putState(key, value, network) {
+    return this.ctx.putState(key, value, network);
   }
 
-  static deleteState(key) {
-    return this.ctx.deleteState(key);
+  static deleteState(key, network) {
+    return this.ctx.deleteState(key, network);
   }
 }
 

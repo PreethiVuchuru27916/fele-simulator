@@ -9,13 +9,14 @@ class Context {
 
   constructor() {
     this.#globalState = {
-      networkName: 'artemis',
+      networkName: '',
       channelName: '',
       invokerName: ''
     };
   }
   
-  async getState(key) {
+  async getState(key, network) {
+    this.#globalState.networkName = network
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
@@ -26,7 +27,8 @@ class Context {
     }
   }
 
-  async putState(key, value) {
+  async putState(key, value, network) {
+    this.#globalState.networkName = network
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const document = { ...value, _id: key };
@@ -41,7 +43,8 @@ class Context {
     }
   }
 
-  async deleteState(key) {
+  async deleteState(key, network) {
+    this.#globalState.networkName = network
     const databaseName = NETWORK_PREFIX + this.#globalState.networkName;
     try {
       const result = await getDocumentByID(databaseName, key);
