@@ -62,6 +62,7 @@ const enrollUser = async(enrollmentId, mspId, network, unique=true) => {
             }
             else{
                 logger.error(`Fele Organization ${args.orgName} does not exist.`)
+                throw new Error(`Fele Organization ${args.orgName} does not exist.`)
             }
         }
         else{
@@ -70,6 +71,7 @@ const enrollUser = async(enrollmentId, mspId, network, unique=true) => {
         return cred_id
     }catch(e){
         logger.error(e)
+        throw new Error(e.message)
     }
 }
 

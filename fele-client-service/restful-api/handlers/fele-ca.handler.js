@@ -13,9 +13,9 @@ const registerFeleUser = async (req, res) => {
 
 const enrollFeleUser = async (req, res) => {
     const {enrollmentId, enrollmentSecret} = req.body
-    const organization = req.headers.organization
+    const {organization, network} = req.headers
     try {
-        const response = await CA.enrollUserUsingREST(enrollmentId, enrollmentSecret, organization)
+        const response = await CA.enrollUserUsingREST(enrollmentId, enrollmentSecret, organization, network)
         res.status(200).send(response)
     } catch(error) {
         res.status(500).send({

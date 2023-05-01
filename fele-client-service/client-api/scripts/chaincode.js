@@ -4,7 +4,8 @@ const logger = require('../../utils/logger');
 const {NETWORK_BASEPATH,USER_WORKSPACE} = require('../../../globals')
 const { checkIfDatabaseExists, getDocumentFromDatabase} = require('../../utils/db')
 const { NETWORK_PREFIX } = require('../../utils/constants')
-const { getChannelSelector, copyFolderSync } = require('../../utils/helpers')
+const { getChannelSelector, copyFolderSync } = require('../../utils/helpers');
+const { Context } = require('../../../fele-smart-contract/Context');
 
 
 async function createChaincode(networkName, channelName, chaincodeName) {
@@ -32,7 +33,10 @@ async function createChaincode(networkName, channelName, chaincodeName) {
     } 
 }
 
-async function invokeChaincode(networkName, channelName, chaincodeName, argumentJSON) {
+async function invokeChaincode(networkName, channelName, invokerName, chaincodeName, argumentJSON) {
+    console.log("argumentJson"+JSON.stringify(argumentJSON));
+    const ctx = new Context();
+    ctx.initState(networkName, channelName, invokerName);
     const database = NETWORK_PREFIX + networkName;
     const dbStatus = await checkIfDatabaseExists(database)
     if (dbStatus) {
@@ -47,19 +51,23 @@ async function invokeChaincode(networkName, channelName, chaincodeName, argument
                     const txnResult = await chClass[functionToCall](...functionArgs, networkName)
                     console.log(txnResult)
                     logger.info("Transaction successful");
+                    return txnResult
                 }
                 catch(err){
                     console.log(err);
                     logger.error(err);
+                    throw new Error(err.message)
                 }
             }
             catch(err){
                 console.log(err);
                 logger.error(chaincodeName + " does not exist.");
+                throw new Error(chaincodeName + " does not exist.")
             }
         }
         else{
             logger.error("Channel \""+channelName+"\" not found in "+networkName);
+            throw new Error("Channel " + channelName +  " not found in " + networkName)
         }
     }
 }

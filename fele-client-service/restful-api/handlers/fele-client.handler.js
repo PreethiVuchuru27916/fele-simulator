@@ -1,6 +1,6 @@
 const { createNetwork, deleteNetwork } = require('../../client-api/scripts/network')
-const { createChannel, deleteChannel } = require('../../client-api/scripts/channel')
-
+const { createChannel, deleteChannel, addFeleUsersInChannel } = require('../../client-api/scripts/channel')
+const {createFeleOrg} = require('../../client-api/scripts/feleOrg')
 const createNetworkHandler = async (req, res) => {
     try {
         let {networkName} = req.query
@@ -14,7 +14,6 @@ const createNetworkHandler = async (req, res) => {
         })
     }
 }
-
 
 const createChannelHandler = async (req, res) => {
     const { networkName, channelConfig } = req.body
@@ -30,6 +29,24 @@ const createChannelHandler = async (req, res) => {
     }
 }
 
+const createOrganizationHandler = async (req, res) => {
+    const {network, organization} = req.headers
+    if(!network || !organization) {
+        res.status(400).send({message: "Network and organization headers are required"})
+        return
+    }
+    try {
+        await createFeleOrg(network, organization)
+        res.status(200).send({
+            message: "Organization created successfully"
+        })
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
+        })
+    }
+}
+
 const deleteChannelHandler = async (req, res) => {
     const { networkName, channelName } = req.body
     try {
@@ -40,6 +57,25 @@ const deleteChannelHandler = async (req, res) => {
     } catch (e) {
         res.status(500).send({
             error: e.message
+        })
+    }
+}
+
+const addFeleUsersToChannel = async (req, res) => {
+    const {network, channel, organization} = req.headers
+    const {feleUsers} = req.body
+    if(!network || !channel || !organization) {
+        res.status(400).send({
+            message: "network, channel and organization headers are required"
+        })
+        return
+    }
+    try {
+        const response = await addFeleUsersInChannel(network, channel, organization, feleUsers)
+        res.status(200).send(response)
+    } catch(error) {
+        res.status(500).send({
+            message: error.message
         })
     }
 }
@@ -82,5 +118,7 @@ module.exports = {
     deleteNetworkHandler,
     addOrganizationHandler,
     removeOrganizationHandler,
-    chainCodeDeployHandler
+    chainCodeDeployHandler,
+    createOrganizationHandler,
+    addFeleUsersToChannel
 }

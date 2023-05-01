@@ -18,6 +18,10 @@ class SmartContract {
   static deleteState(key, network) {
     return this.ctx.deleteState(key, network);
   }
+
+  static getQueryByResult(query) {
+    return this.ctx.getQueryByResult(query);
+  }
 }
 
 module.exports = {
