@@ -3,7 +3,7 @@ const { SmartContract } = require('../../../../../fele-smart-contract/SmartContr
 const { v4: uuidv4 } = require('uuid');
 
 class EmployeeAsset extends SmartContract {
-    async init() {
+    async init(network) {
         const employees = [
             {
                 "name": "Emily Shaw",
@@ -21,33 +21,33 @@ class EmployeeAsset extends SmartContract {
             const employeeAsset = { ...employee };
             const key = "Asset~" + uuidv4();
             employeeAsset.fmt = "asset";
-            await SmartContract.putState(key, employeeAsset)
+            await SmartContract.putState(key, employeeAsset, network)
         })
         
     }
 
-    async AssetExists(key) {
-        const asset = await SmartContract.getState(key);
+    async AssetExists(key,network) {
+        const asset = await SmartContract.getState(key, network);
         if(asset) return asset
         return null
     }
 
-    async createAsset(name, designation, salary) {
+    async createAsset(name, designation, salary, network) {
         const key = "Asset~" + uuidv4();
-        const asset = await this.AssetExists(key)
+        const asset = await this.AssetExists(key, network)
         if (!asset) {
             const value = {
                 "name": name,
                 "designation": designation,
                 "salary": salary
             }
-            return await SmartContract.putState(key, value);;
+            return await SmartContract.putState(key, value, network);;
         }
         else throw new Error("Asset ID already exists")
     } 
     
-    async readAsset(key) {
-        const result = await SmartContract.getState(key);
+    async readAsset(key, network) {
+        const result = await SmartContract.getState(key, network);
         return result;
     }
 
@@ -75,15 +75,15 @@ class EmployeeAsset extends SmartContract {
                 "designation": designation.length ? designation : asset.designation,
                 "salary": salary.length ? salary : asset.salary
             }
-            return await SmartContract.putState(key, value);
+            return await SmartContract.putState(key, value, network);
         }
         else throw new Error("Asset does not exist!");
     }
     
-    async deleteAsset(key) {
-        const asset = await this.AssetExists(key)
+    async deleteAsset(key, network) {
+        const asset = await this.AssetExists(key, network)
         if(asset) {
-            return await SmartContract.deleteState(key);
+            return await SmartContract.deleteState(key, network);
         }
         else throw new Error("Asset ID does not exists")
     }  

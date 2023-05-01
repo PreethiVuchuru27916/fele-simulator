@@ -2,7 +2,7 @@ const logger = require('../../utils/logger');
 const { checkIfDatabaseExists, getDocumentFromDatabase, deleteDocument, insertToDatabase} = require('../../utils/db')
 const { NETWORK_PREFIX, ORG_FMT, ORG_ID_PREFIX } = require('../../utils/constants')
 const { v4: uuidv4 } = require('uuid')
-
+const {enrollUser, registerUser} = require('../scripts/ca')
 const createFeleOrg = async(network, organization) => {
     try{
         const database = NETWORK_PREFIX + network;
@@ -28,6 +28,9 @@ const createFeleOrg = async(network, organization) => {
                 }
                 await insertToDatabase(database, organizationConfig)
                 console.log(`Fele Organization ${organization} created successfully`)
+                const { enrollmentID } = await registerUser(organization+"_"+network,"admin")
+                const cred_id = await enrollUser(enrollmentID, organization, network)
+                console.log(`Fele User Admin ${enrollmentID} created successfully with credential ID = ${cred_id}`)
                 return;
             }
             else{
