@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const { SmartContract } = require('../../../../../fele-smart-contract/SmartContract');
-
+const { Context } = require('../../../../../fele-smart-contract/Context');
 
 class AssetTransfer extends SmartContract {
     async init() {
@@ -76,6 +76,22 @@ class AssetTransfer extends SmartContract {
         }
         else throw new Error("Asset ID does not exists")
     } 
+
+    async getAllAssets() {
+        const query = { 
+            "selector": {
+                "fmt": {
+                    "$eq": "Asset"
+                },
+                "channelName": {
+                    "$eq": Context.globalState.channelName
+                }
+            }
+        }
+        const result = await SmartContract.getQueryByResult(query);
+        console.log("Result is"+result.docs)
+        return result.docs;
+    }
 }
 
 module.exports={
