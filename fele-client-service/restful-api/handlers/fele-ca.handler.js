@@ -1,4 +1,5 @@
 const CA = require('../../client-api/scripts/ca')
+const { NETWORK_PREFIX } = require('../../utils/constants')
 const registerFeleUser = async (req, res) => {
     try {
         const {affiliation, id} = req.body
@@ -11,7 +12,7 @@ const registerFeleUser = async (req, res) => {
     }
 }
 
-const enrollFeleUser = async (req, res) => {
+const enrollFeleUser = async (req, res, next) => {
     const {enrollmentId, enrollmentSecret} = req.body
     const {organization, network} = req.headers
     try {
@@ -21,6 +22,8 @@ const enrollFeleUser = async (req, res) => {
         res.status(500).send({
             message: error.message
         })
+    }finally {
+        next()
     }
 }
 

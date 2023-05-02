@@ -1,7 +1,7 @@
 const { createNetwork, deleteNetwork } = require('../../client-api/scripts/network')
 const { createChannel, deleteChannel, addFeleUsersInChannel } = require('../../client-api/scripts/channel')
 const {createFeleOrg} = require('../../client-api/scripts/feleOrg')
-const createNetworkHandler = async (req, res) => {
+const createNetworkHandler = async (req, res, next) => {
     try {
         let {networkName} = req.query
         networkName = networkName.toLowerCase()
@@ -12,10 +12,12 @@ const createNetworkHandler = async (req, res) => {
         res.status(500).send({
             message: "Error creating network: "+e.message
         })
+    } finally {
+        next()
     }
 }
 
-const createChannelHandler = async (req, res) => {
+const createChannelHandler = async (req, res, next) => {
     const { networkName, channelConfig } = req.body
     try {
         const response = await createChannel(networkName, channelConfig)
@@ -26,6 +28,8 @@ const createChannelHandler = async (req, res) => {
         res.status(500).send({
             error: e.message
         })
+    } finally {
+        next()
     }
 }
 
@@ -47,7 +51,7 @@ const createOrganizationHandler = async (req, res) => {
     }
 }
 
-const deleteChannelHandler = async (req, res) => {
+const deleteChannelHandler = async (req, res, next) => {
     const { networkName, channelName } = req.body
     try {
         const response = await deleteChannel(networkName, channelName)
@@ -58,16 +62,19 @@ const deleteChannelHandler = async (req, res) => {
         res.status(500).send({
             error: e.message
         })
+    } finally {
+        next()
     }
 }
 
-const addFeleUsersToChannel = async (req, res) => {
+const addFeleUsersToChannel = async (req, res, next) => {
     const {network, channel, organization} = req.headers
     const {feleUsers} = req.body
     if(!network || !channel || !organization) {
         res.status(400).send({
             message: "network, channel and organization headers are required"
         })
+        next()
         return
     }
     try {
@@ -77,10 +84,12 @@ const addFeleUsersToChannel = async (req, res) => {
         res.status(500).send({
             message: error.message
         })
+    } finally {
+        next()
     }
 }
 
-const deleteNetworkHandler = async (req, res) => {
+const deleteNetworkHandler = async (req, res, next) => {
     const { networkName } = req.query
     try {
         await deleteNetwork(networkName)
@@ -92,6 +101,8 @@ const deleteNetworkHandler = async (req, res) => {
         res.status(500).send({
             error: e.message
         })
+    } finally {
+        next()
     }
 }
 

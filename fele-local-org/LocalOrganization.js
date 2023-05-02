@@ -40,6 +40,7 @@ const createOrganization = async (organization, localUsers) => {
     } else {
         await insertToDatabase(BID, organizationConfig)
     }
+    await syncLocalOrg(organization)
 }
 
 const getChannelsAndItsFeleUsersInNetwork = async (network, organization, chs) => {

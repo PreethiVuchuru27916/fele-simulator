@@ -2,7 +2,7 @@ const express = require('express')
 const { server } = require('../../conf/feleConf')
 const swaggerUi = require('swagger-ui-express')
 const {swaggerDocument} = require('./openAPI/swagger')
-
+const localOrg = require('../../fele-local-org/LocalOrganization')
 const app = express()
 
 //Adding Routes
