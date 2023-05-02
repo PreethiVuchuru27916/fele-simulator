@@ -41,3 +41,5 @@ Simulator for Hyperledger fabric that is a framework to develop permissioned blo
     chaincode invoke -nn artemis -cn uhcl_international1 -ccn EmployeeAsset -ca {"Args":["deleteAsset","Asset~43012f4c-2fa4-4ded-859c-3aaa214541e8"]}
     chaincode invoke -nn artemis -cn uhcl_international1 -ccn EmployeeAsset -ca {"Args":["updateAsset","Asset~287ef1d4-6588-49b7-803a-dc385ce266c9","Dave","Developer","10000"]}
 ```
+#chaincode usecase command
+chaincode invoke -nn artemis2 -cn nasa -i nasa_artemis2.admin -ccn AssetTransfer -ca {"Args":["createAsset","{\"Color\":\"blue\",\"Size\":15,\"Owner\":\"ram\",\"AppraisedValue\":700}\"}"]}
