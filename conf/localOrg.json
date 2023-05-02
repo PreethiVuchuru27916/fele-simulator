@@ -22,20 +22,20 @@
 		"role": "Admin"
 	  }
 	],
-	"felenetworks": [
+	"feleNetworks": [
 	  {
-		"felenetId": "artemis",
+		"feleNetId": "artemis",
 		"feleOrgId": "nasa_artemis",
-		"feleChannel": [
+		"feleChannels": [
 		  {
 			"channelName": "channel1",
-			"feleusers": [
+			"feleUsers": [
 			  {
-				"feleuserId": "nasa_artemis.admin1",
+				"feleUserId": "nasa_artemis.admin1",
 				"walletId": "wallet_preethi"
 			  },
 			  {
-				"feleuserId": "nasa_artemis.se1",
+				"feleUserId": "nasa_artemis.se1",
 				"walletId": "wallet_sha"
 			  }
 			],
@@ -52,13 +52,13 @@
 		  },
 		  {
 			"channelName": "channel2",
-			"feleusers": [
+			"feleUsers": [
 			  {
-				"feleuserId": "nasa_artemis.admin2",
+				"feleUserId": "nasa_artemis.admin2",
 				"walletId": "wallet_preethi"
 			  },
 			  {
-				"feleuserId": "nasa_artemis.se2",
+				"feleUserId": "nasa_artemis.se2",
 				"walletId": "wallet_sha"
 			  }
 			],
@@ -74,58 +74,6 @@
 			]
 		  }
 		]
-	  },
-	  {
-		"felenetId": "art",
-		"feleOrgId": "nasa_art",
-		"feleChannel": [
-		  {
-			"channelName": "channel1",
-			"feleusers": [
-			  {
-				"feleuserId": "nasa_art.admin1",
-				"walletId": "wallet_preethi"
-			  },
-			  {
-				"feleuserId": "nasa_art.se1",
-				"walletId": "wallet_sha"
-			  }
-			],
-			"mappings": [
-			  {
-				"from": "preethi",
-				"to": "nasa_art.admin1"
-			  },
-			  {
-				"from": "sha",
-				"to": "nasa_art.se1"
-			  }
-			]
-		  },
-		  {
-			"channelName": "channel2",
-			"feleusers": [
-			  {
-				"feleuserId": "nasa_art.admin2",
-				"walletId": "wallet_preethi"
-			  },
-			  {
-				"feleuserId": "nasa_art.se2",
-				"walletId": "wallet_sha"
-			  }
-			],
-			"mappings": [
-			  {
-				"from": "preethi",
-				"to": "nasa_artemis.admin2"
-			  },
-			  {
-				"from": "sha",
-				"to": "nasa_artemis.se2"
-			  }
-			]
-		  }
-		]
-	  }
+	  }	  
 	]
   }

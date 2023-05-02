@@ -47,7 +47,7 @@ class AssetTransfer extends SmartContract {
     }
 
     async createAsset(jsonValue) {
-        console.log("jsomValue inside create aset"+jsonValue)
+        console.log("jsonValue inside create asset"+jsonValue)
         const key = "Asset~" + uuidv4();
         const asset = await this.AssetExists(key)
         if (!asset) {
