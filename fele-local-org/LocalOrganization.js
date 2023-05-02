@@ -32,6 +32,7 @@ const createOrganization = async (organization, localUsers) => {
     } catch {
         await createDatabase(BID)
         await insertToDatabase(BID, organizationConfig)
+        await syncLocalOrg(organization)
         return;
     }
 
