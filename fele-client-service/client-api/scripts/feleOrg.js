@@ -28,7 +28,7 @@ const createFeleOrg = async(network, organization) => {
                 }
                 await insertToDatabase(database, organizationConfig)
                 console.log(`Fele Organization ${organization} created successfully`)
-                const { enrollmentID } = await registerUser(organization+"_"+network,"admin")
+                const { enrollmentID } = await registerUser(organization,"admin")
                 const cred_id = await enrollUser(enrollmentID, organization, network)
                 console.log(`Fele User Admin ${enrollmentID} created successfully with credential ID = ${cred_id}`)
                 return;

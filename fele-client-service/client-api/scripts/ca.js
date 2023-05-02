@@ -77,7 +77,7 @@ const enrollUser = async(enrollmentId, mspId, network, unique=true) => {
 
 //Stateless
 const registerUserUsingREST = async (affiliation, id) => {
-    const enrollCredentials = registerUser(affiliation, id)
+    const enrollCredentials = await registerUser(affiliation, id)
     try {
         await insertToDatabase(BID, {
             _id : "enrollment~" + uuidv4(),
