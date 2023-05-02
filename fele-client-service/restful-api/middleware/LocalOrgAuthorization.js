@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET
-
+const localOrg = require('../../../fele-local-org/LocalOrganization')
 class LocalOrgAuthorization {
     Authorize = async (req, res, next, role, any=false) => {
         const token = req.headers.authorization
@@ -18,6 +18,15 @@ class LocalOrgAuthorization {
                 req.username = userData.username
                 req.userRole = userData.role
                 req.organization = userData.organization
+
+                console.log("Resource requested: ", req.originalUrl)
+                
+                if(req.originalUrl.includes('localorganization')) {
+                    if(!(req.path.includes('create') || req.path.includes('sync'))){
+                        localOrg.syncLocalOrg(userData.organization)
+                    }
+                }
+
                 next()
             } else {
                 throw new Error(`Access ${role} role required to access this resource`)
