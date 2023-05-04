@@ -96,8 +96,9 @@ feleOrgCommand
 networkCommand
     .command('use')
     .description('uses a network that is available')
+    .option('-cn, --channelName <channelName>', 'Channel name to be passed')
     .action(async(options) => {
-        GLOBAL_STATE.feleUser = await useNetworkCLI(GLOBAL_STATE.localUser.username, GLOBAL_STATE.localOrg, options.networkName);
+        GLOBAL_STATE.feleUser = await useNetworkCLI(GLOBAL_STATE.localUser.username, GLOBAL_STATE.localOrg, options.networkName, options.channelName);
         // if(GLOBAL_STATE.feleUser.user) GLOBAL_STATE.network = GLOBAL_STATE.feleUser.network.felenetId;
     });
 

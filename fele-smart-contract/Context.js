@@ -30,7 +30,7 @@ class Context {
 
   async putState(key, value) {
     const { networkName, channelName, invokerName } = Context.globalState
-    console.log("value inside putstate"+value)
+    console.log("value inside putstate: "+value)
 
     const databaseName = NETWORK_PREFIX + Context.globalState.networkName;
     try {

@@ -7,8 +7,8 @@ const path = require('path')
 const { USER_WORKSPACE } = require('../../../globals');
 const logger = require('../../utils/logger');
 
-async function useNetworkCLI(username, localOrg, networkName) {
-  return useNetwork(username, localOrg, networkName)
+async function useNetworkCLI(username, localOrg, networkName, channelName) {
+  return useNetwork(username, localOrg, networkName, channelName)
 }
 
 async function createNetworkCLI(networkConfig, networkName) {

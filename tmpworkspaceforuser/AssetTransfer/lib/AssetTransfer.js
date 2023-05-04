@@ -1,21 +1,22 @@
-const { SmartContract } = require('../../../fele-smart-contract/SmartContract');
 const { v4: uuidv4 } = require('uuid');
+const { SmartContract } = require('../../../../../fele-smart-contract/SmartContract');
+const { Context } = require('../../../../../fele-smart-contract/Context');
 
 class AssetTransfer extends SmartContract {
     async init() {
         const assets = [
-            // {
-            //     Color: 'blue',
-            //     Size: 5,
-            //     Owner: 'Tomoko',
-            //     AppraisedValue: 300,
-            // },
-            // {
-            //     Color: 'red',
-            //     Size: 5,
-            //     Owner: 'Brad',
-            //     AppraisedValue: 400,
-            // },
+            {
+                Color: 'blue',
+                Size: 5,
+                Owner: 'Tomoko',
+                AppraisedValue: 300,
+            },
+            {
+                Color: 'red',
+                Size: 5,
+                Owner: 'Brad',
+                AppraisedValue: 400,
+            },
             {
                 Color: 'green',
                 Size: 10,
@@ -46,7 +47,7 @@ class AssetTransfer extends SmartContract {
     }
 
     async createAsset(jsonValue) {
-        console.log("myassettransfer"+jsonValue)
+        console.log("jsonValue inside create asset"+jsonValue)
         const key = "Asset~" + uuidv4();
         const asset = await this.AssetExists(key)
         if (!asset) {
@@ -75,6 +76,22 @@ class AssetTransfer extends SmartContract {
         }
         else throw new Error("Asset ID does not exists")
     } 
+
+    async getAllAssets() {
+        const query = { 
+            "selector": {
+                "fmt": {
+                    "$eq": "Asset"
+                },
+                "channelName": {
+                    "$eq": Context.globalState.channelName
+                }
+            }
+        }
+        const result = await SmartContract.getQueryByResult(query);
+        console.log("Result is"+result.docs)
+        return result.docs;
+    }
 }
 
 module.exports={

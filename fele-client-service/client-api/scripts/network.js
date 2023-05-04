@@ -45,31 +45,62 @@ const createNetwork = async (networkConfig, networkName) => {
     }
 }
 
-const useNetwork = (username, localOrg, networkName) => {
-  console.log(GLOBAL_STATE);
-  const { localUsers, felenetworks } = GLOBAL_STATE.localOrg
-  const feleUser = {}
-  const localUserIndex = localUsers.findIndex((localUser) => (localUser.username === username));
-  if(localUserIndex != -1) {
-        const felenetworkIndex = felenetworks.findIndex((felenetwork) => felenetwork.felenetId === networkName);
-        if(felenetworkIndex != -1) {
-            feleUser.network = felenetworks[felenetworkIndex];
-            const isMappingPresentForUser = felenetworks[felenetworkIndex].mappings.findIndex((mapping) => mapping.from === username);
-            if (isMappingPresentForUser != -1) {
-                feleUser.user = felenetworks[felenetworkIndex].mappings[isMappingPresentForUser].to
-                const feleuserIndex = felenetworks[felenetworkIndex].feleusers.findIndex((feleuser) => (feleuser.feleuserId === feleUser.user))
-                if (feleuserIndex != -1) {
-                    feleUser.wallet = felenetworks[felenetworkIndex].feleusers[feleuserIndex].walletId
-                }
-                return feleUser
+const useNetwork = (username, localOrg, networkName, channelName) => {
+    console.log(GLOBAL_STATE);
+    const { localUsers, feleNetworks } = localOrg
+    const feleUser = {}
+    const localUserIndex = localUsers.findIndex((localUser) => (localUser.username === username));
+    if(localUserIndex != -1) {
+          var felenetworkIndex = -1
+          for(let i=0;i<feleNetworks.length; i++){
+            if(feleNetworks[i].feleNetId == networkName){
+                felenetworkIndex=i;
+                break
             }
-            else console.log("You are not authorized to this network")
-        } else {
-            console.log("Network does not exist")
-        }
-    }
-    return feleUser
-}
+          }
+          if(felenetworkIndex != -1) {
+              feleUser.network = feleNetworks[felenetworkIndex];
+              var felechannelIndex = -1
+              for(let i=0;i<feleNetworks[felenetworkIndex].feleChannels.length; i++){
+                if(feleNetworks[felenetworkIndex].feleChannels[i].channelName == channelName){
+                    felechannelIndex=i;
+                    break
+                }
+              }
+              if(felechannelIndex != -1){
+                feleUser.channel = feleNetworks[felenetworkIndex].feleChannels[felechannelIndex];
+                var isMappingPresentForUser = -1
+                for(let i=0;i<feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].mappings.length;i++){
+                    if(feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].mappings[i].from === username){
+                        isMappingPresentForUser=i;
+                        break;
+                    }
+                }
+                if (isMappingPresentForUser != -1) {
+                    feleUser.user = feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].mappings[isMappingPresentForUser].to
+                    var feleuserIndex = -1
+                    for(let i=0;i<feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].feleUsers.length;i++){
+                        if(feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].feleUsers[i].feleuserId === feleUser.user){
+                            feleuserIndex=i;
+                            break;
+                        }
+                    }
+                    if (feleuserIndex != -1) {
+                        feleUser.wallet = feleNetworks[felenetworkIndex].feleChannels[felechannelIndex].feleUsers[feleuserIndex].walletId
+                    }
+                    return feleUser
+                }
+                else console.log("You are not authorized to this network")
+              }
+              else{
+                console.log("Channel does not exist")
+              }
+          } else {
+              console.log("Network does not exist")
+          }
+      }
+      return feleUser
+  }
 
 const deleteNetwork = async (networkName) => {
     const databaseName = NETWORK_PREFIX + networkName
