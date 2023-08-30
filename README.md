@@ -46,3 +46,14 @@ chaincode invoke -nn artemis -cn nasa -ccn AssetTransfer -ca {"Args":["createAss
 chaincode invoke -nn artemis -cn nasa -ccn AssetTransfer -ca {"Args":["readAsset","Asset~c35464f1-7d52-4a54-bcb5-50766490e71d"]}
 chaincode invoke -nn artemis -cn nasa -ccn AssetTransfer -ca {"Args":["updateAsset","Asset~c35464f1-7d52-4a54-bcb5-50766490e71d",{"Color":"red","Size":125,"Owner":"ram","AppraisedValue":700}]}
 chaincode invoke -nn artemis -cn nasa -ccn AssetTransfer -ca {"Args":["deleteAsset","Asset~c35464f1-7d52-4a54-bcb5-50766490e71d"]}
+
+
+
+## Contributors
+
+<a href="https://github.com/PreethiVuchuru27916/fele-simulator/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=PreethiVuchuru27916/fele-simulator" />
+</a>
+
+
+Made with [contrib.rocks](https://contrib.rocks).
